@@ -8,6 +8,10 @@ using yyl_sts2_mod.Code.Character;
 
 namespace yyl_sts2_mod.Code.Cards.Common;
 
+/// <summary>
+///     逃离: 0 费技能, 获得 5 → 8 点格挡。
+///     张楚岚的看家本领就是跑 —— 不花费用、只换格挡的纯防御位。
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 #pragma warning disable STS004
 public class Escape(
@@ -18,9 +22,9 @@ public class Escape(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public Escape() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
+    public Escape() : this(0, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithBlock(6, 3);
+        WithBlock(5, 3);
     }
 
 
