@@ -37,6 +37,6 @@ public sealed class PeachCan : yylRelicModel
 
     public override RelicModel? GetUpgradeReplacement()
     {
-        return ModelDb.Relic<BigPeachCan>();
+        return ModelDb.Relic<NlCan2>();
     }
 }

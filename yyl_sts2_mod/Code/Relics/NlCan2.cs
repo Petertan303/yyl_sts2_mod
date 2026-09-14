@@ -26,7 +26,7 @@ namespace yyl_sts2_mod.Code.Relics;
 ///     并播放奶龙的声音。持有时每点炁额外造成 20% 伤害。
 /// </summary>
 [Pool(typeof(yyl_sts2_modRelicPool))]
-public sealed class BigPeachCan : yylRelicModel, IModifyDamageMultiplicative
+public sealed class NlCan2 : yylRelicModel, IModifyDamageMultiplicative
 {
     public override RelicRarity Rarity => RelicRarity.Ancient;
 
