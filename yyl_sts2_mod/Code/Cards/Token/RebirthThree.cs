@@ -19,6 +19,7 @@ public class RebirthThree(
 {
     public RebirthThree() : this(3, CardType.Power, CardRarity.Token, TargetType.None)
     {
+        WithCostUpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay cardPlay)

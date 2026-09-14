@@ -25,6 +25,7 @@ public sealed class DarkHumor(
 {
     public DarkHumor() : this(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
+        WithPower<IntangiblePower>(1, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -39,7 +40,9 @@ public sealed class DarkHumor(
         }
         // 获得 3 炁
         await yylCmd.GainQi(choiceContext, Owner, 3, this, cardPlay.Card);
-        // 1 层无实体
-        await PowerCmd.Apply<IntangiblePower>(choiceContext, new[] { Owner.Creature }, 1, Owner.Creature, cardPlay.Card);
+        // 1 → 2 层无实体
+        var intangible = DynamicVars["IntangiblePower"].IntValue;
+        if (intangible > 0)
+            await PowerCmd.Apply<IntangiblePower>(choiceContext, new[] { Owner.Creature }, intangible, Owner.Creature, cardPlay.Card);
     }
 }

@@ -23,7 +23,7 @@ public sealed class Zeal(
 {
     public Zeal() : this(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
     {
-        WithPower<Fervor>(1);
+        WithPower<Fervor>(1, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

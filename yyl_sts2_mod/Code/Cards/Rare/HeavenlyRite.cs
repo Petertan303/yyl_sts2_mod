@@ -25,12 +25,13 @@ public sealed class HeavenlyRite(
 {
     public HeavenlyRite() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
+        WithPower<Qi>(10, 3);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 正向: 获得 10 炁 + 3 层金光咒
-        await yylCmd.GainQi(choiceContext, Owner, 10, this, cardPlay.Card);
+        // 正向: 获得 10 → 13 炁 + 3 层金光护体
+        await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature }, 3, Owner.Creature, cardPlay.Card);
         // 负面: 给予天师度 debuff Power
         await PowerCmd.Apply<HeavenlyBurden>(choiceContext, new[] { Owner.Creature }, 1, Owner.Creature, cardPlay.Card);
