@@ -49,7 +49,7 @@
 
 | 名称 | 效果 | 备注 |
 |---|---|---|
-| **天师度 (TianShiDu)** | 回合结束时失去 3 点炁。Stack: Counter | ⚠ 与 §2.4 同名卡"天师度"重名,需要改名(详见 §6) |
+| **天师度 (TianShiDu)** Power | 回合结束时失去 2 点炁 / 层。Stack: Counter | 由 §2.4 的"天师度"卡牌施加,本身不主动获得 |
 
 ### 1.5 一次性 / 触发
 
@@ -66,7 +66,7 @@
 | **吐纳 (TuNa)** | Basic | TBD | 获得 1 → 2 炁,抽 1,**消耗** | 简易发动机 |
 | **蓄势 (XuShi)** | Common | TBD | **下回合开始时**获得 2 → 3 炁 | 需"延迟 buff"机制 |
 | **炁流源体 (QiLiuYuanTi)** | Rare | TBD(估 X) | 将当前炁**翻倍**,消耗 | X = 0 时为白板 |
-| **天师度 (TianShiDu)** | TBD | TBD | 获得 10 炁 + 3 层金光咒;**本回合结束** -2 炁 | ⚠ 与 §1.4 同名,需改名 |
+| **天师度 (TianShiDuCard)** | Rare | 1 | 获得 10 炁 + 3 层金光咒 + 给予 1 层 `TianShiDu` Power | 类比 Wraith Form(正向+持续负面) |
 | **马步 (MaBu)** | Common | TBD | 获得 3 → 5 格挡,获得 1 → 2 炁 | 防御 + 产炁 |
 
 ---
@@ -135,18 +135,18 @@
 
 | 名称 | 效果 | 备注 |
 |---|---|---|
-| **大瓶黄桃罐头 (奶龙 版)** | 战斗开始时获得 5 炁;每点炁 +20% 伤害;**将所有人(包括队友)视作奶龙** | 多人模式下要给队友也贴 tag |
-| **大瓶黄桃罐头 (炁 版)** | 战斗开始时获得 3 炁;每点炁 +20% 伤害 | ⚠ 两个版本的数值不一致(3 炁 vs 5 炁),需确认是同一遗物还是两件 |
+| **大瓶黄桃罐头 (`BigYellowPeachCan`)** | 战斗开始时获得 5 炁;每点炁 +20% 伤害;**将所有人(包括队友)视作奶龙** | 复用 `NlPowerPlus`(与 `NlCan2` 的"视所有人为奶龙"一致) |
 
 ---
 
 ## 6. 设计备注 / 待定
 
-### 命名 / 概念冲突
-1. **"天师度"** 同时作为 debuff(§1.4,-3 炁/回合)和卡牌(§2.4,+10 炁 + 3 金光,-2 炁/回合)出现。建议:
-   - 卡牌 → **"开天师度"** 或 **"天师度·显"**
-   - buff → **"炁泄"** 或 **"走火入魔"**
-2. **大瓶黄桃罐头** 在"炁 / 奶龙"两节都列出且数值不同(3 vs 5 炁),需决定合并为一件还是分两件。
+### 命名 / 概念冲突(已澄清)
+1. **"天师度"** = 一张卡 + 一个 Power 的同名组合(类比 Wraith Form):
+   - 卡牌 `TianShiDuCard`:打出时给 +10 炁 + 3 金光咒 + 给予 Power `TianShiDu`
+   - Power `TianShiDu`(debuff,Counter):每回合结束 -2 炁 / 层
+   - 后续可让 debuff 随回合数累加(目前是固定 -2)
+2. **大瓶黄桃罐头** = `BigYellowPeachCan` 单一遗物:5 炁 + 每点炁 +20% 伤害 + 把所有人视作奶龙。复用 `NlPowerPlus`(与 `NlCan2` 一致)。
 
 ### 机制空白
 3. **奶龙 tag 机制**:目前 `NlPower`(敌人 tag + 击杀回血 3)与 `NlPowerPlus`(所有人 tag + 击杀回血 6)职责混合。建议拆为:
@@ -173,10 +173,44 @@
 14. **效果范围**有歧义(投喂的"所有奶龙"指敌人还是所有?——按奶龙体系应为所有被标记的生物)。
 
 ### 工程现状参考
-- `Code/Powers/Qi.cs` 2% / 层,需改 10%
+- `Code/Powers/Qi.cs` **已改 10% / 层**
 - `Code/Powers/ReverseLife.cs` 三段已实现,需对照 §1.3
-- `Code/Powers/OldFarm.cs` 空壳,可直接填充 §1.1 行为
-- `Code/Relics/NlCan1.cs` 只贴 NlPower,需加 3 炁
+- `Code/Powers/OldFarm.cs` **已填充**:实现 `IGainQi`,获得炁时 +Amount
+- `Code/Relics/NlCan1.cs` **已加 3 炁**(战前给 3 炁 + 贴 NlPower)
 - `Code/Patches/MultiDamage.cs` 已提供"加 / 乘算"钩子桥;新 buff 可直接实现 `IModifyDamageMultiplicative` / `IModifyDamageAdditive`
 - `Code/Patches/ModifyBlockAdditiveCompability.cs` 整文件注释,block 侧需依赖 BaseLib(≥ 3.3.5)直接 hook
 - `Code/Commands/ScryCmd.cs` 整文件注释,本设计未使用 scry
+
+### 费用/数值约定(临时)
+- **所有新卡统一 1 费**,数值由用户后续手动调整。
+- 原始设计为 X 费的(炁流源体)按 1 费实现。
+
+### v0.1 实现状态(对照本设计)
+| 模块 | 状态 |
+|---|---|
+| `IGainQi` / `ILoseQi` 钩子 + `yylHook` 派发 | ✅ |
+| `yylCmd.GainQi` / `LoseQi` 辅助命令 | ✅ |
+| `Qi` 10%/层 | ✅ |
+| `OldFarm` 获得炁时 +Amount | ✅ |
+| `WenYang` 获得炁群伤 | ✅ |
+| `DanShi` 失去炁格挡 | ✅ |
+| `TianShiDu` Power(debuff) | ⚠ 用了 `AfterSideTurnEnd` 钩子,**需验证方法名** |
+| `XuShi` Power(下回合触发) | ✅ |
+| `XingMingShuangQuan` Power | ⚠ 仅占位,"打 2 次"逻辑待补 |
+| 5 产炁卡 (TuNa/XuShi/QiLiuYuanTi/TianShiDuCard/MaBu) | ✅ |
+| 5 耗炁卡 (ZhangXinLei/YiXue/TianHuo/SanQi/TongChang) | ⚠ YiXue 的"从抽牌堆选 1 张"未实现 |
+| 7 奶龙卡 (ZhiRen/XinFang/PoFang/KuangRe/TouWei/DaDanShiLiang/HeiSeYouMo) | ⚠ XinFang 的"本回合受奶龙伤害-50%"未实现 |
+| `BigYellowPeachCan` 遗物 | ✅ |
+| `Cards/Uncommon/OldFarm.cs` 老农功卡(WIP 占位) | ⚠ 保留不动,可能后续删 |
+| 本地化(eng/cards/powers/relics) | ✅ 已加新条目 |
+| 资源(图片/场景) | ⏳ 用户后续 |
+
+### 已知的 API 风险(本机 StS2 未装,无法脱机验证)
+- 继承基类是否真有 `AfterSideTurnEnd` / `BeforeCombatStart` 钩子 → 需要看 sts2.dll
+- `Owner.Player` 转换我已避免(用 `combatState.Players.FirstOrDefault(p => p.Creature == Owner)`)
+- `ValueProp.None` 可能不存在,可换成 `default(ValueProp)` 或 0
+- `PlayerCmd.GainBlock(amount, player)` 签名按 `GainEnergy` 类比,可能需 `GainBlock(amount, player, ctx)` 等
+- `PlayerCmd.Draw(player, amount)` 签名同理
+- `CreatureCmd.GainBlock(creature, amount)` 同理
+- `PowerCmd.Remove(this, ctx)` 是猜测,可能签名不同
+- `CompatibilityCreatureCmd.Damage` 返回 `IEnumerable<DamageResult>`,`DamageResult.Amount` 是猜测字段名

@@ -152,5 +152,43 @@ public class yylHook
     {
         return AfterModifying(player.Creature.CombatState!, modifiers, a=> a.AfterModifyingScryAmount(ctx, player, originalAmount, modifiedAmount));
     }
+
+    /// <summary>
+    ///     Passes the requested Qi gain through all <see cref="IGainQi" /> listeners, tracking
+    ///     which ones actually modified the value.
+    /// </summary>
+    public static int ModifyQiGain(Player player, int amount, out IEnumerable<IGainQi> modifiers)
+    {
+        return Modify(player.Creature.CombatState, amount, (m, a) => m.ModifyQiGain(player, a), out modifiers);
+    }
+
+    /// <summary>
+    ///     Follow-up invoked after the Qi gain modification pass, only on listeners that actually
+    ///     changed the value. Use this for side effects of having modified the gain.
+    /// </summary>
+    public static Task AfterModifyingQiGain(PlayerChoiceContext ctx, Player player, IEnumerable<IGainQi> modifiers, int originalAmount, int modifiedAmount)
+    {
+        return AfterModifying(player.Creature.CombatState!, modifiers,
+            a => a.AfterModifyingQiGain(ctx, player, originalAmount, modifiedAmount));
+    }
+
+    /// <summary>
+    ///     Passes the requested Qi loss through all <see cref="ILoseQi" /> listeners, tracking
+    ///     which ones actually modified the value.
+    /// </summary>
+    public static int ModifyQiLoss(Player player, int amount, out IEnumerable<ILoseQi> modifiers)
+    {
+        return Modify(player.Creature.CombatState, amount, (m, a) => m.ModifyQiLoss(player, a), out modifiers);
+    }
+
+    /// <summary>
+    ///     Follow-up invoked after the Qi loss modification pass, only on listeners that actually
+    ///     changed the value. Use this for side effects of having modified the loss.
+    /// </summary>
+    public static Task AfterModifyingQiLoss(PlayerChoiceContext ctx, Player player, IEnumerable<ILoseQi> modifiers, int originalAmount, int modifiedAmount)
+    {
+        return AfterModifying(player.Creature.CombatState!, modifiers,
+            a => a.AfterModifyingQiLoss(ctx, player, originalAmount, modifiedAmount));
+    }
 }
 

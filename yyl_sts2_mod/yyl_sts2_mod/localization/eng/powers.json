@@ -1,9 +1,9 @@
 {
-  "YYL_STS2_MOD-OLD_FARM.description": "1",
-  "YYL_STS2_MOD-OLD_FARM.smartDescription": "1",
+  "YYL_STS2_MOD-OLD_FARM.description": "老农功。每当获得炁时，额外获得 1 点炁。",
+  "YYL_STS2_MOD-OLD_FARM.smartDescription": "获得炁时，额外 +1 炁。",
   "YYL_STS2_MOD-OLD_FARM.title": "老农功",
-  "YYL_STS2_MOD-QI.description": "炁，异人之所以为异人的根本。\n释放异能必须之物。\n除此之外，每点炁令造成的伤害增加2%。",
-  "YYL_STS2_MOD-QI.smartDescription": "炁，异人之所以为异人的根本。\n释放异能必须之物。\n除此之外，每点炁令造成的伤害增加2%。",
+  "YYL_STS2_MOD-QI.description": "炁，异人之所以为异人的根本。\n释放异能必须之物。\n除此之外，每点炁令造成的伤害增加10%。",
+  "YYL_STS2_MOD-QI.smartDescription": "每点炁令造成的伤害增加10%。",
   "YYL_STS2_MOD-QI.title": "炁",
   "YYL_STS2_MOD-GOLDEN_WAVE.description": "护体金光，包裹全身。\n每层使受到的伤害降低2点。",
   "YYL_STS2_MOD-GOLDEN_WAVE.smartDescription": "护体金光，包裹全身。\n每层使受到的伤害降低2点。",
@@ -17,5 +17,21 @@
   "YYL_STS2_MOD-NL_POWER.title": "奶龙",
   "YYL_STS2_MOD-NL_POWER_PLUS.description": "我才是奶龙！",
   "YYL_STS2_MOD-NL_POWER_PLUS.smartDescription": "我是奶龙！",
-  "YYL_STS2_MOD-NL_POWER_PLUS.title": "心魔"
+  "YYL_STS2_MOD-NL_POWER_PLUS.title": "心魔",
+
+  "YYL_STS2_MOD-WEN_YANG.description": "温养。每当获得炁时，对所有敌人造成 4 点伤害。",
+  "YYL_STS2_MOD-WEN_YANG.smartDescription": "获得炁时，对所有敌人造成 4 点伤害。",
+  "YYL_STS2_MOD-WEN_YANG.title": "温养",
+  "YYL_STS2_MOD-DAN_SHI.description": "丹噬。每当失去炁时，获得 4 点格挡。",
+  "YYL_STS2_MOD-DAN_SHI.smartDescription": "失去炁时，获得 4 点格挡。",
+  "YYL_STS2_MOD-DAN_SHI.title": "丹噬",
+  "YYL_STS2_MOD-TIAN_SHI_DU.description": "天师度。每回合结束时失去 2 点炁。",
+  "YYL_STS2_MOD-TIAN_SHI_DU.smartDescription": "每回合结束时失去 2 点炁。",
+  "YYL_STS2_MOD-TIAN_SHI_DU.title": "天师度",
+  "YYL_STS2_MOD-XU_SHI.description": "蓄势。下回合开始时获得 N 点炁。",
+  "YYL_STS2_MOD-XU_SHI.smartDescription": "下回合开始时获得 N 点炁。",
+  "YYL_STS2_MOD-XU_SHI.title": "蓄势",
+  "YYL_STS2_MOD-XING_MING_SHUANG_QUAN.description": "性命双全。下一张牌打 2 次。",
+  "YYL_STS2_MOD-XING_MING_SHUANG_QUAN.smartDescription": "下一张牌打 2 次。",
+  "YYL_STS2_MOD-XING_MING_SHUANG_QUAN.title": "性命双全"
 }

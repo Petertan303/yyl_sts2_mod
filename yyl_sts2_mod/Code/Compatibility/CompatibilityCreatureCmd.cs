@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Watcher.Code.Compatibility;
+namespace yyl_sts2_mod.Code.Compatibility;
 
 public static class CompatibilityCreatureCmd
 {

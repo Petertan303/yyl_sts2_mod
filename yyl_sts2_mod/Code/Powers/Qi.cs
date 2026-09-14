@@ -14,6 +14,11 @@ public sealed class Qi : yylPowerModel, IModifyDamageMultiplicative
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
+    /// <summary>
+    ///     Damage multiplier per stack of Qi. 0.10m = +10% per stack, so 10 Qi = 2.0x damage.
+    /// </summary>
+    public const decimal PerStackDamageBonus = 0.10m;
+
     public decimal ModifyDamageMultiplicativeCompability(
         Creature? target,
         decimal amount,
@@ -24,8 +29,7 @@ public sealed class Qi : yylPowerModel, IModifyDamageMultiplicative
     {
         if (dealer == Owner && !props.HasFlag(ValueProp.Unpowered))
         {
-            // 每层 +2% 伤害，倍率 = 1 + 0.02 * 当前层数
-            return 1m + 0.02m * Amount;
+            return 1m + PerStackDamageBonus * Amount;
         }
         return 1m;
     }
