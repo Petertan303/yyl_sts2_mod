@@ -1,0 +1,14 @@
+﻿{
+  "id": "yyl_sts2_mod",
+  "name": "伊林",
+  "author": "L1veeR",
+  "description": "来自东方的神秘男子，背负着‘最龙之人’的神秘称号。",
+  "version": "v0.0.1",
+  "min_game_version": "0.108.0",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [
+    {"id": "BaseLib", "min_version": "3.3.5"}
+  ],
+  "affects_gameplay": true
+}

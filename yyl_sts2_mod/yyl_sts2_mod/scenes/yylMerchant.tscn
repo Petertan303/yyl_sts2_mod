@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://b85i7gh02ny56"]
+
+[ext_resource type="Texture2D" uid="uid://dj4nltqh6rblt" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_dphec"]
+[ext_resource type="Texture2D" uid="uid://j1a27vd8552t" path="res://yyl_sts2_mod/images/charui/👆.png" id="2_3ww32"]
+
+[node name="YylMerchant" type="Node2D"]
+
+[node name="Yyl" type="Sprite2D" parent="."]
+position = Vector2(1, -147)
+scale = Vector2(1.5445839, 1.5447367)
+texture = ExtResource("1_dphec")
+
+[node name="👆" type="Sprite2D" parent="."]
+position = Vector2(86, -78)
+texture = ExtResource("2_3ww32")

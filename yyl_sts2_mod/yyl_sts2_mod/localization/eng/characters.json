@@ -1,0 +1,17 @@
+{
+  "YYL_STS2_MOD-YYL_STS2_MOD.aromaPrinciple": "Lore",
+  "YYL_STS2_MOD-YYL_STS2_MOD.banter.alive.endTurnPing": "快点快点…",
+  "YYL_STS2_MOD-YYL_STS2_MOD.banter.dead.endTurnPing": "...",
+  "YYL_STS2_MOD-YYL_STS2_MOD.cardsModifierDescription": "__ cards will now appear in rewards and shops.",
+  "YYL_STS2_MOD-YYL_STS2_MOD.cardsModifierTitle": "__ Cards",
+  "YYL_STS2_MOD-YYL_STS2_MOD.description": "来自东方的神秘男子，背负着‘最龙之人’的神秘称号。\n为讨伐黄色生物而进入尖塔。",
+  "YYL_STS2_MOD-YYL_STS2_MOD.eventDeathPrevention": "Co-op survival line",
+  "YYL_STS2_MOD-YYL_STS2_MOD.goldMonologue": "Line spoken when obtaining a large amount of gold",
+  "YYL_STS2_MOD-YYL_STS2_MOD.possessiveAdjective": "他",
+  "YYL_STS2_MOD-YYL_STS2_MOD.pronounObject": "他",
+  "YYL_STS2_MOD-YYL_STS2_MOD.pronounPossessive": "他的",
+  "YYL_STS2_MOD-YYL_STS2_MOD.pronounSubject": "他",
+  "YYL_STS2_MOD-YYL_STS2_MOD.title": "伊林",
+  "YYL_STS2_MOD-YYL_STS2_MOD.titleObject": "伊林",
+  "YYL_STS2_MOD-YYL_STS2_MOD.unlockText": "用[pink]{Prerequisite}[/pink]进行一局游戏来解锁这个角色。"
+}
