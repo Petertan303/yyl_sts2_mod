@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Events;
 using yyl_sts2_mod.Code.Patches;
+using yyl_sts2_mod.Code.Utils;
 using yyl_sts2_mod.Code.Vfx;
 
 namespace yyl_sts2_mod.Code.Stances;
@@ -15,9 +16,9 @@ public sealed class WrathStance : yylStanceModel, IModifyDamageMultiplicative
     public override bool ShouldReceiveCombatHooks => true;
 
     protected override StanceVfxConfig VfxConfig => new(
-        "res://yyl_sts2_mod/scenes/yyl_sts2_mod_mod/vfx/wrath_aura.tscn",
-        EnterSfxPath: "res://yyl_sts2_mod/audio/wrath_enter.ogg",
-        AmbienceLoopPath: "res://yyl_sts2_mod/audio/wrath_loop.ogg",
+        "res://yyl_sts2_mod/scenes/vfx/wrath_aura.tscn",
+        EnterSfxPath: yylAudio.Sfx("stance/wrath_enter.ogg"),
+        AmbienceLoopPath: yylAudio.Ambience("wrath_loop.ogg"),
         ScreenFlashColor: new Color(1f, 0.15f, 0.1f),
         ScreenShakeStrength: ShakeStrength.Medium
     );

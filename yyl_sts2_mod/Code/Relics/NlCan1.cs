@@ -21,25 +21,13 @@ public sealed class NlCan1 : yylRelicModel
     /// <summary>Initial Qi on combat start.</summary>
     public const int InitialQi = 3;
 
-    /// <summary>SpireField guard: ensures combat-start effects only fire once per combat.</summary>
-    private static readonly SpireField<MegaCrit.Sts2.Core.Entities.Creatures.Creature, bool> CombatStartFired = new(() => false);
-
-    /// <summary>
-    ///     战斗开始时: 获得 3 炁 + 把所有敌人视作奶龙(贴 NlPower tag)。
-    ///     <para>
-    ///         TODO(API): 临时使用 <c>BeforeHandDraw</c> + SpireField 守门实现
-    ///         "战斗开始一次性触发"。BaseLib/StS2 Relic 上真正"战斗开始"的钩子名
-    ///         (可能是 <c>OnCombatStart</c> / <c>AtBattleStart</c> / <c>OnBattleStart</c>)
-    ///         待用户确认后改回。
-    ///     </para>
-    /// </summary>
+    /// <summary>第一回合抽牌前：获得 3 炁，并将所有敌人视作奶龙。</summary>
     public override async Task BeforeHandDraw(
         Player player,
         PlayerChoiceContext choiceContext,
         ICombatState combatState)
     {
-        if (CombatStartFired[Owner.Creature]) return;
-        CombatStartFired[Owner.Creature] = true;
+        if (player != Owner || Owner.PlayerCombatState is not { TurnNumber: 1 }) return;
 
         // 1) 获得 3 炁
         await yylCmd.GainQi(choiceContext, player, InitialQi, this, null);

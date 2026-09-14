@@ -1,12 +1,11 @@
 ﻿using Godot;
-using MegaCrit.Sts2.Core.Assets;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 using yyl_sts2_mod.Code.Stances.Vfx;
+using yyl_sts2_mod.Code.Utils;
 using yyl_sts2_mod.Code.Vfx;
 
 namespace yyl_sts2_mod.Code.Stances;
@@ -14,16 +13,12 @@ namespace yyl_sts2_mod.Code.Stances;
 public class StanceVfxController(StanceVfxConfig cfg)
 {
     private const float AmbienceFadeTime = 0.6f;
-    private const float AmbienceVolume = -6f;
-
-    private static Color? _originalModulate;
-    private static AudioStreamPlayer? _ambiencePlayer;
     private Node2D? _vfxInstance;
+    private string? _ambiencePath;
 
     public async Task OnEnter(Creature owner)
     {
         await CreateAura(owner);
-        ApplyBodyTint(owner);
         PlayEnterSfx();
         StartAmbience();
         if (LocalContext.IsMe(owner))
@@ -36,7 +31,6 @@ public class StanceVfxController(StanceVfxConfig cfg)
     public async Task OnExit(Creature owner)
     {
         RemoveAura();
-        ResetBodyTint(owner);
         StopAmbience();
         await Task.CompletedTask;
     }
@@ -45,7 +39,7 @@ public class StanceVfxController(StanceVfxConfig cfg)
 
     private Task CreateAura(Creature owner)
     {
-        if (cfg.AuraScenePath == null) return Task.CompletedTask;
+        if (cfg.AuraScenePath == null || !ResourceLoader.Exists(cfg.AuraScenePath)) return Task.CompletedTask;
 
         var visuals = NCombatRoom.Instance?.GetCreatureNode(owner)?.Visuals;
         if (visuals == null) return Task.CompletedTask;
@@ -56,7 +50,9 @@ public class StanceVfxController(StanceVfxConfig cfg)
         if (_vfxInstance != null && GodotObject.IsInstanceValid(_vfxInstance))
             _vfxInstance.QueueFree();
 
-        _vfxInstance = PreloadManager.Cache.GetScene(cfg.AuraScenePath).Instantiate<Node2D>();
+        var packedScene = ResourceLoader.Load<PackedScene>(cfg.AuraScenePath);
+        if (packedScene == null) return Task.CompletedTask;
+        _vfxInstance = packedScene.Instantiate<Node2D>();
         _vfxInstance.Position = Vector2.Zero;
         _vfxInstance.Scale = Vector2.One;
         container.AddChild(_vfxInstance);
@@ -105,40 +101,12 @@ public class StanceVfxController(StanceVfxConfig cfg)
         _vfxInstance = null;
     }
 
-    // ── Body Tint ─────────────────────────────────
-
-    private void ApplyBodyTint(Creature owner)
-    {
-        if (cfg.BodyTint == null) return;
-        var body = NCombatRoom.Instance?.GetCreatureNode(owner)?.Body;
-        if (body == null) return;
-        _originalModulate ??= body.Modulate;
-        body.Modulate = cfg.BodyTint.Value;
-    }
-
-    private void ResetBodyTint(Creature owner)
-    {
-        if (_originalModulate == null) return;
-        var body = NCombatRoom.Instance?.GetCreatureNode(owner)?.Body;
-        if (body == null) return;
-        body.Modulate = _originalModulate.Value;
-        _originalModulate = null;
-    }
-
     // ── SFX ───────────────────────────────────────
 
     private void PlayEnterSfx()
     {
-        try
-        {
-            if (cfg.EnterSfxPath != null)
-                SfxCmd.Play(cfg.EnterSfxPath);
-        }
-        catch (Exception e)
-        {
-            MainFile.Logger.Warn(e.ToString());
-        }
-        
+        if (cfg.EnterSfxPath != null)
+            yylAudio.PlaySfx(cfg.EnterSfxPath, 0.8f);
     }
 
     private void PlayScreenFlash()
@@ -158,39 +126,14 @@ public class StanceVfxController(StanceVfxConfig cfg)
     private void StartAmbience()
     {
         if (cfg.AmbienceLoopPath == null) return;
-
-        if (_ambiencePlayer != null && GodotObject.IsInstanceValid(_ambiencePlayer))
-            _ambiencePlayer.QueueFree();
-
-        var combatRoom = NCombatRoom.Instance;
-        if (combatRoom == null) return;
-
-        _ambiencePlayer = new AudioStreamPlayer
-        {
-            Stream = PreloadManager.Cache.GetAsset<AudioStream>(cfg.AmbienceLoopPath),
-            Bus = "SFX",
-            VolumeDb = -80f
-        };
-
-        combatRoom.AddChild(_ambiencePlayer);
-        _ambiencePlayer.Play();
-
-        _ambiencePlayer.CreateTween()
-            .TweenProperty(_ambiencePlayer, "volume_db", AmbienceVolume, AmbienceFadeTime);
+        _ambiencePath = cfg.AmbienceLoopPath;
+        yylAudio.PlayLooped(_ambiencePath, 0.45f);
     }
 
-    private static void StopAmbience()
+    private void StopAmbience()
     {
-        if (_ambiencePlayer == null || !GodotObject.IsInstanceValid(_ambiencePlayer)) return;
-
-        var player = _ambiencePlayer;
-        _ambiencePlayer = null;
-
-        var tween = player.CreateTween();
-        tween.TweenProperty(player, "volume_db", -80f, AmbienceFadeTime);
-        tween.TweenCallback(Callable.From(() =>
-        {
-            if (GodotObject.IsInstanceValid(player)) player.QueueFree();
-        }));
+        if (_ambiencePath == null) return;
+        yylAudio.Stop(_ambiencePath, AmbienceFadeTime);
+        _ambiencePath = null;
     }
 }

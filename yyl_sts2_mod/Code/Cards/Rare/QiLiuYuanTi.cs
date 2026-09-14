@@ -20,7 +20,7 @@ public sealed class QiLiuYuanTi(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public QiLiuYuanTi() : this(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {

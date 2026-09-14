@@ -41,6 +41,8 @@ public abstract class yylStanceModel : AbstractModel
 
     public IEnumerable<string> AssetPaths => VfxConfig.AssetPaths;
 
+    public Color? BodyTint => VfxConfig.BodyTint;
+
     public yylStanceModel ToMutable(Player player)
     {
         var mutable = (yylStanceModel)MutableClone();
@@ -68,4 +70,3 @@ public abstract class yylStanceModel : AbstractModel
         _vfx = null;
     }
 }
-

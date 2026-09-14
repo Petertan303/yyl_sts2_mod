@@ -1,12 +1,12 @@
 ﻿using BaseLib.Abstracts;
+using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
-using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 using MegaCrit.Sts2.Core.ValueProps;
-using yyl_sts2_mod.Code.Compatibility;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -24,21 +24,21 @@ public sealed class KuangRe(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public KuangRe() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
+        WithDamage(4);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var target = cardPlay.Target!;
         if (target == null) return;
-        var damage = 4 + (IsNailong(target) ? 4 : 0);
-        await CompatibilityCreatureCmd.Damage(
-            choiceContext, target, damage, default(ValueProp), cardPlay.Card, cardPlay);
+        var damage = DynamicVars.Damage.IntValue + (yylNailong.IsNailong(target) ? 4 : 0);
+        await CommonActions.CardAttack(this, cardPlay, target, damage, ValueProp.Move)
+            .WithHitFx("vfx/vfx_attack_slash")
+            .Execute(choiceContext);
     }
 
-    private static bool IsNailong(MegaCrit.Sts2.Core.Entities.Creatures.Creature c) =>
-        c.HasPower<NlPower>() || c.HasPower<NlPowerPlus>();
 }

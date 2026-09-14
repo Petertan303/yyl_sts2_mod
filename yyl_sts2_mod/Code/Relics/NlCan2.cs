@@ -26,19 +26,13 @@ public sealed class NlCan2 : yylRelicModel
         PlayerChoiceContext choiceContext,
         ICombatState combatState)
     {
-        // 组合当前战斗所有的实体：敌人 + 玩家的队友 + 玩家自己
-        // var allCreatures = combatState.Enemies
-        //     .Concat(combatState.GetTeammatesOf(player.Creature))
-        //     .Append(player.Creature)
-        //     .Where(c => c != null && c.IsAlive);
-        //
-        // foreach (var creature in allCreatures)
-        // {
-        //     await PowerCmd.Apply<NlPowerPlus>(choiceContext, creature, 1m, null, null);
-        // }
-        if (!Owner.Creature.HasPower<NlPowerPlus>())
-            await PowerCmd.Apply<NlPowerPlus>(choiceContext, Owner.Creature, 1m, Owner.Creature, null);
-        await PowerCmd.Apply<NlPowerPlus>(choiceContext, combatState.Allies, 1m, Owner.Creature, null); 
-        await PowerCmd.Apply<NlPowerPlus>(choiceContext, combatState.HittableEnemies, 1m, Owner.Creature, null);
+        if (player != Owner || Owner.PlayerCombatState is not { TurnNumber: 1 }) return;
+
+        var targets = combatState.Allies
+            .Append(Owner.Creature)
+            .Concat(combatState.HittableEnemies)
+            .Where(c => c.IsAlive)
+            .Distinct();
+        await PowerCmd.Apply<NlPowerPlus>(choiceContext, targets, 1m, Owner.Creature, null);
     }
 }

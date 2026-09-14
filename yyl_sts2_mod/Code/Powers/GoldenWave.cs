@@ -21,9 +21,9 @@ public class GoldenWave : yylPowerModel, IModifyDamageAdditive
         CardModel? cardSource,
         CardPlay? cardPlay)
     {
-        if (target != Owner)
+        if (target != Owner || props.HasFlag(ValueProp.Unpowered))
             return 0m;
 
-        return -Math.Min(amount, Amount)*2;
+        return -Math.Min(amount, Amount * 2m);
     }
 }

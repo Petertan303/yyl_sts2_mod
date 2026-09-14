@@ -23,18 +23,16 @@ public sealed class TongChang(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public TongChang() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
+        WithCards(3, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var draws = 3; // TODO upgrade: would be 4 if IsUpgraded
         await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
-        // TODO: PlayerCmd.Draw not found - use CardPileCmd.Add from draw pile to hand
-        // await PlayerCmd.Draw(Owner, draws);
+        await CommonActions.Draw(this, choiceContext);
     }
 }
-

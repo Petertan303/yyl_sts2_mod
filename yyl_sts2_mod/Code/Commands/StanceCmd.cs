@@ -27,4 +27,19 @@ public static class StanceCmd
     {
         return yylModel.SetStance<NoStance>(ctx, player, cardSource);
     }
+
+    public static Task EnterReverseLife1(PlayerChoiceContext ctx, Player player, CardModel? cardSource)
+    {
+        return yylModel.SetStance<ReverseLife1Stance>(ctx, player, cardSource);
+    }
+
+    public static Task EnterReverseLife2(PlayerChoiceContext ctx, Player player, CardModel? cardSource)
+    {
+        return yylModel.SetStance<ReverseLife2Stance>(ctx, player, cardSource);
+    }
+
+    public static Task EnterReverseLife3(PlayerChoiceContext ctx, Player player, CardModel? cardSource)
+    {
+        return yylModel.SetStance<ReverseLife3Stance>(ctx, player, cardSource);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using BaseLib.Abstracts;
+using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -11,14 +12,15 @@ using yyl_sts2_mod.Code.Powers;
 
 namespace yyl_sts2_mod.Code.Cards.Basic;
 
-[Pool(typeof(yyl_sts2_modCardPool))]
+// 占位实现：暂不进入正式卡池。
+#pragma warning disable STS004
 public sealed class Ancient1(
     int canonicalEnergyCost,
     CardType type,
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public Ancient1() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AllEnemies)
     {
@@ -32,8 +34,9 @@ public sealed class Ancient1(
     
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await CommonActions.Apply<VulnerablePower>(choiceContext, CombatState.HittableEnemies, this);
-        await CommonActions.Apply<WeakPower>(choiceContext, CombatState.HittableEnemies, this);
+        var enemies = CombatState?.HittableEnemies ?? [];
+        await CommonActions.Apply<VulnerablePower>(choiceContext, enemies, this);
+        await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
 
         if (Owner.HasPower<GoldenWave>()){
             DynamicVars.Damage.BaseValue += 1;

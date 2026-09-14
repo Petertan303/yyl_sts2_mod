@@ -1,12 +1,13 @@
 ﻿using BaseLib.Abstracts;
+using yyl_sts2_mod.Code.Abstract;
+using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using yyl_sts2_mod.Code.Abstract;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using yyl_sts2_mod.Code.Character;
-using yyl_sts2_mod.Code.Compatibility;
-using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Models.Powers;
 
@@ -14,9 +15,6 @@ namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
 ///     破防: 1 费, 造成 6 伤害 2 → 3 次, 每次命中使奶龙 -1 力量。消耗。
-///     <para>
-///         TODO: 升级档位检测 (IsUpgraded / UpgradeType) 需用 BaseLib 的实际属性名。
-///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class PoFang(
@@ -25,10 +23,12 @@ public sealed class PoFang(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public PoFang() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
+        WithDamage(6);
+        WithVars(new RepeatVar(2).WithUpgrade(1));
         WithKeywords(CardKeyword.Exhaust);
     }
 
@@ -36,19 +36,17 @@ public sealed class PoFang(
     {
         var target = cardPlay.Target!;
         if (target == null) return;
-        // TODO: 用 IsUpgraded 替换;目前固定 2 hits
-        var hits = 2;
-        for (var i = 0; i < hits; i++)
+        var hits = DynamicVars.Repeat.IntValue;
+        var attack = await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue,
+                ValueProp.Move, hitCount: hits)
+            .WithHitFx("vfx/vfx_attack_slash")
+            .Execute(choiceContext);
+
+        if (!yylNailong.IsNailong(target)) return;
+        var hitCount = attack.Results.SelectMany(result => result).Count(result => result.Receiver == target);
+        for (var i = 0; i < hitCount; i++)
         {
-            await CompatibilityCreatureCmd.Damage(
-                choiceContext, target, 6, default(ValueProp), cardPlay.Card, cardPlay);
-            if (IsNailong(target))
-            {
-                await PowerCmd.Apply<StrengthPower>(choiceContext, new[] { target }, -1, Owner.Creature, cardPlay.Card);
-            }
+            await PowerCmd.Apply<StrengthPower>(choiceContext, new[] { target }, -1, Owner.Creature, cardPlay.Card);
         }
     }
-
-    private static bool IsNailong(MegaCrit.Sts2.Core.Entities.Creatures.Creature c) =>
-        c.HasPower<NlPower>() || c.HasPower<NlPowerPlus>();
 }

@@ -19,7 +19,7 @@ public class ReverseLife1(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public ReverseLife1() : this(3, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
@@ -28,13 +28,12 @@ public class ReverseLife1(
             .Select(m => new TooltipSource(_ => m))
             .ToList()
             .ForEach(t => WithTip(t));
-        WithPower<ReverseLife>(1);
         WithKeyword(CardKeyword.Innate, UpgradeType.Add);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay cardPlay)
     {
-        await CommonActions.ApplySelf<ReverseLife>(ctx, this);
+        await StanceCmd.EnterReverseLife1(ctx, Owner, cardPlay.Card);
         await yylCmd.GiveCard<ReverseLife2>(Owner, PileType.Hand, CardPilePosition.Random);
     }
 }

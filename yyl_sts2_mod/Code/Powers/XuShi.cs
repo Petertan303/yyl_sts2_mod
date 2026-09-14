@@ -35,8 +35,7 @@ public sealed class XuShi : yylPowerModel
         var player = combatState.Players.FirstOrDefault(p => p.Creature == Owner);
         if (player == null) return;
 
-        // TODO(API): 验证 PowerCmd.Remove(this, ctx) 的实际签名; BaseLib 该方法签名待确认
-        // 暂时: 不主动移除, 让 Amount 自然衰减(若 amount 在 1 则下次不会触发)
         await yylCmd.GainQi(ctx, player, qi, this, null);
+        await PowerCmd.Remove(this);
     }
 }

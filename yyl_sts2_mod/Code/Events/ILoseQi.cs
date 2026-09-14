@@ -15,8 +15,8 @@ public interface ILoseQi
     ///     Returns the adjusted Qi loss. Called once per Qi loss event, receiving the value as
     ///     modified by any earlier listeners.
     ///     <para>
-    ///         Return <paramref name="amount" /> unchanged to opt out. Changing the value
-    ///         (per-call <see cref="int" /> equality) marks this listener as a modifier.
+    ///         Return <paramref name="amount" /> unchanged when this listener only needs the
+    ///         <see cref="AfterModifyingQiLoss" /> follow-up.
     ///     </para>
     ///     <para>
     ///         The return value is interpreted as a positive number (amount of Qi to remove);
@@ -26,9 +26,8 @@ public interface ILoseQi
     int ModifyQiLoss(Player player, int amount);
 
     /// <summary>
-    ///     Follow-up invoked after all listeners have run, but only on listeners whose
-    ///     <see cref="ModifyQiLoss" /> changed the value. Use this for side effects of having
-    ///     modified the Qi loss: gaining block, consuming charges, etc.
+    ///     Follow-up invoked after the final Qi change has been applied. Use this for side
+    ///     effects such as gaining block or consuming charges.
     /// </summary>
     Task AfterModifyingQiLoss(PlayerChoiceContext ctx, Player player, int originalAmount, int modifiedAmount);
 }

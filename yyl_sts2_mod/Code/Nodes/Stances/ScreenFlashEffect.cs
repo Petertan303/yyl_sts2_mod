@@ -28,9 +28,16 @@ public partial class ScreenFlashEffect : CanvasLayer
 
     public override void _Ready()
     {
+        const string texturePath = "res://yyl_sts2_mod/images/vfx/screenflash.png";
+        if (!ResourceLoader.Exists(texturePath))
+        {
+            QueueFree();
+            return;
+        }
+
         _tex = new TextureRect();
         _tex.MouseFilter = Control.MouseFilterEnum.Ignore;
-        _tex.Texture = PreloadManager.Cache.GetAsset<Texture2D>("res://yyl_sts2_mod/images/vfx/screenflash.png");
+        _tex.Texture = PreloadManager.Cache.GetAsset<Texture2D>(texturePath);
         _tex.Material = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
         _tex.StretchMode = TextureRect.StretchModeEnum.Scale;
         _tex.AnchorRight = 1;
@@ -41,6 +48,8 @@ public partial class ScreenFlashEffect : CanvasLayer
 
     public override void _Process(double delta)
     {
+        if (_tex == null) return;
+
         _elapsed += (float)delta;
         if (_elapsed >= FlashDuration)
         {

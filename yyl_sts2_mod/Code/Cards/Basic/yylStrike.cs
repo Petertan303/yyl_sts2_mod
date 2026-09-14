@@ -14,7 +14,7 @@ public sealed class yylStrike(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public yylStrike() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
     {

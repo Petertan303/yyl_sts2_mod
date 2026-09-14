@@ -8,11 +8,7 @@ namespace yyl_sts2_mod.Code.Abstract;
 public abstract class yylPowerModel : CustomPowerModel
 {
     public sealed override string CustomPackedIconPath =>
-        $"power.png".PowerImagePath();
-        // $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".PowerImagePath();
+        $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".PowerImagePath();
 
     public sealed override string CustomBigIconPath => CustomPackedIconPath;
-    
-    // public abstract override PowerType Type { get; }
-    // public abstract override PowerStackType StackType { get; }
 }

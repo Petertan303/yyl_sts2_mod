@@ -19,17 +19,16 @@ public sealed class SanQi(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public SanQi() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
+        WithEnergy(2, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var energy = 2; // TODO upgrade: would be 3 if IsUpgraded
         await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
-        await PlayerCmd.GainEnergy(energy, Owner);
+        await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }
 }
-

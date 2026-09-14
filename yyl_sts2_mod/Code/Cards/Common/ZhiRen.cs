@@ -1,15 +1,19 @@
 ﻿using BaseLib.Abstracts;
+using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Common;
 
-// 占位实现：暂不进入正式卡池。
-#pragma warning disable STS004
-public class FengHou(
+/// <summary>
+///     指认: 1 费, 造成 6 → 9 伤害, 若目标是奶龙, 获得 1 能量。
+/// </summary>
+[Pool(typeof(yyl_sts2_modCardPool))]
+public sealed class ZhiRen(
     int canonicalEnergyCost,
     CardType type,
     CardRarity rarity,
@@ -17,18 +21,21 @@ public class FengHou(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public FengHou(): this(1, CardType.Power, CardRarity.Uncommon, TargetType.AllEnemies)
+    public ZhiRen() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
-        WithDamage(700, 300);
-        WithBlock(700, 300);
+        WithDamage(6, 3);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var combatState = cardPlay.Target?.CombatState;
-        if (combatState == null) return;
+        var target = cardPlay.Target!;
+        var isNailong = yylNailong.IsNailong(target);
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
+
+        // 击杀结算后目标可能已死亡，因此在攻击前记录是否为奶龙。
+        if (isNailong)
+            await PlayerCmd.GainEnergy(1, Owner);
     }
 }

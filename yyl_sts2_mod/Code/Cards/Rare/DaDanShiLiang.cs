@@ -1,12 +1,11 @@
 ﻿using BaseLib.Abstracts;
+using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
-using yyl_sts2_mod.Code.Compatibility;
-using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace yyl_sts2_mod.Code.Cards.Rare;
@@ -21,30 +20,28 @@ public sealed class DaDanShiLiang(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public DaDanShiLiang() : this(1, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
+        WithDamage(4, 2);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
-        var damage = 4; // TODO upgrade: would be 6 if IsUpgraded
         var totalHealed = 0m;
         foreach (var enemy in combatState.HittableEnemies)
         {
-            if (!enemy.HasPower<NlPower>() && !enemy.HasPower<NlPowerPlus>()) continue;
-            // 用真实伤害结果(返回 IEnumerable<DamageResult>),累加实际命中
-            // TODO: 验证 DamageResult 的字段名(可能不叫 Amount, 可能是 TotalDamage / Damage / ActualDamage)
-            var results = await CompatibilityCreatureCmd.Damage(
-                choiceContext, enemy, damage, default(ValueProp), cardPlay.Card, cardPlay);
-            // 暂时按预期伤害累加(因 DamageResult 字段名待确认)
-            totalHealed += damage;
+            if (!yylNailong.IsNailong(enemy)) continue;
+            var attack = await CommonActions.CardAttack(this, cardPlay, enemy, DynamicVars.Damage.IntValue,
+                    ValueProp.Move)
+                .WithHitFx("vfx/vfx_attack_slash")
+                .Execute(choiceContext);
+            totalHealed += attack.Results.SelectMany(result => result).Sum(result => result.UnblockedDamage);
         }
         if (totalHealed > 0)
             await CreatureCmd.Heal(Owner.Creature, totalHealed);
     }
 }
-

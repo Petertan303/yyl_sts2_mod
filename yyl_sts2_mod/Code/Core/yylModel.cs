@@ -4,17 +4,16 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Nodes.Rooms;
 using yyl_sts2_mod.Code.Events;
-using yyl_sts2_mod.Code.Nodes;
 using yyl_sts2_mod.Code.Stances;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Core;
 
 public class yylModel() : CustomSingletonModel(HookType.Combat)
 {
     private static readonly SpireField<Player, yylStanceModel> ActiveStance =
-        new(yylModelDb.yylStance<CalmStance>);
+        new(yylModelDb.yylStance<NoStance>);
 
     public override bool ShouldReceiveCombatHooks => true;
 
@@ -49,16 +48,9 @@ public class yylModel() : CustomSingletonModel(HookType.Combat)
         ActiveStance[player] = mutable;
         await mutable.OnEnterStance(ctx, player, source);
 
-        var creatureNode = NCombatRoom.Instance?.GetCreatureNode(player.Creature);
-        var visuals = creatureNode?.Visuals as yylNCreatureVisuals;
-        visuals?.SetEyeStance(mutable switch
-        {
-            WrathStance => "wrath",
-            CalmStance => "calm",
-            DivinityStance => "divinity",
-            _ => "RESET"
-        });
-        await yylHook.OnStanceChange(ctx, player, current!, ActiveStance[player]!);
+        yylAnim.ResetStanceTint(player.Creature);
+        await yylAnim.PlayStanceTransition(player.Creature, mutable.BodyTint);
+        await yylHook.OnStanceChange(ctx, player, current ?? yylModelDb.yylStance<NoStance>(), mutable);
     }
 
     public override Task BeforeCombatStart()
@@ -66,7 +58,10 @@ public class yylModel() : CustomSingletonModel(HookType.Combat)
         var state = CombatManager.Instance.DebugOnlyGetState();
         if (state == null) return Task.CompletedTask;
         foreach (var player in state.Players)
+        {
             ActiveStance[player] = yylModelDb.yylStance<NoStance>();
+            yylAnim.ResetStanceTint(player.Creature);
+        }
         return Task.CompletedTask;
     }
 }

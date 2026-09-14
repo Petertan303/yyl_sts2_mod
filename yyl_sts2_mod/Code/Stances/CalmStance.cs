@@ -5,8 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using yyl_sts2_mod.Code.Vfx;
 using yyl_sts2_mod.Code.Events;
-using yyl_sts2_mod.Code.Stances;
-using yyl_sts2_mod.Code.Vfx;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Stances;
 
@@ -15,10 +14,10 @@ public class CalmStance : yylStanceModel
     public override bool ShouldReceiveCombatHooks => true;
 
     protected override StanceVfxConfig VfxConfig => new(
-        "res://yyl_sts2_mod/scenes/yyl_sts2_mod_mod/vfx/calm_aura.tscn",
+        "res://yyl_sts2_mod/scenes/vfx/calm_aura.tscn",
         new Color(0.7f, 0.85f, 1.3f),
-        "res://yyl_sts2_mod/audio/calm_enter.ogg",
-        AmbienceLoopPath: "res://yyl_sts2_mod/audio/calm_loop.ogg",
+        yylAudio.Sfx("stance/calm_enter.ogg"),
+        AmbienceLoopPath: yylAudio.Ambience("calm_loop.ogg"),
         ScreenFlashColor: new Color(0.4f, 0.7f, 1f)
     );
 

@@ -21,7 +21,7 @@ public sealed class TianShiDuCard(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public TianShiDuCard() : this(1, CardType.Power, CardRarity.Rare, TargetType.Self)
     {

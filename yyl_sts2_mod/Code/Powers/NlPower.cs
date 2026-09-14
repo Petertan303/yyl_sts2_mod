@@ -14,6 +14,7 @@ public sealed class NlPower : yylPowerModel
 {
     public override PowerType Type => PowerType.None; 
     public override PowerStackType StackType => PowerStackType.None;
+    public override PowerInstanceType InstanceType => PowerInstanceType.InstancedPerApplier;
     
     private bool _applierIsAttacking;
     public override Task BeforeAttack(AttackCommand command)
@@ -30,5 +31,12 @@ public sealed class NlPower : yylPowerModel
         {
             await CreatureCmd.Heal(Applier, 3m);
         }
+    }
+
+    public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
+    {
+        if (command.Attacker == Applier)
+            _applierIsAttacking = false;
+        return Task.CompletedTask;
     }
 }

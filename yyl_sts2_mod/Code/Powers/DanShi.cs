@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Events;
 
@@ -39,7 +40,6 @@ public sealed class DanShi : yylPowerModel, ILoseQi
         var block = BaseBlock * Amount;
         if (block <= 0) return;
 
-        // TODO: PlayerCmd.GainBlock not found in this BaseLib - hook via yylCmd.GainBlock helper or PowerCmd equivalent
-        // await PlayerCmd.GainBlock(block, player);
+        await CreatureCmd.GainBlock(player.Creature, block, ValueProp.Unpowered, null);
     }
 }

@@ -15,17 +15,15 @@ public interface IGainQi
     ///     Returns the adjusted Qi gain. Called once per Qi gain event, receiving the value as
     ///     modified by any earlier listeners.
     ///     <para>
-    ///         Return <paramref name="amount" /> unchanged to opt out — doing so also excludes
-    ///         this listener from the <see cref="AfterModifyingQiGain" /> follow-up. Changing the
-    ///         value (per-call <see cref="int" /> equality) marks this listener as a modifier.
+    ///         Return <paramref name="amount" /> unchanged when this listener only needs the
+    ///         <see cref="AfterModifyingQiGain" /> follow-up.
     ///     </para>
     /// </summary>
     int ModifyQiGain(Player player, int amount);
 
     /// <summary>
-    ///     Follow-up invoked after all listeners have run, but only on listeners whose
-    ///     <see cref="ModifyQiGain" /> changed the value they received. Use this for the side
-    ///     effects of having modified the Qi gain: dealing damage, sounds, consuming charges.
+    ///     Follow-up invoked after the final Qi change has been applied. Use this for side
+    ///     effects such as dealing damage, sounds, or consuming charges.
     ///     <para>
     ///         <paramref name="modifiedAmount" /> is the final amount after all listeners; it
     ///         may be 0 (no Qi actually gained) — do not assume a positive amount.

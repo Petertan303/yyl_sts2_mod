@@ -19,21 +19,20 @@ public sealed class YiXue(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public YiXue() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
+        WithBlock(10, 5);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var block = 10; // TODO upgrade: would be 15 if IsUpgraded
-        // TODO: PlayerCmd.GainBlock not found in this BaseLib - hook via yylCmd.GainBlock helper or PowerCmd equivalent
-        // await PlayerCmd.GainBlock(block, Owner);
+        await CommonActions.CardBlock(this, cardPlay);
         await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
-        // TODO: 从抽牌堆选 1 张加入手牌。BaseLib 应该有现成的 CardSelectCmd / PileScry 类原语
-        //       (例如 CardCmd.SearchDrawPileAddToHand / ScryCmd.SearchPickN);
-        //       若确认不到,改为 Scry 1 张(老 Mechanics)。
+
+        var card = await CommonActions.SelectSingleCard(this, SelectionScreenPrompt, choiceContext, PileType.Draw);
+        if (card != null)
+            await CardPileCmd.Add(card, PileType.Hand);
     }
 }
-

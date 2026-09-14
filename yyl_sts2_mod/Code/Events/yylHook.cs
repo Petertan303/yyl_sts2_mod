@@ -172,6 +172,13 @@ public class yylHook
             a => a.AfterModifyingQiGain(ctx, player, originalAmount, modifiedAmount));
     }
 
+    /// <summary>炁获取结算完成后，向所有监听者广播副作用。</summary>
+    public static Task AfterQiGained(PlayerChoiceContext ctx, Player player, int originalAmount, int modifiedAmount)
+    {
+        return Dispatch<IGainQi>(ctx, player,
+            listener => listener.AfterModifyingQiGain(ctx, player, originalAmount, modifiedAmount));
+    }
+
     /// <summary>
     ///     Passes the requested Qi loss through all <see cref="ILoseQi" /> listeners, tracking
     ///     which ones actually modified the value.
@@ -190,5 +197,11 @@ public class yylHook
         return AfterModifying(player.Creature.CombatState!, modifiers,
             a => a.AfterModifyingQiLoss(ctx, player, originalAmount, modifiedAmount));
     }
-}
 
+    /// <summary>炁失去结算完成后，向所有监听者广播副作用。</summary>
+    public static Task AfterQiLost(PlayerChoiceContext ctx, Player player, int originalAmount, int modifiedAmount)
+    {
+        return Dispatch<ILoseQi>(ctx, player,
+            listener => listener.AfterModifyingQiLoss(ctx, player, originalAmount, modifiedAmount));
+    }
+}

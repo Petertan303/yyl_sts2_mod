@@ -70,7 +70,7 @@ public class yylCmd
         var modified = yylHook.ModifyQiGain(player, amount, out var modifiers);
         if (modified > 0)
             await PowerCmd.Apply<Qi>(ctx, new[] { player.Creature }, modified, player.Creature, cardSource);
-        await yylHook.AfterModifyingQiGain(ctx, player, modifiers, amount, modified);
+        await yylHook.AfterQiGained(ctx, player, amount, modified);
     }
 
     /// <summary>
@@ -86,14 +86,16 @@ public class yylCmd
         CardModel? cardSource = null)
     {
         if (amount <= 0) return;
-        var modified = yylHook.ModifyQiLoss(player, amount, out var modifiers);
-        if (modified > 0)
+        var modified = yylHook.ModifyQiLoss(player, amount, out _);
+        var current = player.Creature.GetPower<Qi>()?.Amount ?? 0;
+        var actualLoss = Math.Min(modified, Math.Max(current, 0));
+        if (actualLoss > 0)
         {
             // PowerCmd.Apply with negative amount reduces counter powers (Qi is Counter stack).
             // If a future BaseLib version rejects negative amounts, fall back to a direct
             // ReduceAmount on the existing Qi power.
-            await PowerCmd.Apply<Qi>(ctx, new[] { player.Creature }, -modified, player.Creature, cardSource);
+            await PowerCmd.Apply<Qi>(ctx, new[] { player.Creature }, -actualLoss, player.Creature, cardSource);
         }
-        await yylHook.AfterModifyingQiLoss(ctx, player, modifiers, amount, modified);
+        await yylHook.AfterQiLost(ctx, player, amount, actualLoss);
     }
 }

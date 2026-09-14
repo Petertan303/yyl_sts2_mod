@@ -19,15 +19,16 @@ public sealed class XuShi(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public XuShi() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
+        WithPower<Powers.XuShi>(2, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var qi = 2; // TODO upgrade: would be 3 if IsUpgraded
+        var qi = DynamicVars["XuShi"].IntValue;
         await PowerCmd.Apply<Powers.XuShi>(choiceContext, new[] { Owner.Creature }, qi, Owner.Creature, cardPlay.Card);
     }
 }

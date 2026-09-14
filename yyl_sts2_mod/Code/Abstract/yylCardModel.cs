@@ -23,6 +23,5 @@ public abstract class yylCardModel(
     : ConstructedCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public sealed override string CustomPortraitPath =>
-        $"card.png".CardImagePath();
-        // $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
+        $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
 }

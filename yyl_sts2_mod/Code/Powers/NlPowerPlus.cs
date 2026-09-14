@@ -15,14 +15,31 @@ public sealed class NlPowerPlus : yylPowerModel
 {
     public override PowerType Type => PowerType.Debuff; 
     public override PowerStackType StackType => PowerStackType.None;
+    public override PowerInstanceType InstanceType => PowerInstanceType.InstancedPerApplier;
+
+    private bool _applierIsAttacking;
+
+    public override Task BeforeAttack(AttackCommand command)
+    {
+        if (command.Attacker == Applier)
+            _applierIsAttacking = true;
+        return Task.CompletedTask;
+    }
 
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
     {
-        if (Applier == null || wasRemovalPrevented || creature != Owner) return;
+        if (Applier == null || wasRemovalPrevented || !_applierIsAttacking || creature != Owner) return;
         if (Applier.IsAlive)
         {
             await CreatureCmd.Heal(Applier, 6m);
         }
+    }
+
+    public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
+    {
+        if (command.Attacker == Applier)
+            _applierIsAttacking = false;
+        return Task.CompletedTask;
     }
     // // 1. 战斗开始时（即这个Buff被初次施加时）
     // public override Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, ICombatState combatState)

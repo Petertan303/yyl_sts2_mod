@@ -46,7 +46,7 @@ public sealed class WenYang : yylPowerModel, IGainQi
         foreach (var enemy in combatState.HittableEnemies)
         {
             await CompatibilityCreatureCmd.Damage(
-                ctx, enemy, damage, default(ValueProp), cardSource: null, cardPlay: null);
+                ctx, enemy, damage, default(ValueProp), cardSource: null!, cardPlay: null);
         }
     }
 }

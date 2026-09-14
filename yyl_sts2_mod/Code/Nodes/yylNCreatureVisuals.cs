@@ -79,7 +79,7 @@ public partial class yylNCreatureVisuals : NCreatureVisuals
                 break;
             case "Dead":
                 if (_playback == null) return;
-                SpineBody?.SetNormalMaterial(_oldMaterial);
+                if (_oldMaterial != null) SpineBody?.SetNormalMaterial(_oldMaterial);
                 // _body.Material = null;
                 _playback.Travel(trigger);
                 break;
@@ -88,4 +88,3 @@ public partial class yylNCreatureVisuals : NCreatureVisuals
 
     
 }
-

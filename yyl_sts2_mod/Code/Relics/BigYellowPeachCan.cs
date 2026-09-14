@@ -27,13 +27,7 @@ namespace yyl_sts2_mod.Code.Relics;
 ///     <para>
 ///         伤害叠加: 与 Qi 的 10%/层相乘 — 例如 5 炁时, Qi 给 1.5x, 大瓶给 2.0x, 合计 3.0x。
 ///     </para>
-///     <remarks>
-///         TODO(API): 当前 <c>BeforeCombatStart(ctx, combatState)</c> 在 RelicModel 上
-///         不存在。BaseLib/StS2 Relic 的 "战斗开始" 钩子名待用户确认
-///         (可能是 <c>OnCombatStart</c> / <c>OnBattleStart</c> / <c>AtPreBattle</c> 等)。
-///         临时方案: 在 <c>BeforeHandDraw</c> 里用 SpireField 标记 "本战斗已触发",
-///         保证只跑一次。
-///     </remarks>
+///     <remarks>通过第一回合抽牌前的钩子执行，避免每次抽牌重复结算。</remarks>
 /// </summary>
 [Pool(typeof(yyl_sts2_modRelicPool))]
 public sealed class BigYellowPeachCan : yylRelicModel, IModifyDamageMultiplicative
@@ -46,24 +40,22 @@ public sealed class BigYellowPeachCan : yylRelicModel, IModifyDamageMultiplicati
     /// <summary>Extra damage per Qi on top of the base Qi 10%/stack.</summary>
     public const decimal PerStackDamageBonus = 0.20m;
 
-    private static readonly SpireField<MegaCrit.Sts2.Core.Entities.Creatures.Creature, bool> CombatStartFired = new(() => false);
-
-    // 临时使用 BeforeHandDraw + SpireField 触发, 等找到正确的"战斗开始"钩子后改回
     public override async Task BeforeHandDraw(
         Player player,
         PlayerChoiceContext choiceContext,
         ICombatState combatState)
     {
-        if (CombatStartFired[Owner.Creature]) return;
-        CombatStartFired[Owner.Creature] = true;
+        if (player != Owner || Owner.PlayerCombatState is not { TurnNumber: 1 }) return;
 
         // 1) 5 炁
         await yylCmd.GainQi(choiceContext, player, InitialQi, this, null);
-        // 2) 把所有人视作奶龙 (复刻 NlCan2 的逻辑, 加上对自己)
-        await PowerCmd.Apply<NlPowerPlus>(choiceContext, combatState.Allies, 1m, Owner.Creature, null);
-        await PowerCmd.Apply<NlPowerPlus>(choiceContext, combatState.HittableEnemies, 1m, Owner.Creature, null);
-        if (!Owner.Creature.HasPower<NlPowerPlus>())
-            await PowerCmd.Apply<NlPowerPlus>(choiceContext, Owner.Creature, 1m, Owner.Creature, null);
+        // 2) 把所有人视作奶龙
+        var targets = combatState.Allies
+            .Append(Owner.Creature)
+            .Concat(combatState.HittableEnemies)
+            .Where(c => c.IsAlive)
+            .Distinct();
+        await PowerCmd.Apply<NlPowerPlus>(choiceContext, targets, 1m, Owner.Creature, null);
     }
 
     public decimal ModifyDamageMultiplicativeCompability(
