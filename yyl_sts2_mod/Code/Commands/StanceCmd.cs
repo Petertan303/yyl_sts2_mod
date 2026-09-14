@@ -30,16 +30,16 @@ public static class StanceCmd
 
     public static Task EnterReverseLife1(PlayerChoiceContext ctx, Player player, CardModel? cardSource)
     {
-        return yylModel.SetStance<ReverseLife1Stance>(ctx, player, cardSource);
+        return yylModel.SetStance<RebirthStanceOne>(ctx, player, cardSource);
     }
 
     public static Task EnterReverseLife2(PlayerChoiceContext ctx, Player player, CardModel? cardSource)
     {
-        return yylModel.SetStance<ReverseLife2Stance>(ctx, player, cardSource);
+        return yylModel.SetStance<RebirthStanceTwo>(ctx, player, cardSource);
     }
 
     public static Task EnterReverseLife3(PlayerChoiceContext ctx, Player player, CardModel? cardSource)
     {
-        return yylModel.SetStance<ReverseLife3Stance>(ctx, player, cardSource);
+        return yylModel.SetStance<RebirthStanceThree>(ctx, player, cardSource);
     }
 }

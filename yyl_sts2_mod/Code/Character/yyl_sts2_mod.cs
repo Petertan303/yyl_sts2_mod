@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Utils.NodeFactories;
 using yyl_sts2_mod.Code.Extensions;
 using Godot;
@@ -24,21 +24,21 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
 
     public override IEnumerable<CardModel> StartingDeck =>
     [
-        ModelDb.Card<yylStrike>(),
-        ModelDb.Card<yylStrike>(),
-        ModelDb.Card<yylStrike>(),
-        ModelDb.Card<yylStrike>(),
-        ModelDb.Card<yylDefend>(),
-        ModelDb.Card<yylDefend>(),
-        ModelDb.Card<yylDefend>(),
-        ModelDb.Card<yylDefend>(),
-        ModelDb.Card<YangThunder>(),
-        ModelDb.Card<GoldenWaveCard>()
+        ModelDb.Card<YylStrike>(),
+        ModelDb.Card<YylStrike>(),
+        ModelDb.Card<YylStrike>(),
+        ModelDb.Card<YylStrike>(),
+        ModelDb.Card<YylDefend>(),
+        ModelDb.Card<YylDefend>(),
+        ModelDb.Card<YylDefend>(),
+        ModelDb.Card<YylDefend>(),
+        ModelDb.Card<SolarThunder>(),
+        ModelDb.Card<GoldenCharm>()
     ];
 
     public override IReadOnlyList<RelicModel> StartingRelics =>
     [
-        ModelDb.Relic<NlCan1>()
+        ModelDb.Relic<PeachCan>()
     ];
 
     public override CardPoolModel CardPool => ModelDb.CardPool<yyl_sts2_modCardPool>();

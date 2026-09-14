@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -56,8 +56,8 @@ public class yylCmd
     }
 
     /// <summary>
-    ///     Gain Qi through the <see cref="IGainQi" /> hook chain (e.g. <c>OldFarm</c> modifies
-    ///     the amount, <c>WenYang</c> deals damage as a follow-up side effect).
+    ///     Gain Qi through the <see cref="IGainQi" /> hook chain (e.g. <c>PeasantDrill</c> modifies
+    ///     the amount, <c>Nurture</c> deals damage as a follow-up side effect).
     /// </summary>
     public static async Task GainQi(
         PlayerChoiceContext ctx,
@@ -74,7 +74,7 @@ public class yylCmd
     }
 
     /// <summary>
-    ///     Lose Qi through the <see cref="ILoseQi" /> hook chain (e.g. <c>DanShi</c> gains block
+    ///     Lose Qi through the <see cref="ILoseQi" /> hook chain (e.g. <c>CinnabarBite</c> gains block
     ///     as a follow-up side effect). The hook is allowed to scale the loss up or down; the
     ///     final value is applied to the existing <c>Qi</c> counter.
     /// </summary>

@@ -1,14 +1,19 @@
 using BaseLib.Abstracts;
+using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Powers;
 
-namespace yyl_sts2_mod.Code.Cards.Basic;
+namespace yyl_sts2_mod.Code.Cards.Common;
 
+/// <summary>
+///     心防: 1 费, 获得 3 → 5 格挡, 本回合受到来自奶龙的伤害 -50%。
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
-public sealed class YylDefend(
+public sealed class HeartWard(
     int canonicalEnergyCost,
     CardType type,
     CardRarity rarity,
@@ -16,14 +21,15 @@ public sealed class YylDefend(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public YylDefend() : this(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
+    public HeartWard() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithBlock(5, 3);
-        WithTags(CardTag.Defend);
+        WithBlock(3, 2);
+        WithPower<Powers.HeartGuard>(1);
     }
-    
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await CommonActions.CardBlock(this, cardPlay);
+        await PowerCmd.Apply<Powers.HeartGuard>(choiceContext, Owner.Creature, 1m, Owner.Creature, cardPlay.Card);
     }
 }
