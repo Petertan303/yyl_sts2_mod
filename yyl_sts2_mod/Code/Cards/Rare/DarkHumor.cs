@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     黑色幽默: 1 费, 为奶龙回复 20 HP, 获得 3 炁, 获得 1 层无实体。
+///     黑色幽默: 2 费, 为奶龙回复 20 HP, 获得 3 炁, 获得 1 层无实体。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class DarkHumor(

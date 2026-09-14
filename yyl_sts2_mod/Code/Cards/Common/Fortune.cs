@@ -25,7 +25,7 @@ public class Fortune(
 {
     public Fortune() : this(0, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithCards(1, 1);
+        WithCards(2, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

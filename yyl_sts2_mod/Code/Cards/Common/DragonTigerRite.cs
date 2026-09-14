@@ -23,7 +23,7 @@ public sealed class DragonTigerRite(
 {
     public DragonTigerRite() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
-        WithDamage(7, 3);
+        WithDamage(8, 4);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

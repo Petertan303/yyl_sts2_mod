@@ -20,7 +20,7 @@ public sealed class GoldenCharm(
 {
     public GoldenCharm() : this(2, CardType.Skill, CardRarity.Basic, TargetType.Self)
     {
-        WithBlock(12, 4);
+        WithBlock(8, 4);
         WithPower<GoldenAegis>(1);
     }
     

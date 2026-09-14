@@ -19,7 +19,7 @@ public sealed class Fervor : yylPowerModel, IModifyDamageAdditive
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>每层对奶龙目标的额外伤害。</summary>
-    public const int BonusDamage = 4;
+    public const int BonusDamage = 2;
 
     public decimal ModifyDamageAdditiveCompability(
         Creature? target,

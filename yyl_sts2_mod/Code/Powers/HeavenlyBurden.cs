@@ -25,7 +25,7 @@ public sealed class HeavenlyBurden : yylPowerModel
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>Base Qi lost per stack of HeavenlyBurden at the end of the player's turn.</summary>
-    public const int BaseQiLoss = 2;
+    public const int BaseQiLoss = 10;
 
     public override async Task AfterSideTurnEnd(
         PlayerChoiceContext ctx,

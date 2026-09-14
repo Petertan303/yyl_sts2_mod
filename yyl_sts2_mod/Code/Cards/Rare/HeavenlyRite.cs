@@ -11,8 +11,8 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     天师度 卡牌: 1 费, 获得 10 炁 + 3 层金光咒, 同时给予 天师度 Power
-///     (回合一结束 -2 炁 / 层)。类比 Wraith Form: 强力正向 + 持续负面。
+///     天师度 卡牌: 1 费, 获得 30 炁 + 5 层金光咒, 同时给予 天师度 Power
+///     (回合一结束 -10 炁 / 层)。类比 Wraith Form: 强力正向 + 持续负面。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class HeavenlyRite(
@@ -25,14 +25,14 @@ public sealed class HeavenlyRite(
 {
     public HeavenlyRite() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<Qi>(10, 3);
+        WithPower<Qi>(30, 10);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 正向: 获得 10 → 13 炁 + 3 层金光护体
+        // 正向: 获得 30 → 40 炁 + 5 层金光护体
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
-        await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature }, 3, Owner.Creature, cardPlay.Card);
+        await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature }, 5, Owner.Creature, cardPlay.Card);
         // 负面: 给予天师度 debuff Power
         await PowerCmd.Apply<HeavenlyBurden>(choiceContext, new[] { Owner.Creature }, 1, Owner.Creature, cardPlay.Card);
     }

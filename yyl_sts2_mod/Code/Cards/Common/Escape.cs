@@ -24,7 +24,7 @@ public class Escape(
 {
     public Escape() : this(0, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithBlock(5, 3);
+        WithBlock(4, 2);
     }
 
 

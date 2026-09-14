@@ -1,7 +1,8 @@
-# 角色 伊林 (`yyl_sts2_mod`) — 设计稿 v0.1
+# 角色 伊林 (`yyl_sts2_mod`) — 设计稿 v0.2
 
 > 工程根: `C:\Users\Peter_Tan\RiderProjects\yyl_sts2_mod`
 > 本文档为**内容与机制**设计提案,实现侧状态以 `Code/` 为准。
+> **v0.2 (2026-09-14)**: 新增 §7「先古卡 / 附魔 / 局外成长」, 并修正 §1.1 / §3 / §4.3 / §6 中与实现脱节的条目。
 
 ---
 
@@ -10,8 +11,10 @@
 | 体系 | 定位 | 核心资源 / 标志 | 反馈环 |
 |---|---|---|---|
 | 炁 体系 | 主轴 | 炁(每点使**造成**的伤害 +10%) | 产炁(偏防)→ 耗炁(偏攻 / 运转) |
-| 奶龙 体系 | 副轴 | "是奶龙" 标记 | 给敌人贴 tag → 针对性牌 / 遗物 → 击杀回血 |
+| 奶龙 体系 | 副轴 | "是奶龙" 标记 | 给敌人贴 tag → 针对性牌 / 遗物 → 击杀回血 / 累计养龙层数 |
 | 阶段 buff | 副轴 | 逆生(1 / 2 / 3 段) | 累积 → 段位提升 → 强效 |
+| 先古卡 | 支线 | 掌心雷 → 白长虫, 辟邪剑法 | 由先古 NPC 赠予 / 由初始牌升级而成, 详见 §7 |
+| 局外成长 | 长线 | 附魔「炁脉」, 养龙层数 | 跨战斗保留, 详见 §7.3 / §7.4 |
 | 既有支撑 | (沿用) | 4 个 stance、金光咒(-2 受伤/层) | 不在本文档展开 |
 
 ---
@@ -23,7 +26,7 @@
 | 名称 | 效果 | 备注 |
 |---|---|---|
 | **炁 (Qi)** | 每点使**造成**的伤害 ×1.10。Stack: Counter | 当前 `Powers/Qi.cs` 实现为 0.02 / 层,**需改为 0.10 / 层** |
-| **老农功 (OldFarm)** | 获得炁时,额外 +1 炁(原"获得 X"实际得 X+1)。Stack: Counter | 当前 `Powers/OldFarm.cs` 是空壳,需补完 |
+| **老农功 (RusticRoot)** | 获得炁时,额外 +1 炁(原"获得 X"实际得 X+1)。Stack: Counter | **v0.2: 显示名改为「养炁」** —— 「老农功」这个名字交给炁婴那张卡了。当前无任何卡引用, 属孤儿 Power |
 
 ### 1.2 触发型
 
@@ -75,7 +78,7 @@
 
 | 名称 | 建议稀有度 | 费用 | 效果 | 备注 |
 |---|---|---|---|---|
-| **掌心雷 (ZhangXinLei)** | Common | TBD | 失去 1 炁,**造成 ? 伤害(待补)** | 描述未完成 |
+| ~~掌心雷 (ZhangXinLei)~~ | — | — | **v0.2: 这一条作废** | 原「耗炁线的低段位起手雷」不再重建; 「掌心雷」这个名字交给初始牌「阳五雷」继承, 详见 §7.1 |
 | **移穴 (YiXue)** | Uncommon | TBD | 获得 10 → 15 格挡;失去 1 炁;从**抽牌堆**选 1 张入手 | 检索 |
 | **天火 (TianHuo)** | Rare | TBD | **失去所有炁**,对所有敌人造成 "失去值 × 14 → 18" 伤害 | 强清场,数值待校 |
 | **散炁 (SanQi)** | Uncommon | TBD(估 0) | 失去 1 炁;获得 2 → 3 能量 | 能量引擎 |
@@ -105,7 +108,7 @@
 | 名称 | 稀有 | 费用 | 效果 |
 |---|---|---|---|
 | **大啖食粮 (DaDanShiLiang)** | Rare | TBD | 对所有奶龙造成 4 伤害;**回复等同伤害的生命** |
-| **黑色幽默 (HeiSeYouMo)** | Ancient | TBD | 为奶龙回复 20 HP;获得 3 炁 + 1 层无实体 |
+| **黑色幽默 (DarkHumor)** | Rare | 2 | 为奶龙回复 20 HP;获得 3 炁 + 1 → 2 层无实体 | **v0.2 修正**: 稀有度是 Rare 不是 Ancient |
 
 > "奶龙"判定需要统一的 `IsNailong(target)` 工具,目前 `NlPower` / `NlPowerPlus` 同时承担"tag + 击杀奖励"两种职责,见 §6。
 
@@ -129,7 +132,10 @@
 | **破损的奶龙玩偶** | 奶龙对伊林造成的伤害 -30% |
 
 ### 5.4 稀有 (Rare)
-*(待设计)*
+
+| 名称 | 效果 |
+|---|---|
+| **养龙 (NailongRearing)** | 每击杀一个[奶龙], 本遗物 +1 层(最多 10 层); 每层使你攻击[奶龙]时额外造成 1 点伤害。跨战斗累计, 详见 §7.4 |
 
 ### 5.5 先古 (Ancient)
 
@@ -182,7 +188,7 @@
 - `Code/Commands/ScryCmd.cs` 整文件注释,本设计未使用 scry
 
 ### 费用/数值约定(临时)
-- **所有新卡统一 1 费**,数值由用户后续手动调整。
+- ~~**所有新卡统一 1 费**~~ → **v0.2 已作废**: 费用已按稀有度重排 (低稀有度常见 0 费, 高稀有度 2–3 费)。
 - 原始设计为 X 费的(炁流源体)按 1 费实现。
 
 ### v0.1 实现状态(对照本设计)
@@ -201,7 +207,7 @@
 | 5 耗炁卡 (ZhangXinLei/YiXue/TianHuo/SanQi/TongChang) | ⚠ YiXue 的"从抽牌堆选 1 张"未实现 |
 | 7 奶龙卡 (ZhiRen/XinFang/PoFang/KuangRe/TouWei/DaDanShiLiang/HeiSeYouMo) | ⚠ XinFang 的"本回合受奶龙伤害-50%"未实现 |
 | `BigYellowPeachCan` 遗物 | ✅ |
-| `Cards/Uncommon/OldFarm.cs` 老农功卡(WIP 占位) | ⚠ 保留不动,可能后续删 |
+| `Cards/Rare/PeasantDrill.cs` 老农功卡 | ✅ v0.2 重做: 不再是占位, 改为 2 费稀有技能「炁婴」(见 §7.1) |
 | 本地化(eng/cards/powers/relics) | ✅ 已加新条目 |
 | 资源(图片/场景) | ⏳ 用户后续 |
 
@@ -214,3 +220,69 @@
 - `CreatureCmd.GainBlock(creature, amount)` 同理
 - `PowerCmd.Remove(this, ctx)` 是猜测,可能签名不同
 - `CompatibilityCreatureCmd.Damage` 返回 `IEnumerable<DamageResult>`,`DamageResult.Amount` 是猜测字段名
+
+---
+
+## 7. v0.2 新增: 先古卡 / 附魔 / 局外成长
+
+> 本节替代之前散落各处的"待设计"。以下内容**已实现并编译通过 (0 warning / 0 error)**。
+
+### 7.1 雷法线: 掌心雷 → 白长虫
+
+原作里阳五雷与阴五雷互斥、不能同时使用, 所以这两张牌不做成两张并列的牌, 而是**同一张牌的先后形态**。
+
+| 名称 | 稀有度 | 费 | 效果 |
+|---|---|---|---|
+| **掌心雷 (PalmThunder)** | Basic (初始牌) | 1 | 对所有敌人造成 1 → 2 点伤害 5 次, 挂 1 层易伤 + 1 层虚弱; 有金光护体则消耗 1 层使本次伤害 +1 |
+| **白长虫 (WhiteWorm)** | **Ancient** | 1 | 对所有敌人造成 2 → 3 点伤害 5 次 (**无视格挡**), 挂 1 → 2 层易伤 + 虚弱; 金光护体规则同上 |
+
+- 初始牌组把原来的 `SolarThunder` 换成 `PalmThunder`(`Code/Character/yyl_sts2_mod.cs`)。
+- **升级即变形**: 掌心雷被升级时, 由 `Code/Patches/PalmThunderUpgradePatch.cs` 在 `CardCmd.Upgrade` 之后调用 `CardCmd.TransformTo<WhiteWorm>`。StS2 没有声明式的"升级成另一张牌"接口(只有 `MaxUpgradeLevel` 控制层数), 所以用了 Harmony 后置补丁; 变形失败只记警告并保留普通升级结果。
+- **无视格挡**的实现注记: `AttackCommand` 没有 `WithValueProp`, 伤害的 `ValueProp` 只能在声明伤害变量时给 —— 用 `WithCalculatedDamage("Damage", 2, _ => 0m, ValueProp.Unblockable, 1, 0)`(变量名故意仍叫 `Damage`, 卡面写法与其它卡一致)。
+- ⚠ **待实机验证**: 升级变形是否与营火/事件/遗物的所有升级入口兼容。
+
+### 7.2 辟邪剑法 (WardingBlade)
+
+| 名称 | 稀有度 | 费 | 效果 |
+|---|---|---|---|
+| **辟邪剑法** | **Ancient** (先古卡的定位 = 由先古 NPC 赠予) | 2 | 造成 8 → 11 点伤害; 若目标带有任一负面状态(**易伤 / 虚弱 / 中毒 / 奶龙**)则本次伤害翻倍 |
+
+- 「辟邪」= 专克邪祟: 目标越脏, 这一剑越重。和铺 debuff 的牌(掌心雷 / 风后奇门 / 破防 / 投喂)天然闭环。
+- NPC 建议: **坦克斯 (TANX)** —— 他的台词本来就在找武器("使炁的小弟, 挑件正经的武器吧!!")。
+
+### 7.3 附魔体系 (局外资源)
+
+参考原版死灵法师的**禁忌魔典**(战斗结束后移除卡牌): 把"一次战斗的结算"变成对牌组的永久改造。这里改造成**附魔**而不是移除。
+
+| 组件 | 名称 | 说明 |
+|---|---|---|
+| 卡牌 | **开脉 (MeridianOpening)** | 1 费能力牌 (Rare)。战斗结束后, 选择牌组中的 1 → 2 张牌附魔「炁脉」 |
+| 能力 | **开脉 (MeridianOpening)** | `AfterCombatEnd(CombatRoom)` 里调 `CardSelectCmd.FromDeckForEnchantment` + `CardCmd.Enchant` |
+| 附魔 | **炁脉 (QiMeridian)** | 被附魔的牌**打出时额外获得 1 点炁**。实现为 `BaseLib.Abstracts.CustomEnchantmentModel.OnPlay` |
+
+为什么是「附魔 + 炁」: 原版角色的金币 / 药水 / 最大生命 / 牌组移除都已被占用; **炁是本角色独有的资源**, 而附魔是 StS2 原生就支持"永久写进牌组"的机制(BaseLib 提供 `CustomEnchantmentModel`)。两者结合就是本 mod 的局外资源。
+
+- 附魔的本地化写在**新文件 `localization/eng/enchantments.json`**(表名 `enchantments`)。
+- ⚠ **待实机验证**: 附魔的 `OnPlay` 是否会被"被附魔牌被打出"这一时机调用; 若不被调用, 改为用 `EnchantDamageAdditive` / `EnchantBlockAdditive`(改动约 2 行)。
+
+### 7.4 养龙 (局外成长, 遗物)
+
+| 名称 | 稀有度 | 效果 |
+|---|---|---|
+| **养龙 (NailongRearing)** | **Rare** | 每击杀一个[奶龙], 本遗物 +1 层 (**最多 10 层**); 每层使你攻击[奶龙]时额外造成 1 点伤害 |
+
+- 跨战斗累计的成长型遗物。起始遗物「黄桃罐头」把所有敌人视作奶龙, 所以层数实际就是累计击杀数。
+- **必须有上限**: 计数器永久保留, 无上限到后期会变成一回合秒杀(用户判断"有点超模", 故做成稀有遗物 + 10 层封顶)。
+- 实现在 `Code/Relics/NailongRearing.cs`: `RelicRarity.Rare` + `IsStackable`/`ShowCounter` 覆盖 + `AbstractModel.AfterDeath` 钩子 + `IModifyDamageAdditive`。
+
+### 7.5 本轮的 API 结论(踩坑记录)
+
+| 需求 | 结论 |
+|---|---|
+| 从别的 mod 抄代码缺 using? | 用 `System.Reflection.Metadata` 读 `sts2.dll` 元数据直接查命名空间/可见性(virtual 与否也能查)。实例: `VakuuCardSelector` 在 `MegaCrit.Sts2.Core.Models.Relics`; `ModelDb.Enchantment<T>()` 可用 |
+| 让攻击无视格挡 | `AttackCommand` 无 `WithValueProp`; 只能在声明伤害变量时给 props(`WithCalculatedDamage`) |
+| 升级成另一张牌 | **无原生接口**; 需 Harmony 补丁 |
+| 战斗结束做点什么 | `AbstractModel.AfterCombatEnd(CombatRoom room)`(卡 / 能力 / 遗物都能覆写) |
+| 跨战斗计数的遗物 | `RelicModel.StackCount` + `IncrementStackCount()` + `IsStackable` + `ShowCounter`(引擎自动存档) |
+| 自定义附魔 | `BaseLib.Abstracts.CustomEnchantmentModel`; 施加用 `CardCmd.Enchant`(同步, 返回附魔实例) |
+| 遗物本地化 | `.title` / `.description` / **`.flavor` 三个键缺一不可**(STS001 分析器会报错) |

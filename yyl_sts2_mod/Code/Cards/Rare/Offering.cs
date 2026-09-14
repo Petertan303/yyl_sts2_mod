@@ -13,7 +13,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     投喂: 1 费, 给予所有奶龙 10 格挡, 获得 2 → 3 炁, 获得 2 能量。
+///     投喂: 1 费, 给予所有奶龙 10 格挡, 获得 2 炁, 获得 2 → 3 能量。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class Offering(
@@ -26,8 +26,8 @@ public sealed class Offering(
 {
     public Offering() : this(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<Qi>(2, 1);
-        WithEnergy(2);
+        WithPower<Qi>(2);
+        WithEnergy(2, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

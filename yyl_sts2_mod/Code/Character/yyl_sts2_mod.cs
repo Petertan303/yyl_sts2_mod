@@ -32,7 +32,7 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
         ModelDb.Card<YylDefend>(),
         ModelDb.Card<YylDefend>(),
         ModelDb.Card<YylDefend>(),
-        ModelDb.Card<SolarThunder>(),
+        ModelDb.Card<PalmThunder>(),
         ModelDb.Card<GoldenCharm>()
     ];
 

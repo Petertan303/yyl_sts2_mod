@@ -12,9 +12,9 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     天火: 1 费, 失去所有炁, 对所有敌人造成 失去值 × 14 → 18 伤害。
+///     天火: 1 费, 失去所有炁, 对所有敌人造成 失去值 × 10 → 15 伤害。
 ///     <para>
-///         ⚠ 强清场: 10 炁时群伤 140 → 180。后续平衡时可能需要加"最多 5 炁"等限制。
+///         ⚠ 强清场: 10 炁时群伤 100 → 150。后续平衡时可能需要加"最多 5 炁"等限制。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -28,7 +28,7 @@ public sealed class SkyFire(
 {
     public SkyFire() : this(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
-        WithDamage(14, 4);
+        WithDamage(10, 5);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

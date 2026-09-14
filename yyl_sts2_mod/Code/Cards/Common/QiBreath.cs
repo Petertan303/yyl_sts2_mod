@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     吐纳: 1 费, 获得 1 → 2 炁, 抽 1, 消耗。简易发动机。
+///     吐纳: 0 费, 获得 1 → 2 炁, 抽 1, 消耗。简易发动机。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class QiBreath(

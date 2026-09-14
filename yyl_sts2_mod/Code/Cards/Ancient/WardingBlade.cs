@@ -1,17 +1,25 @@
 using BaseLib.Abstracts;
-using yyl_sts2_mod.Code.Abstract;
-using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.ValueProps;
+using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
-using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
-namespace yyl_sts2_mod.Code.Cards.Basic;
+namespace yyl_sts2_mod.Code.Cards.Ancient;
 
+/// <summary>
+///     辟邪剑法: 先古卡, 由先古 NPC 赠予 (坦克斯最合适 —— 台词里他就在找武器)。
+///     造成 8 → 11 点伤害; 若目标身上带有任何负面状态 (易伤 / 虚弱 / 中毒 / 奶龙),
+///     本次伤害翻倍。
+///     <para>
+///         「辟邪」= 专克邪祟: 目标越脏, 这一剑越重。
+///         和现有的铺 debuff 体系 (掌心雷 / 风后奇门 / 破防 / 投喂) 天然闭环,
+///         是先古卡里"越到中后期越强"的那一张。
+///     </para>
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 #pragma warning disable STS004
 public sealed class WardingBlade(
@@ -22,31 +30,30 @@ public sealed class WardingBlade(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public WardingBlade() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AllEnemies)
+    public WardingBlade() : this(2, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy)
     {
-        WithDamage(1, 1);
-        WithVars(new RepeatVar(5));
-        WithPower<VulnerablePower>(1);
-        WithPower<WeakPower>(1);
-        
-        WithPower<GoldenAegis>(-1);
+        WithDamage(8, 3);
     }
-    
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var enemies = CombatState?.HittableEnemies ?? [];
-        await CommonActions.Apply<VulnerablePower>(choiceContext, enemies, this);
-        await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
-
-        if (Owner.HasPower<GoldenAegis>()){
-            DynamicVars.Damage.BaseValue += 1;
-            await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
+        if (HasAnyDebuff(cardPlay.Target))
+        {
+            DynamicVars.Damage.BaseValue *= 2;
         }
 
         await CommonActions.CardAttack(this, cardPlay)
-            .WithHitCount(DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_slash")
-            .WithValueProp(ValueProp.Unblockable)
             .Execute(choiceContext);
+    }
+
+    /// <summary>目标是否带有任一可被"辟邪"利用的负面状态。</summary>
+    private static bool HasAnyDebuff(Creature? target)
+    {
+        if (target is not { IsAlive: true }) return false;
+        return target.HasPower<VulnerablePower>()
+               || target.HasPower<WeakPower>()
+               || target.HasPower<PoisonPower>()
+               || yylNailong.IsNailong(target);
     }
 }
