@@ -4,6 +4,7 @@ using yyl_sts2_mod.Code.Extensions;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Relics;
 using yyl_sts2_mod.Code.Cards.Basic;
@@ -60,7 +61,18 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
     }
 
     public override string CustomCharacterSelectBg => "res://yyl_sts2_mod/scenes/yylUI.tscn";
-    public override string CustomVisualPath => "res://yyl_sts2_mod/scenes/yylCharacter.tscn";
+
+    /*  The combat visual is built through the BaseLib node factory instead of relying on
+        CustomVisualPath + a C# script on the scene root. Godot's binary scene export strips
+        the script ext_resource from the packed scene, which left the root a bare Node2D and
+        made CharacterModel.CreateVisuals_Patch2 throw InvalidCastException (Node2D -> NCreatureVisuals).
+        NodeFactory<NCreatureVisuals>.CreateFromScene auto-converts the bare Node2D root (which already
+        carries the required Visuals / Bounds / IntentPos / CenterPos named children) into a proper
+        NCreatureVisuals, which is exactly the pattern LexNinja2 uses and which works. */
+    public override NCreatureVisuals CreateCustomVisuals()
+    {
+        return NodeFactory<NCreatureVisuals>.CreateFromScene("res://yyl_sts2_mod/scenes/yylCharacter.tscn");
+    }
     public override string CustomMerchantAnimPath => "res://yyl_sts2_mod/scenes/yylMerchant.tscn";
     public override string CustomRestSiteAnimPath => "res://yyl_sts2_mod/scenes/yylRest.tscn";
     public override string CustomIconTexturePath => "character_icon_char_name.png".CharacterUiPath();

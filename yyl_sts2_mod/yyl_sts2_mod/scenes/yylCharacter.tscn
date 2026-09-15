@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dcdog164novx1"]
+[gd_scene load_steps=13 format=3 uid="uid://dcdog164novx1"]
 
 [ext_resource type="Texture2D" uid="uid://dj4nltqh6rblt" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_cwhfs"]
 [ext_resource type="Texture2D" uid="uid://btwgi7wop03m1" path="res://yyl_sts2_mod/images/charui/cast3.png" id="2_b3gem"]
