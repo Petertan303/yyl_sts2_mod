@@ -34,6 +34,7 @@
   "YYL_STS2_MOD-IDENTIFY.description": "对目标造成{Damage:diff()}点伤害。若目标是[gold]奶龙[/gold]，获得1点能量。",
   "YYL_STS2_MOD-IDENTIFY.title": "指认",
   "YYL_STS2_MOD-MERIDIAN_OPENING.description": "战斗结束时，选择牌组中的{MeridianOpening:diff()}张牌附魔[gold]炁脉[/gold]：这些牌打出时额外获得1点炁。",
+  "YYL_STS2_MOD-MERIDIAN_OPENING.rewardDescription": "选择{MeridianOpening:diff()}张牌附魔[gold]炁脉[/gold]：这些牌打出时额外获得1点炁。",
   "YYL_STS2_MOD-MERIDIAN_OPENING.title": "开脉",
   "YYL_STS2_MOD-NAILONG_KICK.description": "对所有敌人造成{Damage:diff()}点伤害，所有人获得{PoisonPower:diff()}点中毒。",
   "YYL_STS2_MOD-NAILONG_KICK.title": "奶龙无影脚",

@@ -35,15 +35,13 @@ public sealed class NailongRearing : yylRelicModel, IModifyDamageAdditive
 
     public override bool ShowCounter => true;
 
-    public override Task AfterDeath(
-        PlayerChoiceContext choiceContext,
-        Creature creature,
-        bool wasRemovalPrevented,
-        float deathAnimLength)
+    /*  用 BeforeDeath 而不是 AfterDeath:
+        到了 AfterDeath, 怪物身上的能力(奶龙标记/心魔)已经被清掉了,
+        HasPower<T>() 查不到, 判定永远失败、层数永远不涨。
+        BeforeDeath 时怪物还活着, 标记仍在, IsNailong 的存活判定也成立。 */
+    public override Task BeforeDeath(Creature creature)
     {
-        if (wasRemovalPrevented) return Task.CompletedTask;
-        // 注意: 这里必须用 IsNailongMarked 而不是 IsNailong —— 死亡钩子里怪物已 IsAlive=false。
-        if (!yylNailong.IsNailongMarked(creature)) return Task.CompletedTask;
+        if (!yylNailong.IsNailong(creature)) return Task.CompletedTask;
         if (StackCount >= MaxStacks) return Task.CompletedTask;
 
         IncrementStackCount();

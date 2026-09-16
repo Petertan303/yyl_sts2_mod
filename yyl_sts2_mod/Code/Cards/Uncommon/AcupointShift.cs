@@ -1,5 +1,6 @@
 using BaseLib.Abstracts;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -32,13 +33,18 @@ public sealed class AcupointShift(
         await CommonActions.CardBlock(this, cardPlay);
         await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
 
-        var card = await CommonActions.SelectSingleCard(this, SelectionScreenPrompt, choiceContext, PileType.Draw);
-        if (card != null)
+        /*  从战斗牌堆(抽牌堆)选牌必须用 CardSelectCmd.FromCombatPile:
+            之前用的 CommonActions.SelectSingleCard(..., PileType.Draw) 会让牌卡在待打出区、
+            选牌界面根本不弹出来(OnPlay 的 Task 一直挂在那儿)。
+            CardPileCmd.Draw(ctx, n, player) 是"随机抽 n 张", 也不能用来抽指定牌。 */
+        var pile = PileType.Draw.GetPile(Owner);
+        var prefs = new CardSelectorPrefs(SelectionScreenPrompt, 1);
+        var selected = (await CardSelectCmd.FromCombatPile(choiceContext, pile, Owner, prefs)).ToList();
+
+        if (selected.Count > 0)
         {
-            // 抽牌堆 -> 手牌。CardPileCmd.Draw(ctx, n, player) 是"随机抽 n 张", 不能用来抽指定牌,
-            // 指定牌要用 Add。Add 之后必须 PreviewCardPileAdd, 否则牌进了手牌但手牌 UI 不刷新,
-            // 看起来就像"选了牌却没生效"。
-            var result = await CardPileCmd.Add(card, PileType.Hand);
+            // Add 之后必须 PreviewCardPileAdd, 否则牌进了手牌但手牌 UI 不刷新。
+            var result = await CardPileCmd.Add(selected[0], PileType.Hand);
             CardCmd.PreviewCardPileAdd(result, 0.6f, CardPreviewStyle.HorizontalLayout);
         }
     }
