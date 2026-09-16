@@ -30,6 +30,9 @@ public partial class MainFile : Node
 
         harmony.PatchAll();
         ApplyPatch(harmony, typeof(ModelDbInitIdsPatch));
+
+        // Keep the shop (merchant) character working when RitsuLib is installed.
+        YylMerchantCharacterPatch.TryApply(harmony);
     }
     
     
