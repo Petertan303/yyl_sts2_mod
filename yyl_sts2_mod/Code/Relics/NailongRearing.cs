@@ -42,7 +42,8 @@ public sealed class NailongRearing : yylRelicModel, IModifyDamageAdditive
         float deathAnimLength)
     {
         if (wasRemovalPrevented) return Task.CompletedTask;
-        if (!yylNailong.IsNailong(creature)) return Task.CompletedTask;
+        // 注意: 这里必须用 IsNailongMarked 而不是 IsNailong —— 死亡钩子里怪物已 IsAlive=false。
+        if (!yylNailong.IsNailongMarked(creature)) return Task.CompletedTask;
         if (StackCount >= MaxStacks) return Task.CompletedTask;
 
         IncrementStackCount();

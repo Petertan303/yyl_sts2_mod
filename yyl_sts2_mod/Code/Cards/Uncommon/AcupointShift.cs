@@ -3,6 +3,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
@@ -33,6 +34,12 @@ public sealed class AcupointShift(
 
         var card = await CommonActions.SelectSingleCard(this, SelectionScreenPrompt, choiceContext, PileType.Draw);
         if (card != null)
-            await CardPileCmd.Add(card, PileType.Hand);
+        {
+            // 抽牌堆 -> 手牌。CardPileCmd.Draw(ctx, n, player) 是"随机抽 n 张", 不能用来抽指定牌,
+            // 指定牌要用 Add。Add 之后必须 PreviewCardPileAdd, 否则牌进了手牌但手牌 UI 不刷新,
+            // 看起来就像"选了牌却没生效"。
+            var result = await CardPileCmd.Add(card, PileType.Hand);
+            CardCmd.PreviewCardPileAdd(result, 0.6f, CardPreviewStyle.HorizontalLayout);
+        }
     }
 }
