@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://3tbb3u774djhn"]
+
+[ext_resource type="Script" uid="uid://3xwbqe5jvw10" path="res://Code/Nodes/Stances/WrathGlowSparkSpawner.cs" id="1_spark"]
+[ext_resource type="Script" uid="uid://bt3ndmn5684ew" path="res://Code/Nodes/Stances/WrathActivationBurst.cs" id="2_burst"]
+[ext_resource type="Script" uid="uid://lu7usvkljwkr" path="res://Code/Nodes/Stances/AuraBlobEmitter.cs" id="3_blobs"]
+
+[node name="WrathAura" type="Node2D"]
+scale = Vector2(0.85, 0.85)
+
+[node name="GlowSparks" type="Node2D" parent="."]
+position = Vector2(0, -125)
+script = ExtResource("1_spark")
+
+[node name="AuraBlobs" type="Node2D" parent="."]
+position = Vector2(0, -188)
+script = ExtResource("3_blobs")
+BlobColor = Color(0.15, 0, 0.03, 1)
+
+[node name="ActivationBurst" type="Node2D" parent="."]
+position = Vector2(0, -88)
+script = ExtResource("2_burst")

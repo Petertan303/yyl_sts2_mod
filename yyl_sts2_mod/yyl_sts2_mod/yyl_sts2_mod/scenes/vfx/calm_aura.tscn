@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://2rq7t4ow44t2w"]
+
+[ext_resource type="Script" uid="uid://4e8c2yck603u" path="res://Code/Nodes/Stances/CalmFrostStreakSpawner.cs" id="1_streak"]
+[ext_resource type="Script" uid="uid://lu7usvkljwkr" path="res://Code/Nodes/Stances/AuraBlobEmitter.cs" id="2_blobs"]
+
+[node name="CalmAura" type="Node2D"]
+
+[node name="FrostStreaks" type="Node2D" parent="."]
+position = Vector2(0, -100)
+script = ExtResource("1_streak")
+
+[node name="AuraBlobs" type="Node2D" parent="."]
+position = Vector2(0, -188)
+script = ExtResource("2_blobs")
+BlobColor = Color(0.12, 0.15, 0.25, 1)
