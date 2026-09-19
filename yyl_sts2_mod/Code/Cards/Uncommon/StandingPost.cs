@@ -12,15 +12,18 @@ using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
 
-namespace yyl_sts2_mod.Code.Cards.Common;
+namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     崩拳: 2 费, 造成 14 → 18 点伤害。
-///     普通位唯一的高数值单段攻击 (对应原版重锤/埋葬那一档), 前期过渡的输出担当。
-///     与阿威十八式 (2 费 3 段) 分工: 单段吃减伤更划算, 多段吃狂热/多段加成。
+///     站桩: 2 费, 获得 12 → 16 点格挡。
+///     罕见位最朴素的防御裸卡: 无任何附加功能, 纯粹把费用换成格挡。
+///     与移穴 (1 费 10 → 15 但要失去 2 炁) 分工: 站桩不需要炁, 移穴更便宜但有代价。
+///     <para>
+///         原为普通卡, 因 2 费 16 格挡已越过普通位防御上限而移入罕见。
+///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
-public sealed class BurstFist(
+public sealed class StandingPost(
     int canonicalEnergyCost,
     CardType type,
     CardRarity rarity,
@@ -28,15 +31,13 @@ public sealed class BurstFist(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public BurstFist() : this(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+    public StandingPost() : this(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
-        WithDamage(14, 4);
+        WithBlock(12, 4);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
-            .Execute(choiceContext);
+        await CommonActions.CardBlock(this, cardPlay);
     }
 }
