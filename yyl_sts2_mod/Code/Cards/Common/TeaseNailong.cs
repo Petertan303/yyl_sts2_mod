@@ -31,6 +31,7 @@ public sealed class TeaseNailong(
     public TeaseNailong() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
         WithDamage(6, 2);
+        WithCards(2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -42,6 +43,6 @@ public sealed class TeaseNailong(
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
         if (isNailong)
-            await CardPileCmd.Draw(choiceContext, 2, Owner);
+            await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
     }
 }

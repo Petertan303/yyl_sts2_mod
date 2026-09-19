@@ -32,6 +32,8 @@ public sealed class MoveQi(
     public MoveQi() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
         WithPower<XingQi>(1);
+        // 仅用于卡面显示: 每次失去炁时抽几张
+        WithPower<XingQi>("DrawCount", 1, 0);
         WithCostUpgradeBy(-1);
     }
 

@@ -26,13 +26,15 @@ public sealed class LaShang(
     public LaShang() : this(0, CardType.Status, CardRarity.Status, TargetType.None)
     {
         WithKeywords(CardKeyword.Unplayable);
+        // 每回合结束的自伤 (卡面用)
+        WithCalculatedDamage("HpLoss", 2, (_, _) => 0m, 0, 0, 0);
     }
 
     public override bool HasTurnEndInHandEffect => true;
 
     protected override async Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
     {
-        await CreatureCmd.Damage(choiceContext, Owner.Creature, 2m,
+        await CreatureCmd.Damage(choiceContext, Owner.Creature, DynamicVars["HpLoss"].IntValue,
             ValueProp.Unblockable | ValueProp.Unpowered, null, null);
     }
 }

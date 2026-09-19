@@ -29,6 +29,7 @@ public sealed class Offering(
     {
         WithPower<Qi>(2, 2);
         WithEnergy(2, 0);
+        WithBlock(20, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -39,7 +40,7 @@ public sealed class Offering(
         foreach (var c in combatState.Creatures)
         {
             if (!yylNailong.IsNailong(c)) continue;
-            await CreatureCmd.GainBlock(c, 20m, ValueProp.Move, cardPlay);
+            await CreatureCmd.GainBlock(c, DynamicVars.Block.IntValue, ValueProp.Move, cardPlay);
         }
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);

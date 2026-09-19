@@ -14,13 +14,14 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Ancient;
 
 /// <summary>
-///     白长虫: 先古卡, 掌心雷「入阴」之后的形态 (原「阴五雷」)。
+///     白长虫: 先古卡 (原「阴五雷」), 与掌心雷对应的 ancestral 形态。
 ///     对所有敌人造成 2 → 3 点伤害 5 次, 无视格挡, 并挂 1 → 2 层易伤与虚弱;
 ///     若身上有金光护体, 消耗 1 层使本次伤害 +1。
 ///     <para>
 ///         阴雷走内伤、穿透: 同样的一发雷, 比掌心雷更重且不吃格挡。
-///         由 <c>PalmThunderUpgradePatch</c> 在掌心雷被升级时变形而来,
-///         因此正常游玩中不会与掌心雷同时出现。
+///         白长虫是独立卡牌 (见构造函数里的独立升级 2 → 3),
+///         本体通过「古老牙齿」(Ancient Tooth) 遗物从掌心雷转化而来,
+///         不应在普通升级流程中互相变形。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -35,14 +36,29 @@ public sealed class WhiteWorm(
 {
     public WhiteWorm() : this(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies)
     {
-        // 变量名仍叫 Damage, 但带上 Unblockable —— 阴雷吃"内伤", 不吃格挡。
+        // 伤害变量名仍叫 Damage, 但带上 Unblockable —— 阴雷吃"内伤", 不吃格挡。
         // (AttackCommand 没有 WithValueProp, 伤害的 ValueProp 只能在声明伤害变量时给。)
-        WithCalculatedDamage("Damage", 2, (_, _) => 0m, ValueProp.Unblockable, 1, 0);
+        //
+        // 注意: CalculatedDamageVar 没有可写的 BaseValue 属性, 因此"金光护体 +1 伤害"
+        // 不能像掌心雷那样 DynamicVars.Damage.BaseValue += 1 —— 那会在拥有金光护体时
+        // 抛异常, 导致卡牌卡在待打出区、不生效。改为在 calc 里根据"当前是否拥有金光护体"
+        // 返回 +1 / 0, 由攻击结算时按次读取。
+        WithCalculatedDamage(
+            "Damage",
+            2,
+            (card, _) => card.Owner.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0m,
+            ValueProp.Unblockable,
+            1,
+            0);
         WithVars(new RepeatVar(5));
+        // 消耗金光护体时每段额外伤害 (卡面用)
+        WithCalculatedDamage("Bonus", 1, (_, _) => 0m, 0, 0, 0);
         WithPower<VulnerablePower>(1, 1);
         WithPower<WeakPower>(1, 1);
 
         WithPower<GoldenAegis>(-1);
+        // 仅用于卡面显示: 这次要消耗几层
+        WithPower<GoldenAegis>("AegisCost", 1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -51,15 +67,14 @@ public sealed class WhiteWorm(
         await CommonActions.Apply<VulnerablePower>(choiceContext, enemies, this);
         await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
 
-        if (Owner.HasPower<GoldenAegis>())
-        {
-            DynamicVars.Damage.BaseValue += 1;
-            await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
-        }
-
+        // 先结算攻击: calc 会在读取伤害时根据"是否拥有金光护体"给出 +1/次。
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitCount(DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
+
+        // 攻击结算完再消耗 1 层金光护体 (这样本次攻击已经吃到 +1, 消耗发生在之后)。
+        if (Owner.HasPower<GoldenAegis>())
+            await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
     }
 }

@@ -30,12 +30,14 @@ public sealed class BurnQi(
     {
         WithPower<Qi>(6, 3);
         WithCards(3);
+        // 自伤代价 (卡面用)
+        WithCalculatedDamage("HpLoss", 6, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 代价是直接的掉血: 不吃格挡、不受增减伤影响。
-        await CreatureCmd.Damage(choiceContext, Owner.Creature, 6m,
+        await CreatureCmd.Damage(choiceContext, Owner.Creature, DynamicVars["HpLoss"].IntValue,
             ValueProp.Unblockable | ValueProp.Unpowered, Owner.Creature, this, cardPlay);
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         await CommonActions.Draw(this, choiceContext);

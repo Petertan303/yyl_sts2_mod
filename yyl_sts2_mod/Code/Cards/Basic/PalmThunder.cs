@@ -8,9 +8,10 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
+using yyl_sts2_mod.Code.Cards.Ancient;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Powers;
-// using STS2RitsuLib.Interop.AutoRegistration;
+// using RitsuLib.Interop.AutoRegistration;
 
 namespace yyl_sts2_mod.Code.Cards.Basic;
 
@@ -39,9 +40,13 @@ public sealed class PalmThunder(
     {
         WithDamage(3, 1);
         WithVars(new RepeatVar(2));
+        // 消耗金光护体时每段额外伤害 (卡面用)
+        WithCalculatedDamage("Bonus", 1, (_, _) => 0m, 0, 0, 0);
         WithPower<VulnerablePower>(1, 1);
         // 金光护体联动: 声明 -1 层供 ApplySelf 消耗, 与白长虫 (WhiteWorm) 同一写法。
         WithPower<GoldenAegis>(-1);
+        // 仅用于卡面显示: 这次要消耗几层
+        WithPower<GoldenAegis>("AegisCost", 1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -55,7 +60,7 @@ public sealed class PalmThunder(
         // 2. 攻击: 若身上有金光护体, 本次每段伤害 +1。
         //    用显式数值攻击 (同破防 GuardBreak 的写法), 避免改 BaseValue 的副作用。
         var hasAegis = Owner.HasPower<GoldenAegis>();
-        var damage = DynamicVars.Damage.IntValue + (hasAegis ? 1 : 0);
+        var damage = DynamicVars.Damage.IntValue + (hasAegis ? DynamicVars["Bonus"].IntValue : 0);
         await CommonActions.CardAttack(this, cardPlay, target, damage, ValueProp.Move,
                 hitCount: DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_slash")

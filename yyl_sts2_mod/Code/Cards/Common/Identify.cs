@@ -24,6 +24,7 @@ public sealed class Identify(
     public Identify() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
         WithDamage(6, 3);
+        WithEnergy(1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -36,6 +37,6 @@ public sealed class Identify(
 
         // 击杀结算后目标可能已死亡，因此在攻击前记录是否为奶龙。
         if (isNailong)
-            await PlayerCmd.GainEnergy(1, Owner);
+            await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
     }
 }

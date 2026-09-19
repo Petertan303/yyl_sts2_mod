@@ -30,11 +30,13 @@ public sealed class CloseGate(
     public CloseGate() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
         WithBlock(5, 2);
+        // 有金光护体时的额外格挡 (卡面用)
+        WithCalculatedDamage("Bonus", 4, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var bonus = Owner.HasPower<GoldenAegis>() ? 4 : 0;
+        var bonus = Owner.HasPower<GoldenAegis>() ? DynamicVars["Bonus"].IntValue : 0;
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block.IntValue + bonus,
             ValueProp.Move, cardPlay);
     }

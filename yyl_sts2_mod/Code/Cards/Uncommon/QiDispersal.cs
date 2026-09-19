@@ -26,6 +26,8 @@ public sealed class QiDispersal(
     public QiDispersal() : this(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithEnergy(2, 1);
+        // 仅用于卡面显示: 这张卡要花掉的炁
+        WithPower<Qi>("QiLoss", 2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

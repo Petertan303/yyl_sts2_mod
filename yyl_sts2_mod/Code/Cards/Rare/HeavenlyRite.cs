@@ -26,13 +26,18 @@ public sealed class HeavenlyRite(
     public HeavenlyRite() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
         WithPower<Qi>(30, 10);
+        WithPower<GoldenAegis>(5, 0);
+        WithPower<HeavenlyBurden>(1, 0);
+        // 仅用于卡面显示: 天师度每回合抽走的炁
+        WithPower<Qi>("BurdenQi", 10, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 正向: 获得 30 → 40 炁 + 5 层金光护体
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
-        await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature }, 5, Owner.Creature, cardPlay.Card);
+        await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature },
+            DynamicVars["GoldenAegis"].IntValue, Owner.Creature, cardPlay.Card);
         // 负面: 给予天师度 debuff Power
         await PowerCmd.Apply<HeavenlyBurden>(choiceContext, new[] { Owner.Creature }, 1, Owner.Creature, cardPlay.Card);
     }

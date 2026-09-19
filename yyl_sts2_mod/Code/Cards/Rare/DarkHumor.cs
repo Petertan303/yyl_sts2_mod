@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Powers;
 using yyl_sts2_mod.Code.Utils;
 using MegaCrit.Sts2.Core.Models.Powers;
 
@@ -26,6 +27,8 @@ public sealed class DarkHumor(
     public DarkHumor() : this(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
         WithPower<IntangiblePower>(1, 0);
+        WithHeal(20, 0);
+        WithPower<Qi>(3, 0);
         WithKeyword(CardKeyword.Exhaust, UpgradeType.Remove);
     }
 
@@ -40,10 +43,10 @@ public sealed class DarkHumor(
         {
             if (!yylNailong.IsNailong(c)) continue;
             if (teammates.Contains(c)) continue;
-            await CreatureCmd.Heal(c, 20);
+            await CreatureCmd.Heal(c, DynamicVars.Heal.IntValue);
         }
-        // 获得 3 炁
-        await yylCmd.GainQi(choiceContext, Owner, 3, this, cardPlay.Card);
+        // 获得炁
+        await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         // 1 → 2 层无实体
         var intangible = DynamicVars["IntangiblePower"].IntValue;
         if (intangible > 0)

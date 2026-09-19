@@ -34,6 +34,7 @@ public sealed class DianXue(
     public DianXue() : this(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies)
     {
         WithPower<Powers.DianXue>(1, 1);
+        WithCards(1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -48,6 +49,6 @@ public sealed class DianXue(
             await CreatureCmd.Damage(choiceContext, enemy, stacks, ValueProp.Unblockable,
                 Owner.Creature, this, cardPlay);
         }
-        await CardPileCmd.Draw(choiceContext, 1, Owner);
+        await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
     }
 }

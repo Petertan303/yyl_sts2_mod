@@ -29,6 +29,8 @@ public sealed class QiBurst(
     public QiBurst() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
         WithDamage(8, 3);
+        // 仅用于卡面显示: 这张卡要花掉的炁
+        WithPower<Qi>("QiLoss", 1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

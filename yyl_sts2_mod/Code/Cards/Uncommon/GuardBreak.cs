@@ -30,6 +30,8 @@ public sealed class GuardBreak(
     {
         WithDamage(4);
         WithVars(new RepeatVar(2).WithUpgrade(1));
+        // 仅用于卡面显示: 每次命中削掉的力量点数
+        WithPower<StrengthPower>(1, 0);
         WithKeywords(CardKeyword.Exhaust);
     }
 

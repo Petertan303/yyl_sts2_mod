@@ -32,6 +32,8 @@ public sealed class TaiChi(
     public TaiChi() : this(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
         WithPower<TaiChiMark>(1);
+        // 仅用于卡面显示: 这张卡要花掉的炁
+        WithPower<Qi>("QiLoss", 2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

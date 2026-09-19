@@ -30,11 +30,13 @@ public sealed class DeflectForce(
     public DeflectForce() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
         WithBlock(5, 3);
+        WithPower<XieLi>(1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await CommonActions.CardBlock(this, cardPlay);
-        await PowerCmd.Apply<XieLi>(choiceContext, new[] { Owner.Creature }, 1, Owner.Creature, cardPlay.Card);
+        var xieli = DynamicVars["XieLi"].IntValue;
+        await PowerCmd.Apply<XieLi>(choiceContext, new[] { Owner.Creature }, xieli, Owner.Creature, cardPlay.Card);
     }
 }

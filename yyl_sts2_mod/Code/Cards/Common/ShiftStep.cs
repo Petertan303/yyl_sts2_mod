@@ -30,6 +30,8 @@ public sealed class ShiftStep(
     public ShiftStep() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
         WithCards(1, 1);
+        // 仅用于卡面显示: 随机消耗几张
+        WithCalculatedDamage("ExhaustCount", 1, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

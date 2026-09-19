@@ -29,11 +29,13 @@ public sealed class Divination(
     public Divination() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithCards(3, 1);
+        // 预视之后的抽牌数 (卡面用)
+        WithCalculatedDamage("Draw", 2, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await ScryCmd.Execute(choiceContext, this);
-        await CardPileCmd.Draw(choiceContext, 2, Owner);
+        await CardPileCmd.Draw(choiceContext, DynamicVars["Draw"].IntValue, Owner);
     }
 }

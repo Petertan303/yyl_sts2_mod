@@ -31,6 +31,8 @@ public sealed class MeridianOpening(
     {
         WithCostUpgradeBy(-1);
         WithPower<Powers.MeridianOpening>(1);
+        // 仅用于卡面显示: 附魔几张牌
+        WithCards(1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -29,13 +29,15 @@ public sealed class BorrowForce(
     public BorrowForce() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
         WithDamage(7, 2);
+        // 目标虚弱时的额外伤害 (卡面用)
+        WithCalculatedDamage("Bonus", 5, (_, _) => 0m, 0, 1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var target = cardPlay.Target!;
         if (target == null) return;
-        var bonus = target.HasPower<WeakPower>() ? (IsUpgraded ? 6 : 5) : 0;
+        var bonus = target.HasPower<WeakPower>() ? DynamicVars["Bonus"].IntValue : 0;
         await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue + bonus,
                 ValueProp.Move)
             .WithHitFx("vfx/vfx_attack_slash")

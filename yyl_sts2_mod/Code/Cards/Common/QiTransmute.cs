@@ -28,6 +28,8 @@ public sealed class QiTransmute(
     {
         WithBlock(6, 3);
         WithPower<GoldenAegis>(1, 1);
+        // 仅用于卡面显示: 这张卡要花掉的炁
+        WithPower<Qi>("QiLoss", 1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

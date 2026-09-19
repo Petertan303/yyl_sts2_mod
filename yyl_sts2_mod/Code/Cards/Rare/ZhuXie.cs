@@ -33,6 +33,8 @@ public sealed class ZhuXie(
     public ZhuXie() : this(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
     {
         WithDamage(9, 4);
+        // 连斩的血量阈值 (百分比, 卡面用)
+        WithCalculatedDamage("Threshold", 50, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -51,7 +53,7 @@ public sealed class ZhuXie(
         foreach (var enemy in combatState.HittableEnemies)
         {
             if (enemy == null || enemy == target || !enemy.IsHittable) continue;
-            if (enemy.GetHpPercentRemaining() > ExecuteThreshold) continue;
+            if (enemy.GetHpPercentRemaining() > DynamicVars["Threshold"].IntValue / 100.0) continue;
             // 直接取当前生命值 + Unblockable: 无视格挡, 必定致命。
             await CreatureCmd.Damage(choiceContext, enemy, enemy.CurrentHp, ValueProp.Unblockable,
                 Owner.Creature, this, cardPlay);

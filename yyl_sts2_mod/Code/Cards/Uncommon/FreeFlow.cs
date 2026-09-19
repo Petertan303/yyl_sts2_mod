@@ -29,6 +29,8 @@ public sealed class FreeFlow(
     public FreeFlow() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithCards(3, 1);
+        // 仅用于卡面显示: 这张卡要花掉的炁
+        WithPower<Qi>("QiLoss", 1, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
