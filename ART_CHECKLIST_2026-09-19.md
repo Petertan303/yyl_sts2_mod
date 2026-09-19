@@ -19,7 +19,7 @@
 |---|---|---|
 | 扫堂腿 | `sweeping_leg.png` | 低扫腿带起尘土 |
 | 顶肘 | `elbow_strike.png` | 近身肘击，对方露出破绽 |
-| 点穴 | `dian_xue.png` | 指尖点在穴位上，泛起红点 |
+| 点穴 | — | 卡面仍需绘制（Power 图标已用观者 mod 的印记图标） |
 | 侧踹 | `side_kick.png` | 侧身一脚，另一手架住 |
 | 撩掌 | `rising_palm.png` | 由下向上的掌击，掌心泛金光 |
 | 逗龙 | `tease_nailong.png` | 逗弄一只小龙，引开它的注意 |
@@ -47,7 +47,7 @@
 | 血雷 | `blood_thunder.png` | 血色雷霆，自身也带伤 |
 | 燃炁 | `burn_qi.png` | 燃烧自身气血化为炁 |
 | 行炁 | `move_qi.png` | 炁在经脉里流转成环 |
-| 凋萎（状态牌） | `wilt.png` | 枯萎的手／花，象征生命流失 |
+| 拉伤（状态牌） | `la_shang.png` | 拉伤的手臂／绷带，象征持续掉血 |
 
 ## 存量缺口（13 张）
 
@@ -65,6 +65,6 @@
 | 辟邪剑法 | `warding_blade.png` |
 | 白长虫 | `white_worm.png` |
 | 天火 | `sky_fire.png` |
-| 凋萎（状态牌） | `wilt.png`（与上表同一张） |
+| 拉伤（状态牌） | `la_shang.png`（与上表同一张） |
 
 > 完整卡表（含每张卡的费用／类型／效果／卡面文件名）见工程根 `CARD_LIST_2026-09-19.md`。
