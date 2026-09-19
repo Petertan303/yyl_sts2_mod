@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Commands;
 
 namespace yyl_sts2_mod.Code.Cards.Token;
 
@@ -34,7 +35,7 @@ public sealed class LaShang(
 
     protected override async Task OnTurnEndInHand(PlayerChoiceContext choiceContext)
     {
-        await CreatureCmd.Damage(choiceContext, Owner.Creature, DynamicVars["HpLoss"].IntValue,
-            ValueProp.Unblockable | ValueProp.Unpowered, null, null);
+        // "失去生命"而非伤害: 不走伤害管线, 不吃炁/姿态等增减伤 (与燃炁同款修正)。
+        yylCmd.LoseHp(Owner.Creature, DynamicVars["HpLoss"].IntValue);
     }
 }

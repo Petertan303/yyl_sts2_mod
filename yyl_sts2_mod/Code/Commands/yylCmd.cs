@@ -1,9 +1,11 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Events;
 using yyl_sts2_mod.Code.Powers;
 
@@ -11,6 +13,26 @@ namespace yyl_sts2_mod.Code.Commands;
 
 public class yylCmd
 {
+    private static readonly System.Reflection.MethodInfo? LoseHpInternalMethod = typeof(Creature).GetMethod(
+        "LoseHpInternal",
+        System.Reflection.BindingFlags.Instance
+        | System.Reflection.BindingFlags.NonPublic
+        | System.Reflection.BindingFlags.Public);
+
+    /// <summary>
+    ///     失去生命 (HP Loss): 绕过伤害管线 —— 不吃格挡、不吃炁/姿态/遗物的增减伤,
+    ///     与原版"失去 N 点生命"语义一致。
+    ///     <para>
+    ///         ⚠ 不要用 <c>CreatureCmd.Damage</c> 打自己来实现"失去生命":
+    ///         它走完整伤害管线, 燃炁/拉伤的"固定自伤"会被炁增伤等乘区放大 (v0.111.0 实测)。
+    ///         底层反射 <c>Creature.LoseHpInternal</c> (原版同款私有入口)。
+    ///     </para>
+    /// </summary>
+    public static void LoseHp(Creature creature, decimal amount)
+    {
+        if (creature == null || amount <= 0) return;
+        LoseHpInternalMethod?.Invoke(creature, new object[] { amount, default(ValueProp) });
+    }
     public static async Task<CardModel?> GiveCard<T>(Player player,
         PileType pileType,
         CardPilePosition pos = CardPilePosition.Bottom,

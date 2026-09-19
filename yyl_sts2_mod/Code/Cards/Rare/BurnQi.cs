@@ -36,9 +36,9 @@ public sealed class BurnQi(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 代价是直接的掉血: 不吃格挡、不受增减伤影响。
-        await CreatureCmd.Damage(choiceContext, Owner.Creature, DynamicVars["HpLoss"].IntValue,
-            ValueProp.Unblockable | ValueProp.Unpowered, Owner.Creature, this, cardPlay);
+        // 代价是"失去生命"而非伤害: 不走伤害管线, 不吃格挡、不吃炁/姿态/遗物的增减伤。
+        // (之前用 CreatureCmd.Damage 实现, 自伤会被炁增伤乘区放大 —— 已改 yylCmd.LoseHp。)
+        yylCmd.LoseHp(Owner.Creature, DynamicVars["HpLoss"].IntValue);
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         await CommonActions.Draw(this, choiceContext);
     }
