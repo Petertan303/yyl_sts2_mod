@@ -67,6 +67,8 @@ public class yylCmd
         CardModel? cardSource = null)
     {
         if (amount <= 0) return;
+        // 记录"本回合获得过炁"(全 mod 唯一产炁入口, 供崩拳等条件牌查询)。
+        QiGainTracker.Mark(player, player.Creature?.CombatState);
         var modified = yylHook.ModifyQiGain(player, amount, out var modifiers);
         if (modified > 0)
             await PowerCmd.Apply<Qi>(ctx, new[] { player.Creature }, modified, player.Creature, cardSource);

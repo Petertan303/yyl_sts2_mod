@@ -12,6 +12,7 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -50,12 +51,7 @@ public sealed class ShiYi(
 
         var card = selected[0];
         // 费用置 0 (打出后清除), 并附加消耗词条 —— 二者都作用于被回收的那张牌。
-        // AddTemporaryStarCost 是 CardModel 的私有方法 (公开面只有 UpgradeStarCostBy),
-        // 这里用反射调用; TemporaryCardCost.UntilPlayed(0) 是公开工厂。
-        typeof(CardModel)
-            .GetMethod("AddTemporaryStarCost",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
-            ?.Invoke(card, new object[] { TemporaryCardCost.UntilPlayed(0) });
+        CardCostUtil.SetCostUntilPlayed(card, 0);
         card.AddKeyword(CardKeyword.Exhaust);
 
         // Add 之后必须 PreviewCardPileAdd, 否则牌进了手牌但手牌 UI 不刷新。
