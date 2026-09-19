@@ -35,8 +35,12 @@ public sealed class PeachCan : yylRelicModel
         // 2) 把所有敌人视作奶龙 (NailongMark 兼任 "tag + 击杀回血 3")
         await PowerCmd.Apply<NailongMark>(choiceContext, combatState.HittableEnemies, 1m, Owner.Creature, null);
         // 2b) 队友也一并视为奶龙: 让"给奶龙加防/回血"的卡在联机里有正收益
-        //     (单机没有队友, 行为与之前完全一致)。自己仍留给大瓶黄桃罐头。
-        var allies = combatState.Allies.Where(c => c.IsAlive).ToList();
+        //     (单机没有队友, 行为与之前完全一致)。
+        //     ⚠ Allies 是"己方全体", 包含玩家自己 —— 必须排除;
+        //     把自己标记为奶龙是大瓶黄桃罐头 (NlCan2) 的专属效果。
+        var allies = combatState.Allies
+            .Where(c => c.IsAlive && c != Owner.Creature)
+            .ToList();
         if (allies.Count > 0)
             await PowerCmd.Apply<NailongMark>(choiceContext, allies, 1m, Owner.Creature, null);
         // 3) 挂上手牌金光驱动 (隐藏 Power): 条件牌 (崩拳/金光联动/耗炁卡) 满足条件时发光。
