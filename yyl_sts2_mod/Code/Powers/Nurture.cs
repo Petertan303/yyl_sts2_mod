@@ -1,52 +1,51 @@
-using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
-using yyl_sts2_mod.Code.Compatibility;
 using yyl_sts2_mod.Code.Events;
 
 namespace yyl_sts2_mod.Code.Powers;
 
 /// <summary>
-///     温养: 获得炁时, 对所有敌人造成 4 → 6 点伤害 / 层。
-///     Hook-based: implements <see cref="IGainQi" />, reacts as a follow-up side effect
-///     whenever the player gains Qi.
+///     温养: <b>失去炁时</b>, 获得 4 → 6 点格挡。
+///     <para>
+///         设计意图: 耗炁牌偏攻击与运转, 血量压力大 —— 温养把"失去炁"这个代价换成格挡,
+///         让攻转防、续航。层数即格挡值(同原版「荆棘」的写法), 多张温养叠加。
+///     </para>
+///     <para>
+///         Hook-based: 实现 <see cref="ILoseQi" />, 在每次失去炁后作为后续副作用结算。
+///     </para>
 /// </summary>
-public sealed class Nurture : yylPowerModel, IGainQi
+public sealed class Nurture : yylPowerModel, ILoseQi
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    /// <summary>Base damage dealt to each enemy per stack of Nurture on each Qi gain event.</summary>
-    public const int BaseDamage = 4;
+    /// <summary>卡牌默认给予的数值 (升级后 6)。</summary>
+    public const int DefaultAmount = 4;
 
-    public int ModifyQiGain(Player player, int amount)
+    /// <summary>升级时增加的数值。</summary>
+    public const int UpgradeAmount = 2;
+
+    public int ModifyQiLoss(Player player, int amount)
     {
-        // Opt out of the modify pass — we only care about the after-modifying follow-up.
+        // 不参与数值修改, 只挂 AfterModifyingQiLoss 后续结算。
         return amount;
     }
 
-    public async Task AfterModifyingQiGain(
+    public async Task AfterModifyingQiLoss(
         PlayerChoiceContext ctx,
         Player player,
         int originalAmount,
         int modifiedAmount)
     {
         if (modifiedAmount <= 0) return;
-        var combatState = player.Creature.CombatState;
-        if (combatState == null) return;
 
-        var damage = BaseDamage * Amount;
-        if (damage <= 0) return;
+        var block = Amount;
+        if (block <= 0) return;
 
-        foreach (var enemy in combatState.HittableEnemies)
-        {
-            await CompatibilityCreatureCmd.Damage(
-                ctx, enemy, damage, default(ValueProp), cardSource: null!, cardPlay: null);
-        }
+        await CreatureCmd.GainBlock(player.Creature, block, ValueProp.Unpowered, null);
     }
 }

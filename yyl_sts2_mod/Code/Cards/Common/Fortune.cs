@@ -9,7 +9,7 @@ using yyl_sts2_mod.Code.Character;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     运势: 0 费技能, 抽 1 → 2 张牌, 然后随机弃 1 张手牌。
+///     运势: 0 费技能, 抽 2 → 3 张牌, 然后随机弃 1 张手牌。
 ///     与静默猎手(基准角色)的低费过滤思路一致 —— 用抽弃循环把不需要的牌淘掉,
 ///     "随机"对应"运势"的赌性。
 /// </summary>

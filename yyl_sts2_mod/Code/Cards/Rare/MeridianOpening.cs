@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     开脉: 2 费能力牌。战斗结束后, 选择 1 → 2 张牌组中的牌永久附魔「炁脉」
+///     开脉: 2 → 1 费能力牌。战斗结束后, 选择 1 张牌组中的牌永久附魔「炁脉」
 ///     (打出时额外获得 1 点炁)。
 ///     <para>
 ///         局外资源入口: 附魔写在牌组上、跨战斗保留, 是原版角色没有的资源类型。
@@ -29,7 +29,8 @@ public sealed class MeridianOpening(
 {
     public MeridianOpening() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<Powers.MeridianOpening>(1, 1);
+        WithCostUpgradeBy(-1);
+        WithPower<Powers.MeridianOpening>(1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

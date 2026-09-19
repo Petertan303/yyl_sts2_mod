@@ -32,9 +32,12 @@ public sealed class Devour(
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
         var totalHealed = 0m;
+        // 只打非队友的奶龙: 联机时队友也可能被起始遗物标记为奶龙, 误伤队友不可接受。
+        var teammates = combatState.GetTeammatesOf(Owner.Creature).ToHashSet();
         foreach (var enemy in combatState.HittableEnemies)
         {
             if (!yylNailong.IsNailong(enemy)) continue;
+            if (teammates.Contains(enemy)) continue;
             var attack = await CommonActions.CardAttack(this, cardPlay, enemy, DynamicVars.Damage.IntValue,
                     ValueProp.Move)
                 .WithHitFx("vfx/vfx_attack_slash")

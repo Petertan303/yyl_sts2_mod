@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     吐纳: 0 费, 获得 1 → 2 炁, 抽 1, 消耗。简易发动机。
+///     吐纳: 获得 1 → 2 炁, 抽 1, 消耗。（罕见, 用于稀释产炁浓度）
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class QiBreath(
@@ -21,7 +21,7 @@ public sealed class QiBreath(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public QiBreath() : this(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+    public QiBreath() : this(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithPower<Qi>(1, 1);
         WithCards(1);

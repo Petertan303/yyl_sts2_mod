@@ -26,7 +26,7 @@ public sealed class ChainThunder(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public ChainThunder() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+    public ChainThunder() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
         WithDamage(8, 3);
         // 溅射伤害变量: 独立升级 4 → 5。calc 恒 0 (无额外修正), 仅为声明变量供文案显示。

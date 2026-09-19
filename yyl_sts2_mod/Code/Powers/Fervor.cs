@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Powers;
 
 /// <summary>
-///     狂热: 持有者攻击奶龙时, 每层额外造成 4 点伤害。
+///     狂热: 持有者攻击奶龙时, 每层额外造成 2 点伤害。
 ///     与「破损的奶龙玩偶」(减伤)分属攻防两端,互不影响。
 /// </summary>
 public sealed class Fervor : yylPowerModel, IModifyDamageAdditive

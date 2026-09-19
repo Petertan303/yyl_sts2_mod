@@ -33,6 +33,11 @@ public sealed class PeachCan : yylRelicModel
         await yylCmd.GainQi(choiceContext, player, InitialQi, this, null);
         // 2) 把所有敌人视作奶龙 (NailongMark 兼任 "tag + 击杀回血 3")
         await PowerCmd.Apply<NailongMark>(choiceContext, combatState.HittableEnemies, 1m, Owner.Creature, null);
+        // 2b) 队友也一并视为奶龙: 让"给奶龙加防/回血"的卡在联机里有正收益
+        //     (单机没有队友, 行为与之前完全一致)。自己仍留给大瓶黄桃罐头。
+        var allies = combatState.Allies.Where(c => c.IsAlive).ToList();
+        if (allies.Count > 0)
+            await PowerCmd.Apply<NailongMark>(choiceContext, allies, 1m, Owner.Creature, null);
     }
 
     public override RelicModel? GetUpgradeReplacement()

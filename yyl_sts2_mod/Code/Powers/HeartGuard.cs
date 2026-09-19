@@ -30,13 +30,21 @@ public sealed class HeartGuard : yylPowerModel, IModifyDamageMultiplicative
             return 0.5m;
         return 1m;
     }
+    //
+    // public override async Task AfterSideTurnEnd(
+    //     PlayerChoiceContext ctx,
+    //     CombatSide side,
+    //     IEnumerable<Creature> participants)
+    // {
+    //     if (side == Owner.Side)
+    //         await PowerCmd.Remove(this);
+    // }
 
-    public override async Task AfterSideTurnEnd(
-        PlayerChoiceContext ctx,
-        CombatSide side,
-        IEnumerable<Creature> participants)
+    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants,
+        ICombatState combatState)
     {
         if (side == Owner.Side)
-            await PowerCmd.Remove(this);
+            PowerCmd.Remove(this);
+        return base.BeforeSideTurnStart(choiceContext, side, participants, combatState);
     }
 }

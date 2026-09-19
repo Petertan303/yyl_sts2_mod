@@ -1,19 +1,25 @@
 using BaseLib.Abstracts;
+using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Powers;
 
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     龙虎山正一雷法: 1 费, 造成 7 → 10 点伤害。
-///     龙虎山天师府雷法, 作为普通攻击位的高数值版本。
+///     纳炁: 1 费, 获得 2 → 3 点炁。
+///     最朴素的产炁牌。炁是对数增伤 + 各种花费的资源, 所以产炁一律压低。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
-public sealed class DragonTigerRite(
+public sealed class IntakeQi(
     int canonicalEnergyCost,
     CardType type,
     CardRarity rarity,
@@ -21,15 +27,13 @@ public sealed class DragonTigerRite(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public DragonTigerRite() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+    public IntakeQi() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithDamage(8, 4);
+        WithPower<Qi>(2, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
-            .Execute(choiceContext);
+        await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
     }
 }

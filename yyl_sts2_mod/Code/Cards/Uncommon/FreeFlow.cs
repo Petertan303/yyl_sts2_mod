@@ -6,11 +6,12 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Powers;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     通畅: 1 费, 失去 1 炁, 抽 4 → 5 张。过牌引擎。
+///     通畅: 1 费, 失去 1 炁, 抽 3 → 4 张。过牌引擎。
 ///     <para>
 ///         ⚠ 数值风险: 1 炁换 4-5 抽 + 10% 增伤,可能过强。后续可改为
 ///         "本回合抽牌上限 +3"而非直接抽。
@@ -27,12 +28,15 @@ public sealed class FreeFlow(
 {
     public FreeFlow() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
-        WithCards(4, 1);
+        WithCards(3, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
-        await CommonActions.Draw(this, choiceContext);
+        if(Owner.Creature.GetPower<Qi>()?.Amount >= 1)
+        {
+            await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
+            await CommonActions.Draw(this, choiceContext);
+        }
     }
 }

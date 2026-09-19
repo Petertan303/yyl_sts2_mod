@@ -11,7 +11,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     炁流源体: 1 费, 将当前炁翻倍, 消耗。
+///     炁流源体: 2 → 1 费, 将当前炁翻倍, 消耗。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class QiWellspring(

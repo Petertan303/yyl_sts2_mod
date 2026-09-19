@@ -10,6 +10,14 @@ using System.Linq;
 
 namespace yyl_sts2_mod.Code.Cards.Common;
 
+/// <summary>
+///     奶龙无影脚: 1 费, 对所有敌人造成 12 → 18 伤害, 并对所有生物 (含自己)
+///     施加 4 → 2 层中毒。
+///     <para>
+///         直伤 AoE 位; 中毒无差别施放是"奶龙的踢击谁都遭殃"的代价。
+///         [balance 2026-09-18] 移除格挡: 只保留伤害 + 自中毒负面。
+///     </para>
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 #pragma warning disable STS004
 public class NailongKick(
@@ -23,7 +31,6 @@ public class NailongKick(
     public NailongKick(): this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
     {
         WithDamage(12, 6);
-        WithBlock(12, 6);
         WithPower<PoisonPower>(4, 2);
     }
 
@@ -32,7 +39,7 @@ public class NailongKick(
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
         
-        await CommonActions.CardBlock(this, cardPlay);
+        // [balance] 移除格挡: 用户要求只保留伤害 + 自中毒负面, 不再提供格挡
         // var allCreatures = combatState.Enemies
         //     .Concat(combatState.GetTeammatesOf(Owner.Creature))
         //     .Append(Owner.Creature)

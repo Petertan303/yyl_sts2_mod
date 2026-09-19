@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     蓄势: 0 费, 下回合开始时获得 2 → 3 炁。延迟型产炁。
+///     蓄势: 1 费, 下回合开始时获得 2 → 3 炁。延迟型产炁。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class GatherMight(
@@ -21,7 +21,7 @@ public sealed class GatherMight(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public GatherMight() : this(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+    public GatherMight() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
         WithPower<Powers.StoredMight>(2, 1);
     }

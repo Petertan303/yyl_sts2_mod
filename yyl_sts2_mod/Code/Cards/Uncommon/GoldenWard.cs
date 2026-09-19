@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     金光护体源: 2 费能力牌, 每回合开始时获得 1 → 2 层金光护体。
+///     金光护体源: 2 → 1 费能力牌, 每回合开始时获得 1 层金光护体。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class GoldenWardCard(
@@ -23,7 +23,8 @@ public sealed class GoldenWardCard(
 {
     public GoldenWardCard() : this(2, CardType.Power, CardRarity.Uncommon, TargetType.Self)
     {
-        WithPower<GoldenWard>(1, 1);
+        WithPower<GoldenWard>(1);
+        WithCostUpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

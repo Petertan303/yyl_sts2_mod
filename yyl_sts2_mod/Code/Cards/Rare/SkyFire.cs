@@ -12,9 +12,11 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     天火: 1 费, 失去所有炁, 对所有敌人造成 失去值 × 10 → 15 伤害。
+///     天火: 2 费, 失去所有炁, 对所有敌人造成 失去值 × 10 → 15 伤害。
+///     [rule 2026-09-18] 炁不足时无额外效果 (不打出一滴伤害)。
 ///     <para>
-///         ⚠ 强清场: 10 炁时群伤 100 → 150。后续平衡时可能需要加"最多 5 炁"等限制。
+///         ⚠ 强清场: 10 炁时群伤 100 → 150; 但炁伤害乘区已改对数,
+///         大量囤炁的直接收益主要就体现在这张卡上。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]

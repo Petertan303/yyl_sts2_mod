@@ -13,7 +13,8 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     投喂: 1 费, 给予所有奶龙 10 格挡, 获得 2 炁, 获得 2 → 3 能量。
+///     投喂: 2 费, 给予所有奶龙 20 点格挡, 获得 2 炁, 获得 2 能量。
+///     [balance 2026-09-18] 10 → 20 格挡; 升级从"+1 能量"改为"+2 炁"。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class Offering(
@@ -26,8 +27,8 @@ public sealed class Offering(
 {
     public Offering() : this(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<Qi>(2);
-        WithEnergy(2, 1);
+        WithPower<Qi>(2, 2);
+        WithEnergy(2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -38,7 +39,7 @@ public sealed class Offering(
         foreach (var c in combatState.Creatures)
         {
             if (!yylNailong.IsNailong(c)) continue;
-            await CreatureCmd.GainBlock(c, 10m, ValueProp.Move, cardPlay);
+            await CreatureCmd.GainBlock(c, 20m, ValueProp.Move, cardPlay);
         }
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);

@@ -24,6 +24,8 @@ public class GoldenAegis : yylPowerModel, IModifyDamageAdditive
         if (target != Owner || props.HasFlag(ValueProp.Unpowered))
             return 0m;
 
-        return -Math.Min(amount, Amount * 2m);
+        // 基础每层减伤 2 点; 「守势」会再往上加 (升级 +2)。
+        var perStack = 2m + (Owner.GetPower<ShouShi>()?.Amount ?? 0m);
+        return -Math.Min(amount, Amount * perStack);
     }
 }
