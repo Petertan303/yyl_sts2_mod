@@ -15,8 +15,8 @@ using yyl_sts2_mod.Code.Cards.Token;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     血雷: 2 费, 造成 22 → 28 点伤害, 将一张[凋萎]加入你的弃牌堆。
-///     高数值 + 明确的后续代价 (凋萎在手里每回合结束都会掉血),
+///     血雷: 2 费, 造成 22 → 28 点伤害, 将一张[拉伤]加入你的弃牌堆。
+///     高数值 + 明确的后续代价 (拉伤在手里每回合结束都会掉血),
 ///     属于"负面 + 强正面"的稀有位。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -38,6 +38,6 @@ public sealed class BloodThunder(
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
-        await yylCmd.GiveCard<Wilt>(Owner, PileType.Discard, skipAnimation: true);
+        await yylCmd.GiveCard<LaShang>(Owner, PileType.Discard, skipAnimation: true);
     }
 }
