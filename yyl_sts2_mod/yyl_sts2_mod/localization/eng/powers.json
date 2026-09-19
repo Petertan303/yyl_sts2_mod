@@ -91,5 +91,8 @@
   "YYL_STS2_MOD-XING_QI.description": "Whenever you lose Qi, draw 1 card.",
   "YYL_STS2_MOD-XING_QI.smartDescription": "Losing Qi: draw [blue]1[/blue] card.'\\n}\\n",
   "YYL_STS2_MOD-DIAN_XUE.title": "Pressure Point",
-  "YYL_STS2_MOD-PURITY_VEIL.description": "Pure mind wards off evil.\nDebuffs have no effect on you this turn."
+  "YYL_STS2_MOD-PURITY_VEIL.description": "Pure mind wards off evil.\nDebuffs have no effect on you this turn.",
+  "YYL_STS2_MOD-CARD_GLOW_DRIVER.title": "Qi Sense",
+  "YYL_STS2_MOD-CARD_GLOW_DRIVER.description": "Qi flows around you. (hidden mechanic: glows when conditions are met)",
+  "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "Qi flows around you."
 }

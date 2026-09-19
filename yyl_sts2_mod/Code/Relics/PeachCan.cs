@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Models;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Events;
 using yyl_sts2_mod.Code.Powers;
 
 namespace yyl_sts2_mod.Code.Relics;
@@ -38,6 +39,8 @@ public sealed class PeachCan : yylRelicModel
         var allies = combatState.Allies.Where(c => c.IsAlive).ToList();
         if (allies.Count > 0)
             await PowerCmd.Apply<NailongMark>(choiceContext, allies, 1m, Owner.Creature, null);
+        // 3) 挂上手牌金光驱动 (隐藏 Power): 条件牌 (崩拳/金光联动/耗炁卡) 满足条件时发光。
+        await PowerCmd.Apply<CardGlowDriver>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
     }
 
     public override RelicModel? GetUpgradeReplacement()

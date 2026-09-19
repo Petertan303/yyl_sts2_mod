@@ -15,8 +15,13 @@ public class yylSubscriber
 
     private static IEnumerable<AbstractModel> CollectModels2(CombatState combatState)
     {
-        return combatState.Players
+        IEnumerable<AbstractModel> stances = combatState.Players
             .Select(yylModel.GetStanceModel)
             .Where(s => s is not NoStance);
+        // 手牌金光驱动 (隐藏 Power, 由黄桃罐头战斗开始挂上)。
+        IEnumerable<AbstractModel> drivers = combatState.Players
+            .SelectMany(p => p.Creature.Powers)
+            .OfType<CardGlowDriver>();
+        return stances.Concat(drivers);
     }
 }
