@@ -52,11 +52,11 @@ public sealed class ShengWang(
         var selected = (await CardSelectCmd.FromCombatPile(choiceContext, hand, Owner, prefs)).ToList();
         if (selected.Count == 0) return;
 
-        // 被选的牌: 本场战斗费用 -1 (不低于 0)。
+        // 被选的牌: 本场战斗费用 -1 (AddThisCombat 负偏移, 只降不升)。
         var target = selected[0];
-        CardCostUtil.SetCostThisCombat(target, Math.Max(0, target.CurrentStarCost - 1));
+        CardCostUtil.AddCostThisCombat(target, -1);
 
-        // 此牌自身: 本场战斗费用 +1 (边际递减)。
-        CardCostUtil.SetCostThisCombat(cardPlay.Card, cardPlay.Card.CurrentStarCost + 1);
+        // 此牌自身: 本场战斗费用 +1 (边际递减; +1 是增费, IsReduceOnly 必须为 false)。
+        CardCostUtil.AddCostThisCombat(cardPlay.Card, +1);
     }
 }
