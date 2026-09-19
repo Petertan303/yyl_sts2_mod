@@ -17,7 +17,6 @@
 
 | 中文名 | 文件名 | 画面建议 |
 |---|---|---|
-| 扫堂腿 | `sweeping_leg.png` | 低扫腿带起尘土 |
 | 顶肘 | `elbow_strike.png` | 近身肘击，对方露出破绽 |
 | 点穴 | — | 卡面仍需绘制（Power 图标已用观者 mod 的印记图标） |
 | 侧踹 | `side_kick.png` | 侧身一脚，另一手架住 |
@@ -33,7 +32,7 @@
 | 纳炁 | `intake_qi.png` | 张口吞纳青色气流 |
 | 引炁 | `yin_qi.png` | 出拳瞬间，炁顺着拳势涌出 |
 | 套步 | `shift_step.png` | 错步换位，甩掉一张废牌 |
-| 抢步 | `quick_step.png` | 抢先进身的一小步 |
+| 抢步（暂时移出卡池，可暂缓绘制） | `quick_step.png` | 抢先进身的一小步 |
 | 炁冲 | `qi_burst.png` | 炁凝于拳，一击爆发 |
 | 借力 | `borrow_force.png` | 借对方虚弱之势反推回去 |
 | 截脉 | `vein_cut.png` | 指尖截断对方气血走向 |
@@ -49,6 +48,9 @@
 | 行炁 | `move_qi.png` | 炁在经脉里流转成环 |
 | 拉伤（状态牌） | `la_shang.png` | 拉伤的手臂／绷带，象征持续掉血 |
 
+| 拾遗 | `shi_yi.png` | 从弃牌堆拾起一张牌，画面可画"手从 discard 捡牌"意象 |
+| 炼化 | `lian_hua.png` | 手中牌化为金色光焰 |
+
 ## 存量缺口（13 张）
 
 | 中文名 | 文件名 |
@@ -58,7 +60,7 @@
 | 清心咒 | `clear_mind.png` |
 | 涤荡 | `purge.png` |
 | 太极 | `tai_chi.png` |
-| 阴煞 | `yin_sha.png` |
+| 冰蚕寒功（原阴煞，图标文件名仍为 `yin_sha.png`） | `yin_sha.png` |
 | 诛邪 | `zhu_xie.png` |
 | 移穴 | `acupoint_shift.png` |
 | 风后奇门 | `wind_array.png` |

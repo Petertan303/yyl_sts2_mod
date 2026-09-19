@@ -8,7 +8,7 @@ using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
 
-namespace yyl_sts2_mod.Code.Cards.Rare;
+namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
 ///     太极: 1 费, 失去 2 点炁, 本回合你受到的伤害转移给一名随机敌人。
@@ -18,6 +18,7 @@ namespace yyl_sts2_mod.Code.Cards.Rare;
 ///         (<see cref="Patches.TaiChiRedirectPatch" />) 实现: 打出期间所有以你为
 ///         目标的单体重定向到随机敌人; 回合结束 (敌方回合收尾) 自动散去。
 ///         [rule 2026-09-18] 耗炁卡统一判定: 炁不足 2 时无额外效果。
+///         [balance 2026-09-19] 稀有度 Rare → Uncommon (用户定调)。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -29,7 +30,7 @@ public sealed class TaiChi(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public TaiChi() : this(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
+    public TaiChi() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithPower<TaiChiMark>(1);
         // 仅用于卡面显示: 这张卡要花掉的炁

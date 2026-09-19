@@ -18,7 +18,8 @@ namespace yyl_sts2_mod.Code.Cards.Common;
 ///     抢步: 0 费, 抽 1 → 2 张, 消耗。
 ///     一次性过牌 + 瘦身牌库。0 费是它在运转体系里的立身之本, 因此用消耗收口。
 /// </summary>
-[Pool(typeof(yyl_sts2_modCardPool))]
+// [balance 2026-09-19] 暂时移出卡池 (与套步/引光定位重叠), 保留代码以备回炉。
+// [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class QuickStep(
     int canonicalEnergyCost,
     CardType type,

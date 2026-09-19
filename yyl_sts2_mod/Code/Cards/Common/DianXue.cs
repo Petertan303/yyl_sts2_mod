@@ -15,11 +15,11 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     点穴: 1 费, 给予所有敌人 1 → 2 层[点穴], 然后每个敌人失去等同自身点穴层数的生命
-///     (无视格挡), 再抽 1 张牌。
+///     点穴: 1 费, 给予所有敌人 8 → 12 层[点穴], 然后每个敌人失去等同自身点穴层数的生命
+///     (无视格挡)。
 ///     <para>
-///         层数会留在目标身上累积, 所以反复点同一个敌人会越来越痛 ——
-///         普通攻击位里少见的长线钩子, 配合多段/连击有额外收益。
+///         [balance 2026-09-19] 用户定调: 层数 1 → 2 改为 8 → 12, 删除抽 1 ——
+///         对齐观者 mod 的点穴强度 (层数留在目标身上累积, 反复点同一个敌人会越来越痛)。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -33,8 +33,7 @@ public sealed class DianXue(
 {
     public DianXue() : this(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies)
     {
-        WithPower<Powers.DianXue>(1, 1);
-        WithCards(1, 0);
+        WithPower<Powers.DianXue>(8, 4);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -49,6 +48,5 @@ public sealed class DianXue(
             await CreatureCmd.Damage(choiceContext, enemy, stacks, ValueProp.Unblockable,
                 Owner.Creature, this, cardPlay);
         }
-        await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
     }
 }
