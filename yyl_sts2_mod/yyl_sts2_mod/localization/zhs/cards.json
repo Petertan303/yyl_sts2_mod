@@ -128,7 +128,7 @@
   "YYL_STS2_MOD-MERIDIAN_OPENING.title": "开脉",
   "YYL_STS2_MOD-MOVE_QI.description": "获得{XingQi:diff()}层[gold]行炁[/gold]：每当你失去[gold]炁[/gold]，抽1张牌。",
   "YYL_STS2_MOD-MOVE_QI.title": "行炁",
-  "YYL_STS2_MOD-OFFERING.description": "给予所有[gold]奶龙[/gold]{Block:diff()}点[gold]格挡[/gold]，获得{Qi:diff()}点[gold]炁[/gold]与{Energy:diff()}点能量。",
+  "YYL_STS2_MOD-OFFERING.description": "为所有[gold]奶龙[/gold]回复{Heal:diff()}点生命。每为一只奶龙回复了生命，获得{QiPer:diff()}点[gold]炁[/gold]。",
   "YYL_STS2_MOD-OFFERING.title": "投喂",
   "YYL_STS2_MOD-PEASANT_DRILL.description": "获得{QiInfant:diff()}层[gold]炁婴[/gold]，你的下个回合由炁婴接管。",
   "YYL_STS2_MOD-PEASANT_DRILL.title": "老农功",

@@ -128,7 +128,7 @@
   "YYL_STS2_MOD-MERIDIAN_OPENING.title": "Meridian Opening",
   "YYL_STS2_MOD-MOVE_QI.description": "Gain {XingQi:diff()} [gold]Qi Flow[/gold]: whenever you lose [gold]Qi[/gold], draw 1 card.",
   "YYL_STS2_MOD-MOVE_QI.title": "Qi Flow",
-  "YYL_STS2_MOD-OFFERING.description": "Give all [gold]Nailong[/gold] {Block:diff()} [gold]Block[/gold]. Gain {Qi:diff()} [gold]Qi[/gold] and {Energy:diff()} Energy.",
+  "YYL_STS2_MOD-OFFERING.description": "Heal ALL [gold]Nailong[/gold] for {Heal:diff()} HP. For each Nailong actually healed, gain {QiPer:diff()} [gold]Qi[/gold].",
   "YYL_STS2_MOD-OFFERING.title": "Feeding",
   "YYL_STS2_MOD-PEASANT_DRILL.description": "Gain {QiInfant:diff()} [gold]Qi Infant[/gold]. Your next turn is played by the Qi Infant.",
   "YYL_STS2_MOD-PEASANT_DRILL.title": "Old Farmer's Art",
