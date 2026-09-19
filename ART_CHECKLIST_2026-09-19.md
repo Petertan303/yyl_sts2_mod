@@ -1,44 +1,70 @@
-# yyl_sts2_mod 待绘制美术清单（2026-09-19）
+# yyl_sts2_mod 待绘制美术清单（更新于 2026-09-19 深夜）
 
-> 共 **13 张卡面 + 2 个 Power 图标**。本轮新增卡 7+2 张，其余 6 张为存量缺口。
-> 全部缺失时游戏会回退到通用占位图（`card.png` / `power.png`），不会报错，但所有缺失卡长得一样。
+> **Power 图标已全部补齐**（本轮 7 个新 Power + 上一批的清心 / 太极标记，均为 AI 生成的像素风圆形徽章，已放入 `images/powers/` 与 `big/`）。
+> 下面只剩**卡面**：共 **43 张**待画（本轮新增 30 张 + 存量缺口 13 张）。
 
 ## 规格
 
-| 类型 | 路径 | 建议尺寸 | 说明 |
-|---|---|---|---|
-| 卡面 | `yyl_sts2_mod/images/card_portraits/<文件名>.png` | **547 × 408**（与现有 palm_thunder.png 一致，约 4:3） | 大图目录 `big/` 放同一张图即可（现有 big 与小图同尺寸同内容） |
-| Power 图 | `yyl_sts2_mod/images/powers/<文件名>.png` | **64 × 64** | 大图 `big/` 目录放 **256 × 256** 同内容 |
+| 类型 | 路径 | 尺寸 |
+|---|---|---|
+| 卡面 | `yyl_sts2_mod/images/card_portraits/<文件名>.png` | **547 × 408**（同现有 palm_thunder.png） |
+| 大卡图 | `yyl_sts2_mod/images/card_portraits/big/<文件名>.png` | 放同一张图即可 |
+| Power 图 | `yyl_sts2_mod/images/powers/<文件名>.png` + `big/` | 64 × 64 / 256 × 256 ✅ 已完成 |
 
-文件名必须与下表完全一致（小写 snake_case，**注意 golden_ward_card 这类带 Card 后缀的特例**，下表已按引擎实际读取的规则生成）。保存 PNG 后无需手动 import：下次发布构建时 Godot 无头导入会自动处理。
+缺失时游戏回退到通用占位图（`card.png` / `power.png`），不会报错。保存 PNG 后跑一次发布构建即生效（Godot 无头导入自动处理）。
 
-## 卡面（13 张）
+## 本轮新增（30 张 + 状态牌，优先画）
 
-| # | 中文卡名 | 类名 | 文件名 | 画面建议 |
-|---|---|---|---|---|
-| 1 | 破煞（新） | PoSha | `po_sha.png` | 金色雷光劈开一团黑煞之气，消耗牌的决绝感 |
-| 2 | 阴煞（新） | YinSha | `yin_sha.png` | 阴冷黑雾缠绕数道人影，全员虚弱的压迫感 |
-| 3 | 清心咒（新） | ClearMind | `clear_mind.png` | 一张澄澈符纸泛起淡金光晕，邪祟在外 |
-| 4 | 涤荡（新） | Purge | `purge.png` | 清水/光流冲刷身上的污黑纹理 |
-| 5 | 连雷（新） | ChainThunder | `chain_thunder.png` | 一道主雷分叉跳向侧面的次要目标 |
-| 6 | 太极（新） | TaiChi | `tai_chi.png` | 阴阳鱼回旋，一方的攻被引向另一侧 |
-| 7 | 诛邪（新） | ZhuXie | `zhu_xie.png` | 审判之剑贯落，低血量者同斩 |
-| 8 | 辟邪剑法 | WardingBlade | `warding_blade.png` | 一柄古剑，剑身缠红色辟邪纹路 |
-| 9 | 白长虫 | WhiteWorm | `white_worm.png` | 一条通体惨白的小虫，阴雷内伤感 |
-| 10 | 龙虎山正一雷法 | DragonTigerRite | `dragon_tiger_rite.png` | 黄符引雷，龙虎山符箓风 |
-| 11 | 天火 | SkyFire | `sky_fire.png` | 天穹裂开，倾泻而下的炽白天火 |
-| 12 | 移穴 | AcupointShift | `acupoint_shift.png` | 人体穴位图上光点沿经络游走 |
-| 13 | 风后奇门 | WindArray | `wind_array.png` | 八奇技罗盘阵图，风纹环绕 |
+| 中文名 | 文件名 | 画面建议 |
+|---|---|---|
+| 扫堂腿 | `sweeping_leg.png` | 低扫腿带起尘土 |
+| 顶肘 | `elbow_strike.png` | 近身肘击，对方露出破绽 |
+| 点穴 | `dian_xue.png` | 指尖点在穴位上，泛起红点 |
+| 侧踹 | `side_kick.png` | 侧身一脚，另一手架住 |
+| 撩掌 | `rising_palm.png` | 由下向上的掌击，掌心泛金光 |
+| 逗龙 | `tease_nailong.png` | 逗弄一只小龙，引开它的注意 |
+| 崩拳 | `burst_fist.png` | 直拳轰出，气浪四散 |
+| 破绽 | `opening.png` | 对手架势露出空隙，被标红圈 |
+| 化劲 | `deflect_force.png` | 来袭的一击被引偏、卸到身侧 |
+| 站桩 | `standing_post.png` | 马步站定，脚下生根 |
+| 舒筋 | `relax_tendon.png` | 把身上的黑气搓成球丢向对方 |
+| 封门 | `close_gate.png` | 双臂交叠封住门户，金光一闪 |
+| 引光 | `yin_guang.png` | 牵引一缕金光入体 |
+| 纳炁 | `intake_qi.png` | 张口吞纳青色气流 |
+| 引炁 | `yin_qi.png` | 出拳瞬间，炁顺着拳势涌出 |
+| 套步 | `shift_step.png` | 错步换位，甩掉一张废牌 |
+| 抢步 | `quick_step.png` | 抢先进身的一小步 |
+| 炁冲 | `qi_burst.png` | 炁凝于拳，一击爆发 |
+| 借力 | `borrow_force.png` | 借对方虚弱之势反推回去 |
+| 截脉 | `vein_cut.png` | 指尖截断对方气血走向 |
+| 铁山靠 | `shoulder_strike.png` | 肩背撞入，同时护住自身 |
+| 金光壁 | `golden_wall.png` | 一面金色光墙竖起 |
+| 守势 | `guard_stance.png` | 收攻为守的架势：金光更盛、炁息收敛 |
+| 拔罐 | `cupping.png` | 拔罐吸出黑气 |
+| 卜卦 | `divination.png` | 掷卦查看牌堆顶 |
+| 炁海 | `qi_sea.png` | 身周形成一片炁的海洋 |
+| 五雷正法 | `five_thunder_law.png` | 五道雷同时落下 |
+| 血雷 | `blood_thunder.png` | 血色雷霆，自身也带伤 |
+| 燃炁 | `burn_qi.png` | 燃烧自身气血化为炁 |
+| 行炁 | `move_qi.png` | 炁在经脉里流转成环 |
+| 凋萎（状态牌） | `wilt.png` | 枯萎的手／花，象征生命流失 |
 
-## Power 图标（2 个）
+## 存量缺口（13 张）
 
-| # | 中文 | 类名 | 文件名（64×64 / big 256×256） | 画面建议 |
-|---|---|---|---|---|
-| 1 | 清心（新） | PurityVeil | `purity_veil.png` | 一圈淡金光罩护住心口 |
-| 2 | 太极（新） | TaiChiMark | `tai_chi_mark.png` | 小型阴阳鱼标记 |
+| 中文名 | 文件名 |
+|---|---|
+| 引雷（原「破煞」，已改名） | `yin_lei.png` |
+| 连雷（已降为普通） | `chain_thunder.png` |
+| 清心咒 | `clear_mind.png` |
+| 涤荡 | `purge.png` |
+| 太极 | `tai_chi.png` |
+| 阴煞 | `yin_sha.png` |
+| 诛邪 | `zhu_xie.png` |
+| 移穴 | `acupoint_shift.png` |
+| 风后奇门 | `wind_array.png` |
+| 辟邪剑法 | `warding_blade.png` |
+| 白长虫 | `white_worm.png` |
+| 天火 | `sky_fire.png` |
+| 凋萎（状态牌） | `wilt.png`（与上表同一张） |
 
-## 备注
-
-- 上表"新"= 2026-09-19 新增：破煞 / 阴煞 / 清心咒 / 涤荡 / 连雷 / 太极 / 诛邪 + 清心 / 太极。
-- 存量缺口的 6 张卡面（#8–#13）此前一直用占位图，可一并补上。
-- 绘制完成后把文件放进对应目录，再跑一次发布构建（或游戏内启用 mod 的资源重导入）即可生效。
+> 完整卡表（含每张卡的费用／类型／效果／卡面文件名）见工程根 `CARD_LIST_2026-09-19.md`。
