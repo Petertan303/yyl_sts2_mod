@@ -3,6 +3,8 @@
   "YYL_STS2_MOD-GOLDEN_CHARM.title": "Golden Charm",
   "YYL_STS2_MOD-PALM_THUNDER.description": "Apply {VulnerablePower:diff()} [gold]Vulnerable[/gold], then deal {Damage:diff()} damage {Repeat:diff()} times. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
   "YYL_STS2_MOD-PALM_THUNDER.title": "Palm Thunder",
+  "YYL_STS2_MOD-QUICK_STEP.description": "Draw {Cards:diff()} card(s).",
+  "YYL_STS2_MOD-QUICK_STEP.title": "Quick Step",
   "YYL_STS2_MOD-YYL_DEFEND.description": "Gain {Block:diff()} [gold]Block[/gold].",
   "YYL_STS2_MOD-YYL_DEFEND.title": "Defend",
   "YYL_STS2_MOD-YYL_STRIKE.description": "Deal {Damage:diff()} damage.",
@@ -16,7 +18,7 @@
   "YYL_STS2_MOD-CLOSE_GATE.title": "Close Gate",
   "YYL_STS2_MOD-DEFLECT_FORCE.description": "Gain {Block:diff()} [gold]Block[/gold] and {XieLi:diff()} [gold]Deflect[/gold]: the next attack damage you take is halved.",
   "YYL_STS2_MOD-DEFLECT_FORCE.title": "Deflect",
-  "YYL_STS2_MOD-DIAN_XUE.description": "Apply {DianXue:diff()} [gold]Pressure Point[/gold] to ALL enemies. ALL enemies lose HP equal to their stacks.",
+  "YYL_STS2_MOD-DIAN_XUE.description": "Apply {DianXue:diff()} [gold]Pressure Point[/gold] to 1 enemy. ALL enemies lose HP equal to their own stacks.",
   "YYL_STS2_MOD-DIAN_XUE.title": "Pressure Point",
   "YYL_STS2_MOD-ELBOW_STRIKE.description": "Deal {Damage:diff()} damage. If the target is [gold]Vulnerable[/gold], hit one extra time.",
   "YYL_STS2_MOD-ELBOW_STRIKE.title": "Elbow Strike",
@@ -38,8 +40,6 @@
   "YYL_STS2_MOD-OPENING.title": "Opening",
   "YYL_STS2_MOD-QI_TRANSMUTE.description": "Lose {QiLoss:diff()} [gold]Qi[/gold]. Gain {GoldenAegis:diff()} [gold]Golden Aegis[/gold] and {Block:diff()} [gold]Block[/gold].",
   "YYL_STS2_MOD-QI_TRANSMUTE.title": "Transmute Qi to Golden Light",
-  "YYL_STS2_MOD-QUICK_STEP.description": "Draw {Cards:diff()} card(s).",
-  "YYL_STS2_MOD-QUICK_STEP.title": "Quick Step",
   "YYL_STS2_MOD-RELAX_TENDON.description": "Remove {Cards:diff()} Debuff stack(s) from yourself and transfer them to the target enemy.",
   "YYL_STS2_MOD-RELAX_TENDON.title": "Loosen Tendons",
   "YYL_STS2_MOD-RISING_PALM.description": "Deal {Damage:diff()} damage. If you have [gold]Golden Aegis[/gold], deal {Bonus:diff()} more damage.",
@@ -119,7 +119,7 @@
   "YYL_STS2_MOD-DARK_HUMOR.title": "Dark Humor",
   "YYL_STS2_MOD-DEVOUR.description": "Deal {Damage:diff()} damage to all non-teammate [gold]Nailong[/gold] and heal for the damage dealt.",
   "YYL_STS2_MOD-DEVOUR.title": "Devour the Feast",
-  "YYL_STS2_MOD-FIVE_THUNDER_LAW.description": "Deal {Damage:diff()} damage to ALL enemies.",
+  "YYL_STS2_MOD-FIVE_THUNDER_LAW.description": "Deal {Damage:diff()} damage to ALL enemies {Repeat:diff()} times. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
   "YYL_STS2_MOD-FIVE_THUNDER_LAW.title": "Five Thunder Law",
   "YYL_STS2_MOD-HEAVENLY_RITE.description": "Gain {Qi:diff()} [gold]Qi[/gold] and {GoldenAegis:diff()} [gold]Golden Aegis[/gold], and gain 1 [gold]Heavenly Burden[/gold]: lose 10 Qi at the end of each turn.",
   "YYL_STS2_MOD-HEAVENLY_RITE.title": "Heavenly Rite",
@@ -140,7 +140,7 @@
   "YYL_STS2_MOD-SKY_FIRE.title": "Sky Fire",
   "YYL_STS2_MOD-YIN_SHA.description": "Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies.",
   "YYL_STS2_MOD-YIN_SHA.title": "Silkworm Frost",
-  "YYL_STS2_MOD-ZHU_XIE.description": "Deal {Damage:diff()} damage. If this kills, all other enemies at {Threshold:diff()}% HP or below die.",
+  "YYL_STS2_MOD-ZHU_XIE.description": "Deal {Damage:diff()} damage. If this kills, the lowest-HP enemy at {Threshold:diff()} HP or below dies.",
   "YYL_STS2_MOD-ZHU_XIE.title": "Zhu Xie",
 
   "YYL_STS2_MOD-WARDING_BLADE.description": "Deal {Damage:diff()} damage {Repeat:diff()} times. If the target has [gold]Vulnerable[/gold], [gold]Weak[/gold], [gold]Poison[/gold] or the [gold]Nailong[/gold] mark, this damage is doubled.",
@@ -157,5 +157,6 @@
   "YYL_STS2_MOD-LA_SHANG.title": "Strain",
 
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "At the start of each turn, gain {GoldenWard:diff()} [gold]Golden Aegis[/gold].",
-  "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "Golden Aegis Source"
+  "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "Golden Aegis Source",
+  "YYL_STS2_MOD-QUICKSTEP.description": "Draw {Cards:diff()} card(s)."
 }

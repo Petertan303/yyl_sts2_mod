@@ -11,14 +11,14 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     太极: 1 费, 失去 2 点炁, 本回合你受到的伤害转移给一名随机敌人。
+///     太极: 1 费, 失去 2 点炁 (升级后 1 点), 本回合你受到的伤害转移给一名随机敌人。
 ///     <para>
 ///         机制化 AoE / 防御 (设计笔记 §6-②): 借力打力, 以彼之道还施彼身。
 ///         转移由 <see cref="Powers.TaiChiMark" /> + Harmony 前缀
 ///         (<see cref="Patches.TaiChiRedirectPatch" />) 实现: 打出期间所有以你为
 ///         目标的单体重定向到随机敌人; 回合结束 (敌方回合收尾) 自动散去。
-///         [rule 2026-09-18] 耗炁卡统一判定: 炁不足 2 时无额外效果。
-///         [balance 2026-09-19] 稀有度 Rare → Uncommon (用户定调)。
+///         [rule 2026-09-18] 耗炁卡统一判定: 炁不足时无额外效果。
+///         [balance 2026-09-19] 稀有度 Rare → Uncommon; 升级效果改为耗炁 2 → 1 (用户定调)。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -33,16 +33,17 @@ public sealed class TaiChi(
     public TaiChi() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithPower<TaiChiMark>(1);
-        // 仅用于卡面显示: 这张卡要花掉的炁
-        WithPower<Qi>("QiLoss", 2, 0);
+        // 仅用于卡面显示 + 实际读取: 这张卡要花掉的炁 (升级 2 → 1)
+        WithPower<Qi>("QiLoss", 2, -1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 炁不足 2 时无额外效果 (耗炁卡统一判定)。
-        if (Owner.Creature.GetPower<Qi>()?.Amount >= 2)
+        // 炁不足时无额外效果 (耗炁卡统一判定); 消耗量随升级变化 (2 → 1)。
+        var cost = DynamicVars["QiLoss"].IntValue;
+        if (cost > 0 && Owner.Creature.GetPower<Qi>()?.Amount >= cost)
         {
-            await yylCmd.LoseQi(choiceContext, Owner, 2, this, cardPlay.Card);
+            await yylCmd.LoseQi(choiceContext, Owner, cost, this, cardPlay.Card);
             var amount = DynamicVars["TaiChiMark"].IntValue;
             if (amount > 0)
                 await PowerCmd.Apply<TaiChiMark>(choiceContext, new[] { Owner.Creature }, amount, Owner.Creature, cardPlay.Card);
