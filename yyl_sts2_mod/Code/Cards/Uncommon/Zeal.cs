@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     狂热: 1 费能力牌, 获得 1 层狂热(攻击奶龙时每层额外造成 4 点伤害)。
+///     狂热: 1 费能力牌, 获得 1 → 2 层狂热(攻击奶龙时每层额外造成 2 点伤害)。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class Zeal(

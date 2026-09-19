@@ -6,24 +6,26 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Powers;
+// using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace yyl_sts2_mod.Code.Cards.Basic;
 
 /// <summary>
 ///     掌心雷: 初始牌 (原「阳五雷」)。
-///     对所有敌人造成 1 → 2 点伤害 5 次, 并挂 1 层易伤与虚弱;
-///     若身上有金光护体, 消耗 1 层使本次伤害 +1。
+///     1 费, 先施加 1 → 2 层易伤, 再造成 3 → 4 点伤害 2 次;
+///     若身上有金光护体, 消耗 1 层使本次每段伤害 +1 (与白长虫同款联动)。
 ///     <para>
-///         张楚岚的招牌雷法。升级后不再是数值强化, 而是「入阴」——
-///         雷法转入阴面, 化为白长虫 (见 <see cref="Ancient.WhiteWorm"/>),
-///         由 <c>PalmThunderUpgradePatch</c> 在执行升级时完成变形。
-///         原作里阳五雷与阴五雷本就互斥, 用"同一张牌的先后形态"来表达这层关系。
+///         结算顺序: 易伤 → 攻击 → 消耗金光护体 (攻击时仍在身上, 能吃到加成)。
+///         白长虫 (WhiteWorm) 是独立先古卡, 通过「古老牙齿」获得, 不在升级时变形。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
+// 若日后接「古老牙齿」(Ancient Tooth) 遗物，应在此注册对应先古牌:
+// [RegisterArchaicToothTranscendence(typeof(WhiteWorm))]
 #pragma warning disable STS004
 public sealed class PalmThunder(
     int canonicalEnergyCost,
@@ -33,31 +35,34 @@ public sealed class PalmThunder(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public PalmThunder() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AllEnemies)
+    public PalmThunder() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
     {
-        WithDamage(1, 1);
-        WithVars(new RepeatVar(5));
-        WithPower<VulnerablePower>(1);
-        WithPower<WeakPower>(1);
-
+        WithDamage(3, 1);
+        WithVars(new RepeatVar(2));
+        WithPower<VulnerablePower>(1, 1);
+        // 金光护体联动: 声明 -1 层供 ApplySelf 消耗, 与白长虫 (WhiteWorm) 同一写法。
         WithPower<GoldenAegis>(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var enemies = CombatState?.HittableEnemies ?? [];
-        await CommonActions.Apply<VulnerablePower>(choiceContext, enemies, this);
-        await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
+        var target = cardPlay.Target!;
+        if (target == null) return;
 
-        if (Owner.HasPower<GoldenAegis>())
-        {
-            DynamicVars.Damage.BaseValue += 1;
-            await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
-        }
+        // 1. 先施加易伤 (让本次攻击直接吃到 1.5x)。
+        await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
 
-        await CommonActions.CardAttack(this, cardPlay)
-            .WithHitCount(DynamicVars.Repeat.IntValue)
+        // 2. 攻击: 若身上有金光护体, 本次每段伤害 +1。
+        //    用显式数值攻击 (同破防 GuardBreak 的写法), 避免改 BaseValue 的副作用。
+        var hasAegis = Owner.HasPower<GoldenAegis>();
+        var damage = DynamicVars.Damage.IntValue + (hasAegis ? 1 : 0);
+        await CommonActions.CardAttack(this, cardPlay, target, damage, ValueProp.Move,
+                hitCount: DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
+
+        // 3. 攻击结算完再消耗 1 层金光护体 (保证本次攻击已经吃到 +1)。
+        if (hasAegis)
+            await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
     }
 }

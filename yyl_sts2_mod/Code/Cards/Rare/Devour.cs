@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     大啖食粮: 1 费, 对所有奶龙造成 4 伤害, 回复等同造成伤害的生命。
+///     大啖食粮: 2 费, 对所有奶龙造成 4 → 6 伤害, 回复等同造成伤害的生命。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class Devour(

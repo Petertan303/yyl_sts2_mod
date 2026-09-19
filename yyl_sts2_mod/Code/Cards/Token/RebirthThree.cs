@@ -8,6 +8,10 @@ using yyl_sts2_mod.Code.Commands;
 
 namespace yyl_sts2_mod.Code.Cards.Token;
 
+/// <summary>
+///     逆生三重: 3 费衍生牌 (由逆生二重加入手牌), 进入逆生三重姿态。
+///     姿态链终点; 升级后添加保留。
+/// </summary>
 [Pool(typeof(TokenCardPool))]
 public class RebirthThree(
     int canonicalEnergyCost,
@@ -19,6 +23,7 @@ public class RebirthThree(
 {
     public RebirthThree() : this(3, CardType.Power, CardRarity.Token, TargetType.None)
     {
+        WithKeyword(CardKeyword.Retain, UpgradeType.Add);
         WithCostUpgradeBy(-1);
     }
 

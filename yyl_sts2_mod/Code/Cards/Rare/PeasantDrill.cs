@@ -10,7 +10,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     老农功: 2 费稀有技能, 获得 1 层[炁婴] —— 危急时刻由炁婴接管身体,
+///     老农功: 0 费稀有技能, 获得 1 层[炁婴] —— 危急时刻由炁婴接管身体,
 ///     额外获得一个由系统自动出牌的回合。
 ///     <para>
 ///         原作里冯宝宝把这门功法叫"老农功", 说练到深处会有"炁婴"接管身体打架,
@@ -28,10 +28,11 @@ public class PeasantDrill(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public PeasantDrill() : this(2, CardType.Skill, CardRarity.Rare, TargetType.Self)
+    public PeasantDrill() : this(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
         WithPower<QiInfant>(1);
-        WithCostUpgradeBy(-1);
+        // WithCostUpgradeBy(-1);
+        WithKeyword(CardKeyword.Retain);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

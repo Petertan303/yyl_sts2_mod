@@ -14,7 +14,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     破防: 1 费, 造成 6 伤害 2 → 3 次, 每次命中使奶龙 -1 力量。消耗。
+///     破防: 1 费, 造成 4 伤害 2 → 3 次, 每次命中使奶龙 -1 力量。消耗。
+///     [balance 2026-09-18] 伤害 6 → 4: 作为消耗位仍保留斩力量机制, 压低裸数值。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class GuardBreak(
@@ -27,7 +28,7 @@ public sealed class GuardBreak(
 {
     public GuardBreak() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
-        WithDamage(6);
+        WithDamage(4);
         WithVars(new RepeatVar(2).WithUpgrade(1));
         WithKeywords(CardKeyword.Exhaust);
     }
