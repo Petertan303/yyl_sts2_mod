@@ -57,9 +57,13 @@ public sealed class TaiChiMark : yylPowerModel
         if (candidates.Count == 0) return;
         var victim = candidates[Random.Shared.Next(candidates.Count)];
 
-        // 先把玩家补回等量生命 (等效于这次掉血被"搬走"), 再把伤害以原攻击者为来源拍给替身。
+        // 先把玩家补回等量生命 (等效于这次掉血被"搬走"), 再把伤害拍给替身。
+        // ⚠ 转移伤害必须【无来源】(dealer=null, 2026-09-20 实测):
+        //   若保留原攻击者为来源, 当替身恰好是攻击者本身、且其带有荆棘类
+        //   "伤害来源"反制 Power 时, 会 自伤 → 再触发 → 死循环 (蜂群术士 ENTOMANCER 卡死)。
+        //   null 来源同时保证不会递归进入本钩子 (本钩子对 dealer==null 直接跳过)。
         await CreatureCmd.Heal(Owner, hpLost);
-        await CreatureCmd.Damage(choiceContext, victim, hpLost, ValueProp.Unblockable, dealer, null, null);
+        await CreatureCmd.Damage(choiceContext, victim, hpLost, ValueProp.Unblockable, null, null, null);
     }
 
     /// <summary>敌方回合收尾时散去 (保证敌方回合内的攻击已被转移)。</summary>
