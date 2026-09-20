@@ -10,21 +10,26 @@ using yyl_sts2_mod.Code.Abstract;
 namespace yyl_sts2_mod.Code.Powers;
 
 /// <summary>
-///     太极: 持有者<b>未被格挡的伤害</b>转移到一名随机敌人 (借力打力)。
+///     太极: 敌方对你的<b>真实攻击</b>原封不动转嫁给一名随机敌人 (借力打力)。
 ///     <para>
-///         [重做 2026-09-20] 参考原版「倒映」(ReflectPower) 用 <b>AfterDamageReceived</b>
-///         事件钩子: 玩家每受到一次敌方来源的真实攻击伤害, 取
-///         <see cref="DamageResult.UnblockedDamage" /> (穿过格挡的部分), 先把等量生命
-///         补回玩家, 再把这笔伤害以<b>无来源</b>拍给随机敌人 (Unblockable, 足额落地)。
+///         [重做 2026-09-20 晚] 主路径 = <see cref="Patches.TaiChiRedirectPatch" /> /
+///         <see cref="Patches.TaiChiRedirectMultiPatch" /> 的 Harmony 目标改写:
+///         敌方攻击的目标被改写成随机敌人, 伤害数值/格挡结算/易伤等<b>原封不动</b>,
+///         你不掉血, 同时把 dealer 置 null —— 反汇编确认蜂群术士的蜂巢
+///         (PersonalHivePower, 受攻击时给攻击者塞晕眩牌) 对 dealer==null 的伤害
+///         直接跳过, 不会重演"往怪物手里塞牌→卡死"。
 ///     </para>
 ///     <para>
-///         ★两个必须遵守的约束 (都来自实战卡死):
-///         ① <b>不保留 Harmony 目标改写补丁</b> —— 改写攻击目标会让"怪物攻击怪物",
-///         触发蜂群术士蜂巢 (PersonalHive, 受攻击时给攻击者塞晕眩牌) 这类
-///         假设"攻击者是玩家"的怪物 Power, 往怪物手里塞牌直接卡死;
-///         ② 转移伤害<b>无来源 + 只响应 IsPoweredAttack</b> —— 反噬/Power 伤害
-///         (非 Move) 不会再次进入本钩子, 且无来源不触发按来源反制的 Power。
-///         回合结束 (敌方回合收尾) 自动移除, 保护窗口 = 打出后的本回合 + 敌方回合。
+///         ★两条铁律 (都来自实战卡死):
+///         ① 重定向必须伴随 dealer=null —— 保留原攻击者等于"怪物攻击怪物";
+///         ② 只转嫁 <see cref="ValuePropExtensions.IsPoweredAttack" /> 且敌方来源的
+///         伤害 —— 中毒/状态/自伤类一律不动。
+///     </para>
+///     <para>
+///         下面的 <see cref="AfterDamageReceived" /> 事件转移 (倒映式) 保留作
+///         未覆盖路径的兜底: 重定向成功时玩家掉血为 0, 该钩子因 target != Owner
+///         自然跳过, 两条路径互斥。回合结束 (敌方回合收尾) 自动移除,
+///         保护窗口 = 打出后的本回合 + 敌方回合。
 ///     </para>
 /// </summary>
 public sealed class TaiChiMark : yylPowerModel
