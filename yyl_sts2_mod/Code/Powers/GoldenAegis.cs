@@ -4,28 +4,38 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
-using yyl_sts2_mod.Code.Patches;
 
 namespace yyl_sts2_mod.Code.Powers;
 
-public class GoldenAegis : yylPowerModel, IModifyDamageAdditive
+public class GoldenAegis : yylPowerModel
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public decimal ModifyDamageAdditiveCompability(
-        Creature? target,
+    // ⚠ 减伤挂点 (2026-09-20 重做): 此前实现为 IModifyDamageAdditive (伤害管线加法阶段),
+    //   但伤害管线在格挡后有"至少掉 1 血"的下限钳制 —— 层数再高也剩 1 点, 减不到 0。
+    //   现改为 override 原版掉血修正钩子 ModifyHpLostAfterOstyLate (原版遗物「钨合金棍」
+    //   TungstenRod / BufferPower 同款阶段): 伤害 → 格挡 → 表观掉血(下限1) → 本钩子,
+    //   在这里可以减到 0。
+    //   代价: 敌方意图预览不再显示金光减免后的数字 (钨合金棍同款行为)。
+    public override decimal ModifyHpLostAfterOstyLate(
+        Creature target,
         decimal amount,
         ValueProp props,
         Creature? dealer,
-        CardModel? cardSource,
-        CardPlay? cardPlay)
+        CardModel? cardSource)
     {
         if (target != Owner || props.HasFlag(ValueProp.Unpowered))
-            return 0m;
+            return amount;
 
-        // 基础每层减伤 2 点; 「守势」会再往上加 (升级 +2)。
+        // 只减"敌方来源"的掉血: dealer 为空 (中毒/状态牌/自伤类 LoseHp) 或来自己方
+        // (联机误伤) 时不减 —— 否则燃炁/拉伤这类固定代价也会被金光吃掉。
+        if (dealer == null || dealer.Side == Owner.Side)
+            return amount;
+
+        // 基础每层减伤 2 点; 「守势」会再往上加 (升级后每层 +1)。
         var perStack = 2m + (Owner.GetPower<ShouShi>()?.Amount ?? 0m);
-        return -Math.Min(amount, Amount * perStack);
+        // 减到 0 为止 (掉血阶段没有下限钳制, 这是与伤害阶段实现的本质区别)。
+        return Math.Max(0m, amount - Amount * perStack);
     }
 }
