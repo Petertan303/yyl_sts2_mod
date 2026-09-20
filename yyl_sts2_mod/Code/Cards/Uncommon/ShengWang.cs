@@ -44,12 +44,12 @@ public sealed class ShengWang(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 从手牌选 1 张 (必须用 CardSelectCmd.FromCombatPile, 见移穴的实现笔记)。
+        // 从手牌选 1 张 (原版 FromHand 选牌 UI; 排除自身, 避免自降费用又自加费用)。
         var hand = PileType.Hand.GetPile(Owner);
         if (hand == null || hand.Cards.Count == 0) return;
 
         var prefs = new CardSelectorPrefs(SelectionScreenPrompt, 1);
-        var selected = (await CardSelectCmd.FromCombatPile(choiceContext, hand, Owner, prefs)).ToList();
+        var selected = (await CardSelectCmd.FromHand(choiceContext, Owner, prefs, c => c != cardPlay.Card, this)).ToList();
         if (selected.Count == 0) return;
 
         // 被选的牌: 本场战斗费用 -1 (AddThisCombat 负偏移, 只降不升)。

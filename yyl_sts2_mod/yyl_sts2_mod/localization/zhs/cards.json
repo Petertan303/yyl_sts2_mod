@@ -157,5 +157,7 @@
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "每回合开始时获得{GoldenWard:diff()}层[gold]金光护体[/gold]。",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "金光护体源",
   "YYL_STS2_MOD-QUICKSTEP.description": "抽{Cards:diff()}张牌。",
-  "YYL_STS2_MOD-SHIFT_STEP.selectionScreenPrompt": "选择1张手牌消耗。"
+  "YYL_STS2_MOD-SHIFT_STEP.selectionScreenPrompt": "选择1张手牌消耗。",
+  "YYL_STS2_MOD-RECYCLE.title": "回收",
+  "YYL_STS2_MOD-RECYCLE.description": "消耗手牌中的1张牌，获得等同其费用的能量。"
 }

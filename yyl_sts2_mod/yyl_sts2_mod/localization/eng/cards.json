@@ -157,5 +157,7 @@
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "At the start of each turn, gain {GoldenWard:diff()} [gold]Golden Aegis[/gold].",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "Golden Aegis Source",
   "YYL_STS2_MOD-QUICKSTEP.description": "Draw {Cards:diff()} card(s).",
-  "YYL_STS2_MOD-SHIFT_STEP.selectionScreenPrompt": "Choose a card to Exhaust."
+  "YYL_STS2_MOD-SHIFT_STEP.selectionScreenPrompt": "Choose a card to Exhaust.",
+  "YYL_STS2_MOD-RECYCLE.title": "Recycle",
+  "YYL_STS2_MOD-RECYCLE.description": "Exhaust a card in your hand. Gain Energy equal to its cost."
 }
