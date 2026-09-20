@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -34,6 +34,7 @@ public sealed class DarkHumor(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
         // 为非队友的奶龙回复 20 HP (自己也可能算在内 —— 大瓶黄桃罐头会把玩家也视为奶龙)。

@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -42,6 +42,7 @@ public sealed class Offering(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
 

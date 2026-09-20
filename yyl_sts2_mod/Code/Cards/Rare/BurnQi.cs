@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,6 +10,7 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
@@ -36,6 +37,7 @@ public sealed class BurnQi(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         // 代价是"失去生命"而非伤害: 不走伤害管线, 不吃格挡、不吃炁/姿态/遗物的增减伤。
         // (之前用 CreatureCmd.Damage 实现, 自伤会被炁增伤乘区放大 —— 已改 yylCmd.LoseHp。)
         yylCmd.LoseHp(Owner.Creature, DynamicVars["HpLoss"].IntValue);

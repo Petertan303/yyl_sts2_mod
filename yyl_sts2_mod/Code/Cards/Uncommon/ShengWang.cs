@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.CardSelection;
@@ -44,6 +44,7 @@ public sealed class ShengWang(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         // 从手牌选 1 张 (原版 FromHand 选牌 UI; 排除自身, 避免自降费用又自加费用)。
         var hand = PileType.Hand.GetPile(Owner);
         if (hand == null || hand.Cards.Count == 0) return;
