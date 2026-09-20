@@ -66,8 +66,12 @@ public sealed class PalmThunder(
         await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
 
         // 2. 攻击: 伤害变量自带金光加成 (活 calc, 与预览同源)。
-        await CommonActions.CardAttack(this, cardPlay)
-            .WithHitCount(DynamicVars.Repeat.IntValue)
+        //    ⚠ 必须显式传伤害数值: 无参 CardAttack 内部按强类型读 DynamicVars.Damage,
+        //    而 "Damage" 已被 CustomCalculatedDamageVar 替换, 强转 DamageVar 会抛
+        //    InvalidCastException → OnPlay 中断 → 卡卡在待打出区 (2026-09-20 实测)。
+        //    读取也必须用弱类型访问器 DynamicVars["Damage"]。
+        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
+                ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
 

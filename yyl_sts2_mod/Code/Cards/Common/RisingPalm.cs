@@ -40,7 +40,8 @@ public sealed class RisingPalm(
         var target = cardPlay.Target!;
         if (target == null) return;
         // 伤害变量自带金光加成 (活 calc, 与预览同源); 不消耗护体。
-        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue,
+        // ⚠ 用弱类型访问器: 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
+        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
                 ValueProp.Move)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);

@@ -68,10 +68,17 @@ public sealed class WhiteWorm(
         await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
 
         // 先结算攻击: calc 会在读取伤害时根据"是否拥有金光护体"给出 +1/次。
-        await CommonActions.CardAttack(this, cardPlay)
-            .WithHitCount(DynamicVars.Repeat.IntValue)
-            .WithHitFx("vfx/vfx_attack_slash")
-            .Execute(choiceContext);
+        // ⚠ 同掌心雷 (2026-09-20): 必须显式传数值 + 弱类型访问器 DynamicVars["Damage"] ——
+        // 无参 CardAttack / 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
+        var damage = DynamicVars["Damage"].IntValue;
+        foreach (var enemy in CombatState?.HittableEnemies ?? [])
+        {
+            if (enemy == null || !enemy.IsHittable) continue;
+            await CommonActions.CardAttack(this, cardPlay, enemy, damage,
+                    ValueProp.Unblockable, hitCount: DynamicVars.Repeat.IntValue)
+                .WithHitFx("vfx/vfx_attack_slash")
+                .Execute(choiceContext);
+        }
 
         // 攻击结算完再消耗 1 层金光护体 (这样本次攻击已经吃到 +1, 消耗发生在之后)。
         if (Owner.HasPower<GoldenAegis>())

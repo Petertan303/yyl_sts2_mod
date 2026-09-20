@@ -47,11 +47,19 @@ public sealed class FiveThunderLaw(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 伤害变量自带金光加成 (活 calc, 与预览同源); 攻击结算完再消耗金光。
-        await CommonActions.CardAttack(this, cardPlay)
-            .WithHitCount(DynamicVars.Repeat.IntValue)
-            .WithHitFx("vfx/vfx_attack_slash")
-            .Execute(choiceContext);
+        // 伤害变量自带金光加成 (活 calc, 与预览同源)。
+        // ⚠ 同掌心雷: 显式传数值 + 弱类型访问器 DynamicVars["Damage"] ——
+        // 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException (卡死在待打出区)。
+        var hits = DynamicVars.Repeat.IntValue;
+        var damage = DynamicVars["Damage"].IntValue;
+        foreach (var enemy in CombatState?.HittableEnemies ?? [])
+        {
+            if (enemy == null || !enemy.IsHittable) continue;
+            await CommonActions.CardAttack(this, cardPlay, enemy, damage,
+                    ValueProp.Move, hitCount: hits)
+                .WithHitFx("vfx/vfx_attack_slash")
+                .Execute(choiceContext);
+        }
 
         // 攻击结算完再消耗 1 层金光护体。
         if (Owner.HasPower<GoldenAegis>())

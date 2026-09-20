@@ -39,7 +39,8 @@ public sealed class BorrowForce(
         var target = cardPlay.Target!;
         if (target == null) return;
         // 伤害变量自带虚弱条件加成 (活 calc, 预览指向虚弱敌人时显示 12)。
-        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue,
+        // ⚠ 用弱类型访问器: 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
+        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
                 ValueProp.Move)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
