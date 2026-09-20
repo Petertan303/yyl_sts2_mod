@@ -44,7 +44,7 @@
   "YYL_STS2_MOD-QI_INFANT.description": "Old Farmer's Art. Your next turn is taken over by the Qi Infant, which automatically plays every playable card.",
   "YYL_STS2_MOD-QI_INFANT.smartDescription": "Your next turn is taken over by the Qi Infant, which automatically plays every playable card.",
   "YYL_STS2_MOD-QI_INFANT.title": "Qi Infant",
-  "YYL_STS2_MOD-REBIRTH_STANCE_ONE.description": "The first time you gain Block each turn, that Block is doubled.",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE.description": "The first Block you gain each turn is doubled.",
   "YYL_STS2_MOD-REBIRTH_STANCE_ONE.smartDescription": "The first time you gain Block each turn, that Block is doubled.",
   "YYL_STS2_MOD-REBIRTH_STANCE_ONE.title": "Reverse Life I",
   "YYL_STS2_MOD-REBIRTH_STANCE_THREE.description": "Retain the Reverse Life II effect. At the start of the turn, gain 1 Intangible.",
@@ -94,5 +94,8 @@
   "YYL_STS2_MOD-PURITY_VEIL.description": "Pure mind wards off evil.\nDebuffs have no effect on you this turn.",
   "YYL_STS2_MOD-CARD_GLOW_DRIVER.title": "Qi Sense",
   "YYL_STS2_MOD-CARD_GLOW_DRIVER.description": "Qi flows around you. (hidden mechanic: glows when conditions are met)",
-  "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "Qi flows around you."
+  "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "Qi flows around you.",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.title": "Reverse Life 1",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.description": "The first Block you gain each turn is doubled.",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.smartDescription": "The first Block you gain each turn is doubled."
 }

@@ -94,5 +94,8 @@
   "YYL_STS2_MOD-XING_QI.smartDescription": "失去炁时抽 [blue]1[/blue] 张牌。'\\n}",
   "YYL_STS2_MOD-CARD_GLOW_DRIVER.title": "炁感",
   "YYL_STS2_MOD-CARD_GLOW_DRIVER.description": "炁在周身流转。(隐藏机制: 条件牌满足时发光)",
-  "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "炁在周身流转。"
+  "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "炁在周身流转。",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.title": "逆生一重",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.description": "每回合第一次获得格挡时，该次格挡翻倍。",
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.smartDescription": "每回合第一次获得格挡时，该次格挡翻倍。"
 }
