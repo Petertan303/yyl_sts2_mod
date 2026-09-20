@@ -62,15 +62,11 @@ public class yylModel() : CustomSingletonModel(HookType.Combat)
         if (newCanonical is RebirthStanceOne)
         {
             if (ward == null)
-            {
                 await PowerCmd.Apply<RebirthStanceOnePower>(ctx, new[] { player.Creature }, 1m, player.Creature, source);
-                GD.PushError("[yyl][dbg] RebirthOneWard APPLIED (stance entered)");
-            }
         }
         else if (ward != null)
         {
             await PowerCmd.Remove(ward);
-            GD.PushError("[yyl][dbg] RebirthOneWard REMOVED (stance exited)");
         }
 
         yylAnim.ResetStanceTint(player.Creature);
