@@ -35,10 +35,10 @@ public sealed class FiveThunderLaw(
 {
     public FiveThunderLaw() : this(3, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
-        WithDamage(3, 1);
+        // 主伤害 = 3 → 4, 活 calc: 有金光时预览也显示 +1 (白长虫模式)。
+        WithCalculatedDamage("Damage", 3,
+            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? 1 : 0, default(ValueProp), 1, 0);
         WithVars(new RepeatVar(5));
-        // 消耗金光护体时每段额外伤害 (卡面用)
-        WithCalculatedDamage("Bonus", 1, (_, _) => 0m, 0, 0, 0);
         // 金光护体联动: 声明 -1 层供 ApplySelf 消耗 (与掌心雷同款写法)。
         WithPower<GoldenAegis>(-1);
         // 仅用于卡面显示: 这次要消耗几层
@@ -47,21 +47,14 @@ public sealed class FiveThunderLaw(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 若身上有金光护体, 本次每段伤害 +1 (先攻击吃到加成, 再消耗)。
-        var hasAegis = Owner.HasPower<GoldenAegis>();
-        var damage = DynamicVars.Damage.IntValue + (hasAegis ? DynamicVars["Bonus"].IntValue : 0);
-        var hits = DynamicVars.Repeat.IntValue;
-
-        foreach (var enemy in CombatState?.HittableEnemies ?? [])
-        {
-            if (enemy == null || !enemy.IsHittable) continue;
-            await CommonActions.CardAttack(this, cardPlay, enemy, damage, ValueProp.Move, hitCount: hits)
-                .WithHitFx("vfx/vfx_attack_slash")
-                .Execute(choiceContext);
-        }
+        // 伤害变量自带金光加成 (活 calc, 与预览同源); 攻击结算完再消耗金光。
+        await CommonActions.CardAttack(this, cardPlay)
+            .WithHitCount(DynamicVars.Repeat.IntValue)
+            .WithHitFx("vfx/vfx_attack_slash")
+            .Execute(choiceContext);
 
         // 攻击结算完再消耗 1 层金光护体。
-        if (hasAegis)
+        if (Owner.HasPower<GoldenAegis>())
             await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
     }
 }

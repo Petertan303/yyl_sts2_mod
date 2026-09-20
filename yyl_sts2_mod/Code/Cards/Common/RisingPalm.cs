@@ -30,17 +30,17 @@ public sealed class RisingPalm(
 {
     public RisingPalm() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
-        WithDamage(6, 2);
-        // 有金光护体时的额外伤害 (卡面用)
-        WithCalculatedDamage("Bonus", 3, (_, _) => 0m, 0, 1, 0);
+        // 主伤害 = 6 → 8, 活 calc: 有金光时改为 9 → 12, 预览与结算同源。
+        WithCalculatedDamage("Damage", 6,
+            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? 3 : 0, default(ValueProp), 2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var target = cardPlay.Target!;
         if (target == null) return;
-        var bonus = Owner.HasPower<GoldenAegis>() ? DynamicVars["Bonus"].IntValue : 0;
-        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue + bonus,
+        // 伤害变量自带金光加成 (活 calc, 与预览同源); 不消耗护体。
+        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue,
                 ValueProp.Move)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);

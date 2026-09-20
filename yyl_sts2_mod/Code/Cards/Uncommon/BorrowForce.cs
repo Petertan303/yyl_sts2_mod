@@ -28,17 +28,18 @@ public sealed class BorrowForce(
 {
     public BorrowForce() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
-        WithDamage(7, 2);
-        // 目标虚弱时的额外伤害 (卡面用)
-        WithCalculatedDamage("Bonus", 5, (_, _) => 0m, 0, 1, 0);
+        // 主伤害 = 7 → 9, 活 calc: 目标有虚弱时改为 12 → 15, 预览与结算同源。
+        WithCalculatedDamage("Damage", 7,
+            (card, creature) => creature != null && creature.HasPower<WeakPower>() ? 5 : 0,
+            default(ValueProp), 2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var target = cardPlay.Target!;
         if (target == null) return;
-        var bonus = target.HasPower<WeakPower>() ? DynamicVars["Bonus"].IntValue : 0;
-        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue + bonus,
+        // 伤害变量自带虚弱条件加成 (活 calc, 预览指向虚弱敌人时显示 12)。
+        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue,
                 ValueProp.Move)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);

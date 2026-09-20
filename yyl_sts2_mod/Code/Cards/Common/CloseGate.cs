@@ -29,14 +29,17 @@ public sealed class CloseGate(
 {
     public CloseGate() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
+        // 格挡变量是普通的, 无法在预览里体现金光加成; 卡面 {Bonus} 用活 calc 提示:
+        // 有金光护体时显示 4 (实际获得 5+4=9 → 7+4=11), 没有时显示 0。
         WithBlock(5, 2);
-        // 有金光护体时的额外格挡 (卡面用)
-        WithCalculatedDamage("Bonus", 4, (_, _) => 0m, 0, 0, 0);
+        WithCalculatedDamage("Bonus", 0,
+            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? 4 : 0, default(ValueProp), 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var bonus = Owner.HasPower<GoldenAegis>() ? DynamicVars["Bonus"].IntValue : 0;
+        // 金光加成维持显式计算 (Block 变量无法活 calc); 数值与卡面 {Bonus} 同源 (4)。
+        var bonus = Owner.HasPower<GoldenAegis>() ? 4 : 0;
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block.IntValue + bonus,
             ValueProp.Move, cardPlay);
     }

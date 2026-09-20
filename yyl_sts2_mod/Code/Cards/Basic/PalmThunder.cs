@@ -3,8 +3,10 @@ using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
@@ -38,16 +40,22 @@ public sealed class PalmThunder(
 {
     public PalmThunder() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
     {
-        WithDamage(3, 1);
+        // 主伤害 = 3 → 4, 活 calc: 预览与结算同源 (白长虫模式) —— 有金光时预览也显示 +1。
+        WithCalculatedDamage("Damage", 3,
+            (card, _) => BonusFor(card, card.Owner.Creature), default(ValueProp), 1, 0);
         WithVars(new RepeatVar(2));
-        // 消耗金光护体时每段额外伤害 (卡面用)
-        WithCalculatedDamage("Bonus", 1, (_, _) => 0m, 0, 0, 0);
+        // 卡面"本次每段伤害提高 {Bonus} 点": 有金光显示 1, 没有显示 0 (与金光高亮一致)。
+        WithCalculatedDamage("Bonus", 0, BonusFor, default(ValueProp), 0, 0);
         WithPower<VulnerablePower>(1, 1);
         // 金光护体联动: 声明 -1 层供 ApplySelf 消耗, 与白长虫 (WhiteWorm) 同一写法。
         WithPower<GoldenAegis>(-1);
         // 仅用于卡面显示: 这次要消耗几层
         WithPower<GoldenAegis>("AegisCost", 1, 0);
     }
+
+    /// <summary>金光联动的单一事实来源: 预览 bonusFunc 与 OnPlay 共用。(必须返回 decimal —— 方法组转换不做 int→decimal 装箱)</summary>
+    internal static decimal BonusFor(CardModel card, Creature? self)
+        => self != null && self.HasPower<GoldenAegis>() ? 1m : 0m;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -57,17 +65,14 @@ public sealed class PalmThunder(
         // 1. 先施加易伤 (让本次攻击直接吃到 1.5x)。
         await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
 
-        // 2. 攻击: 若身上有金光护体, 本次每段伤害 +1。
-        //    用显式数值攻击 (同破防 GuardBreak 的写法), 避免改 BaseValue 的副作用。
-        var hasAegis = Owner.HasPower<GoldenAegis>();
-        var damage = DynamicVars.Damage.IntValue + (hasAegis ? DynamicVars["Bonus"].IntValue : 0);
-        await CommonActions.CardAttack(this, cardPlay, target, damage, ValueProp.Move,
-                hitCount: DynamicVars.Repeat.IntValue)
+        // 2. 攻击: 伤害变量自带金光加成 (活 calc, 与预览同源)。
+        await CommonActions.CardAttack(this, cardPlay)
+            .WithHitCount(DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
 
         // 3. 攻击结算完再消耗 1 层金光护体 (保证本次攻击已经吃到 +1)。
-        if (hasAegis)
+        if (Owner.HasPower<GoldenAegis>())
             await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
     }
 }
