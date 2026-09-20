@@ -12,15 +12,18 @@ namespace yyl_sts2_mod.Code.Powers;
 /// <summary>
 ///     太极: 持有者<b>未被格挡的伤害</b>转移到一名随机敌人 (借力打力)。
 ///     <para>
-///         [重做 2026-09-20] 旧实现 (Harmony 前缀改写 CreatureCmd.Damage 单体目标)
-///         从未对敌方攻击生效 —— 敌方 AI 不走那 6 个单体重载。现参考原版「倒映」
-///         (ReflectPower) 改用 <b>AfterDamageReceived</b> 事件钩子: 玩家每受到一次
-///         敌方来源的伤害, 取 <see cref="DamageResult.UnblockedDamage" /> (穿过格挡的
-///         部分), 先把等量生命补回玩家, 再以原攻击者为来源把这笔伤害拍给随机敌人
-///         (Unblockable, 保证足额落地)。
-///         Harmony 前缀 (<see cref="Patches.TaiChiRedirectPatch" />) 保留作"干净路径"
-///         —— 若某次伤害真的走了 CreatureCmd.Damage 且被成功重定向, 玩家掉血为 0,
-///         本事件钩子因 UnblockedDamage=0 自然不触发, 两条路径互斥不叠加。
+///         [重做 2026-09-20] 参考原版「倒映」(ReflectPower) 用 <b>AfterDamageReceived</b>
+///         事件钩子: 玩家每受到一次敌方来源的真实攻击伤害, 取
+///         <see cref="DamageResult.UnblockedDamage" /> (穿过格挡的部分), 先把等量生命
+///         补回玩家, 再把这笔伤害以<b>无来源</b>拍给随机敌人 (Unblockable, 足额落地)。
+///     </para>
+///     <para>
+///         ★两个必须遵守的约束 (都来自实战卡死):
+///         ① <b>不保留 Harmony 目标改写补丁</b> —— 改写攻击目标会让"怪物攻击怪物",
+///         触发蜂群术士蜂巢 (PersonalHive, 受攻击时给攻击者塞晕眩牌) 这类
+///         假设"攻击者是玩家"的怪物 Power, 往怪物手里塞牌直接卡死;
+///         ② 转移伤害<b>无来源 + 只响应 IsPoweredAttack</b> —— 反噬/Power 伤害
+///         (非 Move) 不会再次进入本钩子, 且无来源不触发按来源反制的 Power。
 ///         回合结束 (敌方回合收尾) 自动移除, 保护窗口 = 打出后的本回合 + 敌方回合。
 ///     </para>
 /// </summary>
@@ -43,6 +46,10 @@ public sealed class TaiChiMark : yylPowerModel
         if (target != Owner) return;
         // 只转嫁敌方来源 (dealer 为空 = 中毒/状态牌/自伤类, 不转嫁)。
         if (dealer == null || dealer.Side == Owner.Side) return;
+        // ★只转嫁【真实攻击】的伤害 (原版倒映 ReflectPower 同款过滤器)。
+        //   反噬/Power 产生的伤害不是 Move, 不会再次进入本钩子 ——
+        //   蜂群术士 (ENTOMANCER) "受伤→反噬→再转移→再反噬"死循环的修复点。
+        if (!ValuePropExtensions.IsPoweredAttack(props)) return;
 
         var hpLost = result.UnblockedDamage;
         if (hpLost <= 0) return;
