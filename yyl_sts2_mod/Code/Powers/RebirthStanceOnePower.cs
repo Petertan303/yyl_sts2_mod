@@ -47,7 +47,9 @@ public sealed class RebirthStanceOnePower : yylPowerModel
         CardModel? cardSource,
         CardPlay? cardPlay)
     {
-        if (target != Owner || props.HasFlag(ValueProp.Unpowered) || FirstBlockUsed[target])
+        var used = FirstBlockUsed[target];
+        Godot.GD.PushError($"[yyl][dbg] RebirthOneWard.ModifyBlock: target==Owner:{target == Owner} props:{props} used:{used} amount:{blockAmount}");
+        if (target != Owner || props.HasFlag(ValueProp.Unpowered) || used)
             return 1m;
 
         FirstBlockUsed[target] = true;
