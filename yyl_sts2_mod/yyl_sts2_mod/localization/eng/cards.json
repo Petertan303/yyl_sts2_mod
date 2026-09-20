@@ -9,7 +9,6 @@
   "YYL_STS2_MOD-YYL_DEFEND.title": "Defend",
   "YYL_STS2_MOD-YYL_STRIKE.description": "Deal {Damage:diff()} damage.",
   "YYL_STS2_MOD-YYL_STRIKE.title": "Strike",
-
   "YYL_STS2_MOD-BURST_FIST.description": "Deal {Damage:diff()} damage. If you gained [gold]Qi[/gold] this turn, gain {Energy:diff()} Energy.",
   "YYL_STS2_MOD-BURST_FIST.title": "Burst Fist",
   "YYL_STS2_MOD-CHAIN_THUNDER.description": "Deal {Damage:diff()} damage, and {Splash:diff()} damage to another random enemy.",
@@ -46,7 +45,7 @@
   "YYL_STS2_MOD-RELAX_TENDON.title": "Loosen Tendons",
   "YYL_STS2_MOD-RISING_PALM.description": "Deal {Damage:diff()} damage. If you have [gold]Golden Aegis[/gold], deal {Bonus:diff()} more damage.",
   "YYL_STS2_MOD-RISING_PALM.title": "Rising Palm",
-  "YYL_STS2_MOD-SHIFT_STEP.description": "Draw {Cards:diff()} card(s), then Exhaust 1 random card in your hand.",
+  "YYL_STS2_MOD-SHIFT_STEP.description": "Draw {Cards:diff} card(s), then choose a card in your hand to Exhaust.",
   "YYL_STS2_MOD-SHIFT_STEP.title": "Shift Step",
   "YYL_STS2_MOD-SIDE_KICK.description": "Deal {Damage:diff()} damage. Gain {Block:diff()} [gold]Block[/gold].",
   "YYL_STS2_MOD-SIDE_KICK.title": "Side Kick",
@@ -57,7 +56,6 @@
   "YYL_STS2_MOD-YIN_GUANG.title": "Draw Light",
   "YYL_STS2_MOD-YIN_QI.description": "The next time you play an Attack, gain {YinQi:diff()} [gold]Qi[/gold].",
   "YYL_STS2_MOD-YIN_QI.title": "Qi Draw",
-
   "YYL_STS2_MOD-ACUPOINT_SHIFT.description": "Gain {Block:diff()} [gold]Block[/gold], lose {QiLoss:diff()} [gold]Qi[/gold], then choose 1 card from your draw pile and add it to your hand.",
   "YYL_STS2_MOD-ACUPOINT_SHIFT.selectionScreenPrompt": "Choose 1 card to add to your hand",
   "YYL_STS2_MOD-ACUPOINT_SHIFT.title": "Acupoint Shift",
@@ -110,7 +108,6 @@
   "YYL_STS2_MOD-YIN_LEI.title": "Thunder Call",
   "YYL_STS2_MOD-ZEAL.description": "Gain {Fervor:diff()} [gold]Fervor[/gold]. Each stack deals extra damage to [gold]Nailong[/gold].",
   "YYL_STS2_MOD-ZEAL.title": "Zeal",
-
   "YYL_STS2_MOD-BLOOD_THUNDER.description": "Deal {Damage:diff()} damage. Add a [gold]Strain[/gold] to your discard pile.",
   "YYL_STS2_MOD-BLOOD_THUNDER.title": "Blood Thunder",
   "YYL_STS2_MOD-BURN_QI.description": "Lose {HpLoss:diff()} HP. Gain {Qi:diff()} [gold]Qi[/gold]. Draw {Cards:diff()} cards.",
@@ -147,21 +144,18 @@
   "YYL_STS2_MOD-YIN_SHA.title": "Silkworm Frost",
   "YYL_STS2_MOD-ZHU_XIE.description": "Deal {Damage:diff()} damage. If this kills, the lowest-HP enemy at {Threshold:diff()} HP or below dies.",
   "YYL_STS2_MOD-ZHU_XIE.title": "Zhu Xie",
-
   "YYL_STS2_MOD-WARDING_BLADE.description": "Deal {Damage:diff()} damage {Repeat:diff()} times. If the target has [gold]Vulnerable[/gold], [gold]Weak[/gold], [gold]Poison[/gold] or the [gold]Nailong[/gold] mark, this damage is doubled.",
   "YYL_STS2_MOD-WARDING_BLADE.title": "Evil-Warding Swordplay",
   "YYL_STS2_MOD-WHITE_WORM.description": "Deal {Damage:diff()} damage {Repeat:diff()} times to ALL enemies, ignoring Block, and apply {VulnerablePower:diff()} [gold]Vulnerable[/gold] and {WeakPower:diff()} [gold]Weak[/gold]. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
   "YYL_STS2_MOD-WHITE_WORM.title": "White Worm",
-
   "YYL_STS2_MOD-REBIRTH_THREE.description": "Enter [gold]Reverse Life III[/gold].",
   "YYL_STS2_MOD-REBIRTH_THREE.title": "Reverse Life III",
   "YYL_STS2_MOD-REBIRTH_TWO.description": "Enter [gold]Reverse Life II[/gold]. Add a Reverse Life III into your hand.",
   "YYL_STS2_MOD-REBIRTH_TWO.title": "Reverse Life II",
-
   "YYL_STS2_MOD-LA_SHANG.description": "Unplayable. At the end of your turn, if this is in your hand, lose {HpLoss:diff()} HP.",
   "YYL_STS2_MOD-LA_SHANG.title": "Strain",
-
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "At the start of each turn, gain {GoldenWard:diff()} [gold]Golden Aegis[/gold].",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "Golden Aegis Source",
-  "YYL_STS2_MOD-QUICKSTEP.description": "Draw {Cards:diff()} card(s)."
+  "YYL_STS2_MOD-QUICKSTEP.description": "Draw {Cards:diff()} card(s).",
+  "YYL_STS2_MOD-SHIFT_STEP.selectionScreenPrompt": "Choose a card to Exhaust."
 }

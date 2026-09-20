@@ -9,7 +9,6 @@
   "YYL_STS2_MOD-YYL_DEFEND.title": "防御",
   "YYL_STS2_MOD-YYL_STRIKE.description": "造成{Damage:diff()}点伤害。",
   "YYL_STS2_MOD-YYL_STRIKE.title": "打击",
-
   "YYL_STS2_MOD-BURST_FIST.description": "造成{Damage:diff()}点伤害。若你本回合获得过[gold]炁[/gold]，获得{Energy:diff()}点能量。",
   "YYL_STS2_MOD-BURST_FIST.title": "崩拳",
   "YYL_STS2_MOD-CHAIN_THUNDER.description": "造成{Damage:diff()}点伤害，并随机对另一名敌人造成{Splash:diff()}点伤害。",
@@ -46,7 +45,7 @@
   "YYL_STS2_MOD-RELAX_TENDON.title": "舒筋",
   "YYL_STS2_MOD-RISING_PALM.description": "造成{Damage:diff()}点伤害。若你有[gold]金光护体[/gold]，本次伤害提高{Bonus:diff()}点。",
   "YYL_STS2_MOD-RISING_PALM.title": "撩掌",
-  "YYL_STS2_MOD-SHIFT_STEP.description": "抽{Cards:diff()}张牌，然后随机消耗1张手牌。",
+  "YYL_STS2_MOD-SHIFT_STEP.description": "抽{Cards:diff()}张牌，然后选择1张手牌消耗。",
   "YYL_STS2_MOD-SHIFT_STEP.title": "套步",
   "YYL_STS2_MOD-SIDE_KICK.description": "造成{Damage:diff()}点伤害，获得{Block:diff()}点[gold]格挡[/gold]。",
   "YYL_STS2_MOD-SIDE_KICK.title": "侧踹",
@@ -57,7 +56,6 @@
   "YYL_STS2_MOD-YIN_GUANG.title": "引光",
   "YYL_STS2_MOD-YIN_QI.description": "下一次打出攻击牌时，获得{YinQi:diff()}点[gold]炁[/gold]。",
   "YYL_STS2_MOD-YIN_QI.title": "引炁",
-
   "YYL_STS2_MOD-ACUPOINT_SHIFT.description": "获得{Block:diff()}点[gold]格挡[/gold]，失去{QiLoss:diff()}点[gold]炁[/gold]，从抽牌堆选择1张牌加入手牌。",
   "YYL_STS2_MOD-ACUPOINT_SHIFT.selectionScreenPrompt": "选择1张牌加入手牌",
   "YYL_STS2_MOD-ACUPOINT_SHIFT.title": "移穴",
@@ -110,7 +108,6 @@
   "YYL_STS2_MOD-YIN_LEI.title": "引雷",
   "YYL_STS2_MOD-ZEAL.description": "获得{Fervor:diff()}层[gold]狂热[/gold]，每层狂热对[gold]奶龙[/gold]额外造成伤害。",
   "YYL_STS2_MOD-ZEAL.title": "狂热",
-
   "YYL_STS2_MOD-BLOOD_THUNDER.description": "造成{Damage:diff()}点伤害，将一张[gold]拉伤[/gold]加入你的弃牌堆。",
   "YYL_STS2_MOD-BLOOD_THUNDER.title": "血雷",
   "YYL_STS2_MOD-BURN_QI.description": "失去{HpLoss:diff()}点生命，获得{Qi:diff()}点[gold]炁[/gold]，抽{Cards:diff()}张牌。",
@@ -126,7 +123,7 @@
   "YYL_STS2_MOD-HEAVENLY_RITE.description": "获得{Qi:diff()}点[gold]炁[/gold]与{GoldenAegis:diff()}层[gold]金光护体[/gold]，并获得1层[gold]天师度[/gold]：每回合结束时失去10点炁。",
   "YYL_STS2_MOD-HEAVENLY_RITE.title": "天师度",
   "YYL_STS2_MOD-MERIDIAN_OPENING.description": "战斗结束时，选择牌组中的1张牌永久附魔[gold]炁脉[/gold]：其打出时额外获得1点[gold]炁[/gold]。",
-  "YYL_STS2_MOD-MERIDIAN_OPENING.rewardDescription": "选择卡牌附魔[gold]炁脉[/go一张卡牌附魔[gold]炁脉[/goldld]。",
+  "YYL_STS2_MOD-MERIDIAN_OPENING.rewardDescription": "选择卡牌附魔[gold]炁脉[/gold]。",
   "YYL_STS2_MOD-MERIDIAN_OPENING.title": "开脉",
   "YYL_STS2_MOD-MOVE_QI.description": "获得{XingQi:diff()}层[gold]行炁[/gold]：每当你失去[gold]炁[/gold]，抽1张牌。",
   "YYL_STS2_MOD-MOVE_QI.title": "行炁",
@@ -147,21 +144,18 @@
   "YYL_STS2_MOD-YIN_SHA.title": "冰蚕寒功",
   "YYL_STS2_MOD-ZHU_XIE.description": "造成{Damage:diff()}点伤害。若斩杀，生命值最低且不高于{Threshold:diff()}点的敌人死亡。",
   "YYL_STS2_MOD-ZHU_XIE.title": "诛邪",
-
   "YYL_STS2_MOD-WARDING_BLADE.description": "造成{Damage:diff()}点伤害{Repeat:diff()}次。若目标带有[gold]易伤[/gold]、[gold]虚弱[/gold]、[gold]中毒[/gold]或[gold]奶龙[/gold]标记，则本次伤害翻倍。",
   "YYL_STS2_MOD-WARDING_BLADE.title": "辟邪剑法",
   "YYL_STS2_MOD-WHITE_WORM.description": "对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次，无视格挡，并给予{VulnerablePower:diff()}层[gold]易伤[/gold]与{WeakPower:diff()}层[gold]虚弱[/gold]。若你有[gold]金光护体[/gold]，消耗1层，本次每段伤害提高{Bonus:diff()}点。",
   "YYL_STS2_MOD-WHITE_WORM.title": "白长虫",
-
   "YYL_STS2_MOD-REBIRTH_THREE.description": "进入[gold]逆生三重[/gold]。",
   "YYL_STS2_MOD-REBIRTH_THREE.title": "逆生三重",
   "YYL_STS2_MOD-REBIRTH_TWO.description": "进入[gold]逆生二重[/gold]。将一张逆生三重放入手牌中。",
   "YYL_STS2_MOD-REBIRTH_TWO.title": "逆生二重",
-
   "YYL_STS2_MOD-LA_SHANG.description": "不可打出。回合结束时若在你手中，失去{HpLoss:diff()}点生命。",
   "YYL_STS2_MOD-LA_SHANG.title": "拉伤",
-
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "每回合开始时获得{GoldenWard:diff()}层[gold]金光护体[/gold]。",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "金光护体源",
-  "YYL_STS2_MOD-QUICKSTEP.description": "抽{Cards:diff()}张牌。"
+  "YYL_STS2_MOD-QUICKSTEP.description": "抽{Cards:diff()}张牌。",
+  "YYL_STS2_MOD-SHIFT_STEP.selectionScreenPrompt": "选择1张手牌消耗。"
 }

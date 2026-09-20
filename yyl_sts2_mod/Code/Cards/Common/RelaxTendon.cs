@@ -16,7 +16,7 @@ namespace yyl_sts2_mod.Code.Cards.Common;
 using MegaCrit.Sts2.Core.Models;
 
 /// <summary>
-///     舒筋: 1 费, 移除自身 {Cards} 层负面状态, 并把它们原样转移到目标敌人身上。消耗。
+///     舒筋: 1 费, 移除自身 2 → 3 层负面状态, 并把它们原样转移到目标敌人身上。消耗。
 ///     <para>
 ///         "净化"里唯一一张能把负面丢回去的牌; 代价是消耗 (一次性)。
 ///         与涤荡(全清但只清自己)、拔罐(每回合慢慢清) 分工明确。
@@ -33,7 +33,7 @@ public sealed class RelaxTendon(
 {
     public RelaxTendon() : this(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
     {
-        WithCards(1, 1);
+        WithCards(2, 1);
         WithKeywords(CardKeyword.Exhaust);
     }
 

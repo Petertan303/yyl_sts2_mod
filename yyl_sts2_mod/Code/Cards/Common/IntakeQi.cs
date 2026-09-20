@@ -15,7 +15,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     纳炁: 1 费, 获得 2 → 3 点炁。
+///     纳炁: 1 费, 获得 1 → 2 点炁。
 ///     最朴素的产炁牌。炁是对数增伤 + 各种花费的资源, 所以产炁一律压低。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -29,7 +29,7 @@ public sealed class IntakeQi(
 {
     public IntakeQi() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithPower<Qi>(2, 1);
+        WithPower<Qi>(1, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

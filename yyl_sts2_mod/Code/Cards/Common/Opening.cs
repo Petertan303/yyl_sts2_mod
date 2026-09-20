@@ -15,8 +15,8 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     破绽: 1 费, 给予 1 → 2 层易伤与 1 层虚弱。
-///     易伤与虚弱一起给, 但都很薄 —— 升级只加易伤, 虚弱层数固定不涨 (浓度收口)。
+///     破绽: 1 费, 给予 2 → 3 层易伤与 2 → 3 层虚弱。
+///     易伤与虚弱一起给, 升级两者同步 +1。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class Opening(
@@ -29,8 +29,8 @@ public sealed class Opening(
 {
     public Opening() : this(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
     {
-        WithPower<VulnerablePower>(1, 1);
-        WithPower<WeakPower>(1, 0);
+        WithPower<VulnerablePower>(2, 1);
+        WithPower<WeakPower>(2, 1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
