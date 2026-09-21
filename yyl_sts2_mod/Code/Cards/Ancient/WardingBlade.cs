@@ -44,13 +44,14 @@ public sealed class WardingBlade(
             DynamicVars.Damage.BaseValue *= 2;
         }
 
-        // 辟邪剑法: 三道剑气<b>依次落在目标身上</b> (第 2/3 道各延后 0.2s), 纵向分布
-        // 在受击者的头顶 / 中段 / 脚尖 —— 飞斩是落点类特效, 挂[受击者]而非施法者
+        // 辟邪剑法: 三道剑气<b>依次落在目标身上</b> (第 2/3 道各延后 0.2s), 纵向分布在
+        // 受击者的头顶 / 中段 / 脚尖 —— 飞斩是落点类特效, 挂[受击者]而非施法者
         // (区别于光束那种从施法者射出的发射类特效)。
         yylVfx.ArcVolley(cardPlay.Target!, "vfx/vfx_flying_slash",
             DynamicVars.Repeat.IntValue, intervalSeconds: 0.2f);
 
         await CommonActions.CardAttack(this, cardPlay)
+            .WithHitCount(DynamicVars.Repeat.IntValue) // ★段数必须显式接上, 否则只结算 1 段
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
     }

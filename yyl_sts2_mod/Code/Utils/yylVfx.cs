@@ -187,54 +187,65 @@ public static class yylVfx
     }
 
     /// <summary>
-    ///     ★弧形齐射 (通用版, 2026-09-21): <paramref name="count" /> 个自播特效场景
-    ///     (NVfxSpine / NVfxParticleSystem 等 _Ready 自动播放的横向特效) 沿
-    ///     <paramref name="target" /> <b>身高方向</b>纵向分布 (spreadFraction=1 时即
-    ///     头顶 / 中段 / 脚尖), 横向排成一段圆弧 (凸向 <paramref name="flipX" /> 的
-    ///     反方向) 并整体偏移 <paramref name="widthFraction" /> 个身宽。
-    ///     <paramref name="intervalSeconds" /> &gt; 0 时改为<b>依次落刀</b>: 第 i 个延后
-    ///     i × interval 秒才入树 (入树 = _Ready = 开始播放), 形成连斩节奏。
+    ///     ★弧形/纵向齐射 (通用版, 2026-09-21): <paramref name="count" /> 个自播特效场景
+    ///     (NVfxSpine / NVfxParticleSystem 等 _Ready 自动播放的横向特效) 沿目标<b>命中盒
+    ///     的垂直分布</b>排列 —— 用 <c>GetTopOfHitbox/GetBottomOfHitbox</c> 拿到头顶与脚底
+    ///     的全局坐标后线性插值, <paramref name="spreadFraction" /> = 1 时正好是
+    ///     头顶 / 中段 / 脚尖。
+    ///     <para>
+    ///         ★为什么不用精灵坐标: 敌人遗物/怪物节点里不一定有 AnimatedSprite2D
+    ///         (FindSprite 返回 null → 退回 Visuals 容器原点=脚底, 且 DisplaySize 为 0
+    ///          → 全部叠在脚底), 这正是"从脚底发出、没有扇形"的根因。命中盒的
+    ///         顶/底部是原版自己定位特效时用的同款数据 (参见 NGrandFinaleImpactVfx
+    ///         的 InitializePositions), 对玩家和敌人都成立。
+    ///     </para>
     ///     <para>
     ///         ★挂载语义: <paramref name="target" /> 既可以是<b>施法者</b> (发射类特效,
-    ///         如光束) 也可以是<b>受击者</b> (落点类特效, 如飞斩飞刀) —— 由调用方决定,
-    ///         两者行为的唯一区别是坐标原点属于谁。
-    ///         与 <see cref="KinBeamColumn" /> 的区别: 不限光束场景、无需触发播放
-    ///         (实例化进树即播), <paramref name="lifeSeconds" /> 后兜底回收。
+    ///         如光束) 也可以是<b>受击者</b> (落点类特效, 如飞斩飞刀) —— 由调用方决定。
+    ///         挂载点为 <c>NCombatRoom.Instance</c> 并显式设置 GlobalPosition (与
+    ///         <see cref="GrandFinaleImpact" /> 的源头一致), 与粒子/精灵缩放无关。
     ///     </para>
+    ///     <paramref name="intervalSeconds" /> &gt; 0 时改为<b>依次落刀</b>: 第 i 个延后
+    ///     i × interval 秒才入树 (入树 = _Ready = 开始播放), 形成连斩节奏。
     /// </summary>
     public static void ArcVolley(Creature target, string path, int count, bool flipX = false,
-        float lifeSeconds = 3.5f, float arcDegrees = 50f, float widthFraction = 0.25f,
-        float spreadFraction = 1f, float intervalSeconds = 0f)
+        float lifeSeconds = 3.5f, float spreadFraction = 1f, float intervalSeconds = 0f,
+        float xOffsetFraction = 0f)
     {
-        var size = DisplaySize(target);
-        var anim = yylAnim.FindSprite(target);
-        var sx = Math.Max(anim?.Scale.X ?? 1f, 0.01f);
-        var sy = Math.Max(anim?.Scale.Y ?? 1f, 0.01f);
-        var halfArc = arcDegrees / 2f;
-        var scene = ResourceLoader.Load<PackedScene>("res://scenes/" + path + ".tscn");
-        if (scene == null)
+        try
         {
-            MainFile.Logger.Error($"yylVfx.ArcVolley({path}): scene load failed");
-            return;
+            if (target == null) return;
+            var room = NCombatRoom.Instance;
+            var creatureNode = room?.GetCreatureNode(target);
+            if (room == null || creatureNode == null)
+            {
+                MainFile.Logger.Error($"yylVfx.ArcVolley({path}): combat room / creature node missing");
+                return;
+            }
+            var scene = ResourceLoader.Load<PackedScene>("res://scenes/" + path + ".tscn");
+            if (scene == null)
+            {
+                MainFile.Logger.Error($"yylVfx.ArcVolley({path}): scene load failed");
+                return;
+            }
+            // 命中盒顶部=头顶, 底部=脚底 (全局坐标)。两者 x 通常相同。
+            var top = creatureNode.GetTopOfHitbox();
+            var bottom = creatureNode.GetBottomOfHitbox();
+            var height = Math.Abs(bottom.Y - top.Y);
+            for (var i = 0; i < count; i++)
+            {
+                var t = count <= 1 ? 0.5f : (float)i / (count - 1); // 0 = 头顶, 1 = 脚底
+                var frac = 0.5f + (t - 0.5f) * spreadFraction; // 以中段为中心上下张开
+                var pos = new Vector2(top.X + height * xOffsetFraction,
+                    Godot.Mathf.Lerp(top.Y, bottom.Y, frac));
+                var node = scene.Instantiate<Node2D>();
+                if (node == null) continue;
+                AttachLater(room, node, i * intervalSeconds, pos, flipX, lifeSeconds, setAsGlobal: true);
+            }
         }
-        Node anchor = yylAnim.FindSprite(target)
-            ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(target)?.Visuals);
-        if (anchor == null)
+        catch (Exception ex)
         {
-            MainFile.Logger.Error($"yylVfx.ArcVolley({path}): creature sprite/visuals not found");
-            return;
-        }
-        for (var i = 0; i < count; i++)
-        {
-            var t = count <= 1 ? 0.5f : (float)i / (count - 1); // 0 = 最上, 1 = 最下
-            // 纵向: 沿身高均匀分布 —— spreadFraction=1 时即头顶 / 中段 / 脚尖三处。
-            var dy = (-0.5f + t) * size.Y * spreadFraction;
-            // 横向: 弧线 (中间那条最凸向敌阵) + 整体偏移 widthFraction 个身宽。
-            var ang = (-halfArc + arcDegrees * t) * MathF.PI / 180f;
-            var dx = MathF.Cos(ang) * size.X * 0.5f + size.X * widthFraction;
-            var node = scene.Instantiate<Node2D>();
-            if (node == null) continue;
-            AttachLater(anchor, node, i * intervalSeconds, new Vector2(dx / sx, dy / sy), flipX, lifeSeconds);
+            MainFile.Logger.Error($"yylVfx.ArcVolley({path}): {ex.Message}");
         }
     }
 
@@ -242,27 +253,32 @@ public static class yylVfx
     ///     延时入树 (2026-09-21 连斩/依次落刀用): 自播场景是<b>入树即播</b>, 所以只要
     ///     延后 AddChild 就能拉出时间间隔。注意 <paramref name="delaySeconds" /> 为 0
     ///     时同步完成挂载 (与旧的同帧齐射行为一致)。目标/节点中途失效则丢弃该次演出。
+    ///     <paramref name="setAsGlobal" /> = true 时 <paramref name="position" /> 按全局坐标
+    ///     解释 (须在 AddChild 之后赋值, 由父节点变换反算局部坐标)。
     /// </summary>
-    private static async void AttachLater(Node anchor, Node2D node, float delaySeconds, Vector2 position,
-        bool flipX, float lifeSeconds)
+    private static async void AttachLater(Node parent, Node2D node, float delaySeconds, Vector2 position,
+        bool flipX, float lifeSeconds, bool setAsGlobal = false)
     {
         try
         {
             if (delaySeconds > 0f)
             {
-                // 节点尚未入树, 用 anchor 所在的 SceneTree 计时。
-                var tree = anchor.GetTree();
+                // 节点尚未入树, 用 parent 所在的 SceneTree 计时。
+                var tree = parent.GetTree();
                 if (tree == null) return;
-                await anchor.ToSignal(tree.CreateTimer(delaySeconds), SceneTreeTimer.SignalName.Timeout);
+                await parent.ToSignal(tree.CreateTimer(delaySeconds), SceneTreeTimer.SignalName.Timeout);
             }
-            if (!GodotObject.IsInstanceValid(anchor) || !GodotObject.IsInstanceValid(node))
+            if (!GodotObject.IsInstanceValid(parent) || !GodotObject.IsInstanceValid(node))
             {
                 if (GodotObject.IsInstanceValid(node))
                     node.QueueFree();
                 return;
             }
-            anchor.AddChild(node);
-            node.Position = position;
+            parent.AddChild(node);
+            if (setAsGlobal)
+                node.GlobalPosition = position;
+            else
+                node.Position = position;
             if (flipX)
                 node.Scale = new Vector2(-1f, 1f);
             RecycleLater(node, lifeSeconds);
