@@ -64,41 +64,50 @@ public static class yylVfx
 
     /// <summary>
     ///     ★怪物特效挪用: 从 <paramref name="spawner" /> 的角色视觉中心发射同族祭司的
-    ///     灵魂光束 (kin_priest_beam, 2026-09-21)。反汇编原版 KinPriest.BeamMove:
-    ///     它把光束挂在 <c>creatureNode.GetSpecialNode("Visuals/Beam")</c> —— 即角色
-    ///     场景内预设挂点 (我们的场景没有该节点), 与角色同坐标系自动跟随。
-    ///     <c>_Ready</c> 无外部依赖可自由实例化; 播放靠 <c>Fire()</c> (旋转摆动 +
-    ///     scale.x 伸出/收回 tween), 完成后仅 Visible=false 不回收 —— 原版复用单实例,
-    ///     我们每次新建, 必须在 <paramref name="lifeSeconds" /> 后 QueueFree。
-    ///     光束贴图朝局部 -X 延伸: 默认 0° 向左, 玩家朝右打敌人传 180°。
-    ///     ⚠不要挂 VfxContainer: 那是全屏层 (原点=屏幕左上角), 跨层定位会错位。
+    ///     灵魂光束 (kin_priest_beam, 2026-09-21)。
+    ///     <para>
+    ///         挂载: 直接 AddChild 到角色的 <see cref="AnimatedSprite2D" /> —— 精灵
+    ///         纹理以节点原点居中, 子节点 (0,0) 天然就是角色视觉中心 (我们的角色
+    ///         立绘画在容器正 Y 轴以上, 挂容器原点会落在脚心); 找不到精灵时退回
+    ///         creatureNode.Visuals。原版是挂场景内预设挂点 "Visuals/Beam", 同理。
+    ///     </para>
+    ///     <para>
+    ///         方向: 光束贴图朝局部 -X 延伸 (原版怪物朝玩家打)。
+    ///         <paramref name="flipX" /> = true 时根节点 Scale.X 取 -1 左右镜像 ——
+    ///         光束改朝 +X (玩家打右侧敌人), 且 Fire() 内部 tween 只动子节点,
+    ///         不会被镜像覆盖。⚠镜像与 180° 旋转不等价 (会把上下也翻)。
+    ///     </para>
+    ///     <para>
+    ///         <c>_Ready</c> 无外部依赖可自由实例化; 播放靠 <c>Fire()</c> (旋转摆动 +
+    ///         scale.x 伸出/收回 tween), 完成后仅 Visible=false 不回收 —— 原版复用
+    ///         单实例, 我们每次新建, 必须在 <paramref name="lifeSeconds" /> 后 QueueFree。
+    ///     </para>
     /// </summary>
-    public static void KinBeam(Creature spawner, float rotationDegrees = 0f, float lifeSeconds = 2.5f)
+    public static void KinBeam(Creature spawner, bool flipX = false, float lifeSeconds = 2.5f)
     {
         try
         {
-            var creatureNode = NCombatRoom.Instance?.GetCreatureNode(spawner);
-            Node visuals = creatureNode?.Visuals;
-            if (visuals == null)
-            {
-                MainFile.Logger.Error("yylVfx.KinBeam: creature visuals not found");
-                return;
-            }
-            var scene = ResourceLoader.Load<PackedScene>("res://scenes/vfx/monsters/kin_priest_beam_vfx.tscn");
-            if (scene == null)
-            {
-                MainFile.Logger.Error("yylVfx.KinBeam: scene load failed");
-                return;
-            }
-            var beam = scene.Instantiate<NKinPriestBeamVfx>();
+            var beam = ResourceLoader
+                .Load<PackedScene>("res://scenes/vfx/monsters/kin_priest_beam_vfx.tscn")
+                ?.Instantiate<NKinPriestBeamVfx>();
             if (beam == null)
             {
-                MainFile.Logger.Error("yylVfx.KinBeam: instantiate returned null");
+                MainFile.Logger.Error("yylVfx.KinBeam: scene load or instantiate failed");
                 return;
             }
-            visuals.AddChild(beam);
-            beam.Position = Vector2.Zero; // 角色精灵中心 (Visuals 原点)
-            beam.RotationDegrees = rotationDegrees;
+            // 优先挂角色精灵 (原点=纹理中心=角色视觉中线); 找不到退回 Visuals 容器。
+            Node anchor = yylAnim.FindSprite(spawner)
+                ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(spawner)?.Visuals);
+            if (anchor == null)
+            {
+                MainFile.Logger.Error("yylVfx.KinBeam: creature sprite/visuals not found");
+                beam.QueueFree();
+                return;
+            }
+            anchor.AddChild(beam);
+            beam.Position = Vector2.Zero;
+            if (flipX)
+                beam.Scale = new Vector2(-1f, 1f); // 左右镜像: 光束朝 +X
             beam.Fire();
             SfxCmd.Play("event:/sfx/enemy/enemy_attacks/the_kin_priest/the_kin_priest_soul_beam", 1f);
             RecycleLater(beam, lifeSeconds);

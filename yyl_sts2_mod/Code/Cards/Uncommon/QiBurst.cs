@@ -40,8 +40,8 @@ public sealed class QiBurst(
         if (target == null) return;
         if (Owner.Creature.GetPower<Qi>()?.Amount >= 1)
             await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
-        // 怪物特效挪用: 同族祭司灵魂光束, 从玩家射向目标 (光束贴图朝局部 -X, 转 180° 朝右)。
-        yylVfx.KinBeam(Owner.Creature, 180f);
+        // 怪物特效挪用: 同族祭司灵魂光束, 从角色中线镜像后朝右射向目标。
+        yylVfx.KinBeam(Owner.Creature, flipX: true);
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);
