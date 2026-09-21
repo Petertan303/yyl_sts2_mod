@@ -62,6 +62,43 @@ public static class yylVfx
         }
     }
 
+    /// <summary>单道光束: 挂角色精灵、可带起始位置偏移 (供齐射排布)。</summary>
+    private static void SpawnBeam(Creature spawner, Vector2 position, bool flipX, float lifeSeconds, bool playSfx)
+    {
+        try
+        {
+            var beam = ResourceLoader
+                .Load<PackedScene>("res://scenes/vfx/monsters/kin_priest_beam_vfx.tscn")
+                ?.Instantiate<NKinPriestBeamVfx>();
+            if (beam == null)
+            {
+                MainFile.Logger.Error("yylVfx.SpawnBeam: scene load or instantiate failed");
+                return;
+            }
+            // 优先挂角色精灵 (原点=纹理中心=角色视觉中线); 找不到退回 Visuals 容器。
+            Node anchor = yylAnim.FindSprite(spawner)
+                ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(spawner)?.Visuals);
+            if (anchor == null)
+            {
+                MainFile.Logger.Error("yylVfx.SpawnBeam: creature sprite/visuals not found");
+                beam.QueueFree();
+                return;
+            }
+            anchor.AddChild(beam);
+            beam.Position = position;
+            if (flipX)
+                beam.Scale = new Vector2(-1f, 1f); // 左右镜像: 光束朝 +X
+            beam.Fire();
+            if (playSfx)
+                SfxCmd.Play("event:/sfx/enemy/enemy_attacks/the_kin_priest/the_kin_priest_soul_beam", 1f);
+            RecycleLater(beam, lifeSeconds);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.SpawnBeam: {ex.Message}");
+        }
+    }
+
     /// <summary>
     ///     ★怪物特效挪用: 从 <paramref name="spawner" /> 的角色视觉中心发射同族祭司的
     ///     灵魂光束 (kin_priest_beam, 2026-09-21)。
@@ -84,39 +121,7 @@ public static class yylVfx
     ///     </para>
     /// </summary>
     public static void KinBeam(Creature spawner, bool flipX = false, float lifeSeconds = 2.5f, Vector2? positionOffset = null)
-    {
-        try
-        {
-            var beam = ResourceLoader
-                .Load<PackedScene>("res://scenes/vfx/monsters/kin_priest_beam_vfx.tscn")
-                ?.Instantiate<NKinPriestBeamVfx>();
-            if (beam == null)
-            {
-                MainFile.Logger.Error("yylVfx.KinBeam: scene load or instantiate failed");
-                return;
-            }
-            // 优先挂角色精灵 (原点=纹理中心=角色视觉中线); 找不到退回 Visuals 容器。
-            Node anchor = yylAnim.FindSprite(spawner)
-                ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(spawner)?.Visuals);
-            if (anchor == null)
-            {
-                MainFile.Logger.Error("yylVfx.KinBeam: creature sprite/visuals not found");
-                beam.QueueFree();
-                return;
-            }
-            anchor.AddChild(beam);
-            beam.Position = positionOffset ?? Vector2.Zero;
-            if (flipX)
-                beam.Scale = new Vector2(-1f, 1f); // 左右镜像: 光束朝 +X
-            beam.Fire();
-            SfxCmd.Play("event:/sfx/enemy/enemy_attacks/the_kin_priest/the_kin_priest_soul_beam", 1f);
-            RecycleLater(beam, lifeSeconds);
-        }
-        catch (Exception ex)
-        {
-            MainFile.Logger.Error($"yylVfx.KinBeam: {ex.Message}");
-        }
-    }
+        => SpawnBeam(spawner, positionOffset ?? Vector2.Zero, flipX, lifeSeconds, playSfx: true);
 
     /// <summary>
     ///     ★华丽收场的命中冲击 (grand_finale_impact, 2026-09-21): 在
@@ -155,20 +160,29 @@ public static class yylVfx
     }
 
     /// <summary>
-    ///     ★光束齐射: <paramref name="count" /> 道灵魂光束沿角色立绘纵向均匀并列
-    ///     (覆盖整个身高), 同帧全部发射 (2026-09-21, 白长虫五连射演出)。
-    ///     间距按显示高度换算成精灵局部坐标 (抵消精灵缩放)。
+    ///     ★光束齐射: <paramref name="count" /> 道灵魂光束的<b>发射起点</b>在身前排成
+    ///     一段圆弧 (凸向右, 上下展开呈扇形), 同帧全部发射; 光束本身保持水平不旋转
+    ///     (2026-09-21, 白长虫五连射演出)。整体再右移 <paramref name="widthFraction" />
+    ///     个角色横向宽度。弧心 = 角色精灵中心, 半径 = 显示宽 × 0.5。
     /// </summary>
-    public static void KinBeamColumn(Creature spawner, int count = 5, bool flipX = true, float lifeSeconds = 2.5f)
+    public static void KinBeamColumn(Creature spawner, int count = 5, bool flipX = true, float lifeSeconds = 2.5f,
+        float arcDegrees = 50f, float widthFraction = 0.25f)
     {
+        var size = DisplaySize(spawner);
         var anim = yylAnim.FindSprite(spawner);
-        var scaleY = Math.Max(anim?.Scale.Y ?? 1f, 0.01f);
-        // 局部间距 = 显示高 / 条数 ÷ 精灵缩放 (相邻光束中心相距"一个身位/条数")。
-        var spacing = DisplayHeight(spawner) / Math.Max(count, 1) / scaleY;
+        var sx = Math.Max(anim?.Scale.X ?? 1f, 0.01f);
+        var sy = Math.Max(anim?.Scale.Y ?? 1f, 0.01f);
+        var radius = size.X * 0.5f;
+        var halfArc = arcDegrees / 2f;
         for (var i = 0; i < count; i++)
         {
-            var dy = (i - (count - 1) / 2f) * spacing;
-            KinBeam(spawner, flipX: flipX, lifeSeconds: lifeSeconds, positionOffset: new Vector2(0, dy));
+            var t = count <= 1 ? 0.5f : (float)i / (count - 1); // 0..1, 自上而下
+            var ang = (-halfArc + arcDegrees * t) * MathF.PI / 180f;
+            // 显示系弧上点 (相对精灵中心): 中间条最靠右 (凸向敌阵), 上下条略靠后。
+            var dx = MathF.Cos(ang) * radius + size.X * widthFraction;
+            var dy = MathF.Sin(ang) * radius;
+            // 换算成精灵局部坐标 (抵消精灵缩放)。
+            SpawnBeam(spawner, new Vector2(dx / sx, dy / sy), flipX, lifeSeconds, playSfx: i == 0);
         }
     }
 
@@ -190,26 +204,29 @@ public static class yylVfx
     }
 
     /// <summary>
-    ///     角色立绘的显示高度 (纹理原始高 × 精灵缩放), 用于"上移 N 体位"类定位。
-    ///     取不到时返回 0 (调用方偏移自动退化为 0, 无害)。
+    ///     角色立绘的显示尺寸 (纹理原始宽高 × 精灵缩放), 用于"上移 N 体位"类定位。
+    ///     取不到时返回 Zero (调用方偏移自动退化为 0, 无害)。
     /// </summary>
-    internal static float DisplayHeight(Creature target)
+    internal static Vector2 DisplaySize(Creature target)
     {
         try
         {
             var anim = yylAnim.FindSprite(target);
-            if (anim?.SpriteFrames == null) return 0f;
+            if (anim?.SpriteFrames == null) return Vector2.Zero;
             // 优先 idle 立绘帧 (最能代表完整体型)。
             foreach (var animName in new[] { "idle_loop", "attack", "cast" })
             {
                 if (!anim.SpriteFrames.HasAnimation(animName)) continue;
                 var tex = anim.SpriteFrames.GetFrameTexture(animName, 0);
-                if (tex != null) return tex.GetHeight() * Math.Abs(anim.Scale.Y);
+                if (tex != null) return new Vector2(tex.GetWidth(), tex.GetHeight()) * anim.Scale;
             }
         }
         catch { }
-        return 0f;
+        return Vector2.Zero;
     }
+
+    /// <summary>角色立绘的显示高度。</summary>
+    internal static float DisplayHeight(Creature target) => DisplaySize(target).Y;
 
     /// <summary>
     ///     在角色身上播特效, 并向上抬高 <paramref name="raiseFraction" /> 个体位
