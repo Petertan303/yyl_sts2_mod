@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Utils;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -45,6 +46,8 @@ public sealed class SkyFire(
 
         // 先走 LoseQi(让 CinnabarBite 之类的 follow-up 触发)
         await yylCmd.LoseQi(choiceContext, Owner, current, this, cardPlay.Card);
+        // 炁越足, 齐射光束越密 (上限 12 防过糊)。
+        yylVfx.KinBeamColumn(Owner.Creature, Math.Min(current, 12), flipX: true);
         // 再群伤
         foreach (var enemy in combatState.HittableEnemies)
         {
