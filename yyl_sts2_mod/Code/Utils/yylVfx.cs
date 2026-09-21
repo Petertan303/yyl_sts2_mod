@@ -1,6 +1,8 @@
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 
 namespace yyl_sts2_mod.Code.Utils;
@@ -61,18 +63,27 @@ public static class yylVfx
     }
 
     /// <summary>
-    ///     ★怪物特效挪用实验: 从 <paramref name="spawner" /> 位置发射同族祭司的灵魂光束
-    ///     (kin_priest_beam, 2026-09-21)。反汇编确认:
-    ///     <c>_Ready</c> 只缓存节点引用并隐藏自身, 无外部依赖, 可自由实例化;
-    ///     播放靠 <c>Fire()</c> (旋转摆动 + 光束 scale.x 伸出/收回的 tween), tween 完成后
-    ///     仅 Visible=false <b>不回收节点</b> —— 原版由祭司自己复用同一实例, 我们每次
-    ///     新建实例, 因此必须在 <paramref name="lifeSeconds" /> 后 QueueFree。
+    ///     ★怪物特效挪用: 从 <paramref name="spawner" /> 的角色视觉中心发射同族祭司的
+    ///     灵魂光束 (kin_priest_beam, 2026-09-21)。反汇编原版 KinPriest.BeamMove:
+    ///     它把光束挂在 <c>creatureNode.GetSpecialNode("Visuals/Beam")</c> —— 即角色
+    ///     场景内预设挂点 (我们的场景没有该节点), 与角色同坐标系自动跟随。
+    ///     <c>_Ready</c> 无外部依赖可自由实例化; 播放靠 <c>Fire()</c> (旋转摆动 +
+    ///     scale.x 伸出/收回 tween), 完成后仅 Visible=false 不回收 —— 原版复用单实例,
+    ///     我们每次新建, 必须在 <paramref name="lifeSeconds" /> 后 QueueFree。
     ///     光束贴图朝局部 -X 延伸: 默认 0° 向左, 玩家朝右打敌人传 180°。
+    ///     ⚠不要挂 VfxContainer: 那是全屏层 (原点=屏幕左上角), 跨层定位会错位。
     /// </summary>
     public static void KinBeam(Creature spawner, float rotationDegrees = 0f, float lifeSeconds = 2.5f)
     {
         try
         {
+            var creatureNode = NCombatRoom.Instance?.GetCreatureNode(spawner);
+            Node visuals = creatureNode?.Visuals;
+            if (visuals == null)
+            {
+                MainFile.Logger.Error("yylVfx.KinBeam: creature visuals not found");
+                return;
+            }
             var scene = ResourceLoader.Load<PackedScene>("res://scenes/vfx/monsters/kin_priest_beam_vfx.tscn");
             if (scene == null)
             {
@@ -85,19 +96,11 @@ public static class yylVfx
                 MainFile.Logger.Error("yylVfx.KinBeam: instantiate returned null");
                 return;
             }
-            var container = spawner.GetVfxContainer();
-            if (container == null)
-            {
-                beam.QueueFree();
-                return;
-            }
-            container.AddChild(beam);
-            // ★VfxContainer 是全屏层(原点=屏幕左上角), 必须显式定位到施法者
-            //   (原版 PlayOnCreature 同款: 取 creature 节点的 GlobalPosition)。
-            //   不设置的话光束落在屏幕左上角并朝屏幕外喷, 看不见。
-            beam.GlobalPosition = spawner.GetCreatureNode().GlobalPosition;
+            visuals.AddChild(beam);
+            beam.Position = Vector2.Zero; // 角色精灵中心 (Visuals 原点)
             beam.RotationDegrees = rotationDegrees;
             beam.Fire();
+            SfxCmd.Play("event:/sfx/enemy/enemy_attacks/the_kin_priest/the_kin_priest_soul_beam", 1f);
             RecycleLater(beam, lifeSeconds);
         }
         catch (Exception ex)
