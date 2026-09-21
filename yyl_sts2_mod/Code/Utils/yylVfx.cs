@@ -80,7 +80,11 @@ public static class yylVfx
                 return;
             }
             var beam = scene.Instantiate<NKinPriestBeamVfx>();
-            if (beam == null) return;
+            if (beam == null)
+            {
+                MainFile.Logger.Error("yylVfx.KinBeam: instantiate returned null");
+                return;
+            }
             var container = spawner.GetVfxContainer();
             if (container == null)
             {
@@ -88,6 +92,10 @@ public static class yylVfx
                 return;
             }
             container.AddChild(beam);
+            // ★VfxContainer 是全屏层(原点=屏幕左上角), 必须显式定位到施法者
+            //   (原版 PlayOnCreature 同款: 取 creature 节点的 GlobalPosition)。
+            //   不设置的话光束落在屏幕左上角并朝屏幕外喷, 看不见。
+            beam.GlobalPosition = spawner.GetCreatureNode().GlobalPosition;
             beam.RotationDegrees = rotationDegrees;
             beam.Fire();
             RecycleLater(beam, lifeSeconds);
