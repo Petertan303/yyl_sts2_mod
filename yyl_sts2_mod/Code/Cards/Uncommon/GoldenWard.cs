@@ -30,7 +30,8 @@ public sealed class GoldenWardCard(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
+        await yylAnim.TriggerCast(this);
+        yylVfx.OnCreature(Owner.Creature, "vfx/vfx_block"); // 打出特效: 金光护体格挡火花 // 打出动作: 施法帧动画
         var amount = DynamicVars["GoldenWard"].IntValue;
         await PowerCmd.Apply<GoldenWard>(choiceContext, new[] { Owner.Creature }, amount, Owner.Creature, cardPlay.Card);
     }

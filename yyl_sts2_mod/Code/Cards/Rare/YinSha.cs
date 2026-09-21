@@ -37,6 +37,7 @@ public sealed class YinSha(
     {
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         var enemies = CombatState?.HittableEnemies ?? [];
+        yylVfx.OnCreatures(enemies, "vfx/vfx_smoke_puff"); // 打出特效: 阴煞弥漫
         var weak = DynamicVars["WeakPower"].IntValue;
         if (weak > 0)
             await PowerCmd.Apply<WeakPower>(choiceContext, enemies, weak, Owner.Creature, cardPlay.Card);

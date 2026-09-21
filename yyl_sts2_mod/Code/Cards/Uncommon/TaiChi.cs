@@ -40,7 +40,8 @@ public sealed class TaiChi(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
+        await yylAnim.TriggerCast(this);
+        yylVfx.OnCreature(Owner.Creature, "vfx/common/vfx_common_ring_polar_a"); // 打出特效: 阴阳环 // 打出动作: 施法帧动画
         // 炁不足时无额外效果 (耗炁卡统一判定); 消耗量随升级变化 (2 → 1)。
         var cost = DynamicVars["QiLoss"].IntValue;
         if (cost > 0 && Owner.Creature.GetPower<Qi>()?.Amount >= cost)

@@ -36,7 +36,8 @@ public sealed class CinnabarBite(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
+        await yylAnim.TriggerCast(this);
+        yylVfx.OnCreature(Owner.Creature, "vfx/vfx_poison_impact"); // 打出特效: 毒 (丹噬) // 打出动作: 施法帧动画
         var amount = DynamicVars[typeof(Powers.CinnabarBite).Name].IntValue;
         await PowerCmd.Apply<Powers.CinnabarBite>(
             choiceContext,

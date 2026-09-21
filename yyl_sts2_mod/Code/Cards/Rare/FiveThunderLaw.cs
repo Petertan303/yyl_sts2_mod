@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -57,7 +57,7 @@ public sealed class FiveThunderLaw(
             if (enemy == null || !enemy.IsHittable) continue;
             await CommonActions.CardAttack(this, cardPlay, enemy, damage,
                     ValueProp.Move, hitCount: hits)
-                .WithHitFx("vfx/vfx_attack_slash")
+                .WithHitFx("vfx/vfx_attack_lightning")
                 .Execute(choiceContext);
         }
 

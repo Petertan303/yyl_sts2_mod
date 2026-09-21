@@ -44,6 +44,7 @@ public sealed class DarkHumor(
         {
             if (!yylNailong.IsNailong(c)) continue;
             if (teammates.Contains(c)) continue;
+            yylVfx.OnCreature(c, "vfx/vfx_cross_heal"); // 治疗特效
             await CreatureCmd.Heal(c, DynamicVars.Heal.IntValue);
         }
         // 获得炁

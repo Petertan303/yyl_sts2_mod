@@ -37,7 +37,8 @@ public sealed class BurnQi(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
+        await yylAnim.TriggerCast(this);
+        yylVfx.OnCreature(Owner.Creature, "vfx/vfx_fire_burst"); // 打出特效: 燃炁起火 // 打出动作: 施法帧动画
         // 代价是"失去生命"而非伤害: 不走伤害管线, 不吃格挡、不吃炁/姿态/遗物的增减伤。
         // (之前用 CreatureCmd.Damage 实现, 自伤会被炁增伤乘区放大 —— 已改 yylCmd.LoseHp。)
         yylCmd.LoseHp(Owner.Creature, DynamicVars["HpLoss"].IntValue);

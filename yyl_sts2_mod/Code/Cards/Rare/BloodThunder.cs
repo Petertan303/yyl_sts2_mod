@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -36,7 +36,7 @@ public sealed class BloodThunder(
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_bloody_impact")
             .Execute(choiceContext);
         await yylCmd.GiveCard<LaShang>(Owner, PileType.Discard, skipAnimation: true);
     }

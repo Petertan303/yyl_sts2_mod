@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -49,7 +49,7 @@ public sealed class SkyFire(
         foreach (var enemy in combatState.HittableEnemies)
         {
             await CommonActions.CardAttack(this, cardPlay, enemy, totalDamage, ValueProp.Move)
-                .WithHitFx("vfx/vfx_attack_slash")
+                .WithHitFx("vfx/vfx_fire_burst")
                 .Execute(choiceContext);
         }
     }

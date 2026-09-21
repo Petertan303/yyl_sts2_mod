@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -40,7 +40,7 @@ public sealed class ChainThunder(
 
         // 主目标: 全额伤害 (与破防同款的显式数值攻击)。
         await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue, ValueProp.Move)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);
 
         // 溅射: 随机挑另一名可命中敌人, 直接结算伤害。
