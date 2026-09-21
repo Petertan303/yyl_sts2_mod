@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
+using yyl_sts2_mod.Code.Cards.Basic;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
@@ -35,9 +36,14 @@ public sealed class FiveThunderLaw(
 {
     public FiveThunderLaw() : this(3, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
+        // ★卡面 {Bonus} 必须声明成 DynamicVar, 否则卡面不解析 (2026-09-21 修复)。
+        //   与掌心雷共用同一个 bonus 函数, 保证预览与卡面显示同源。
+        WithCalculatedDamage("Bonus", 0,
+            (card, _) => PalmThunder.BonusFor(card, card.Owner.Creature), default(ValueProp), 0, 0);
         // 主伤害 = 3 → 4, 活 calc: 有金光时预览也显示 +1 (白长虫模式)。
         WithCalculatedDamage("Damage", 3,
-            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? 1 : 0, default(ValueProp), 1, 0);
+            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0,
+            default(ValueProp), 1, 0);
         WithVars(new RepeatVar(5));
         // 金光护体联动: 声明 -1 层供 ApplySelf 消耗 (与掌心雷同款写法)。
         WithPower<GoldenAegis>(-1);

@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -28,9 +28,14 @@ public sealed class BorrowForce(
 {
     public BorrowForce() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
+        // ★卡面 {Bonus} 必须声明成 DynamicVar, 否则卡面不解析 (2026-09-21 修复)。
+        //   虚弱时的额外伤害: 基础 5, 升级 +1 → 升级后 7+6=15 (见文档注释)。
+        WithCalculatedDamage("Bonus", 5, (_, _) => 0m, default(ValueProp), 1, 0);
         // 主伤害 = 7 → 9, 活 calc: 目标有虚弱时改为 12 → 15, 预览与结算同源。
         WithCalculatedDamage("Damage", 7,
-            (card, creature) => creature != null && creature.HasPower<WeakPower>() ? 5 : 0,
+            (card, creature) => creature != null && creature.HasPower<WeakPower>()
+                ? card.DynamicVars["Bonus"].IntValue
+                : 0,
             default(ValueProp), 2, 0);
     }
 
@@ -42,7 +47,7 @@ public sealed class BorrowForce(
         // ⚠ 用弱类型访问器: 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
         await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
                 ValueProp.Move)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(choiceContext);
     }
 }

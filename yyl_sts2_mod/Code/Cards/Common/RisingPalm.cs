@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -30,9 +30,13 @@ public sealed class RisingPalm(
 {
     public RisingPalm() : this(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
     {
+        // ★卡面 {Bonus} 必须声明成 DynamicVar, 否则卡面不解析 (2026-09-21 修复)。
+        //   有金光护体时的额外伤害: 基础 3, 升级 +1 → 升级后 8+4=12。
+        WithCalculatedDamage("Bonus", 3, (_, _) => 0m, default(ValueProp), 1, 0);
         // 主伤害 = 6 → 8, 活 calc: 有金光时改为 9 → 12, 预览与结算同源。
         WithCalculatedDamage("Damage", 6,
-            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? 3 : 0, default(ValueProp), 2, 0);
+            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0,
+            default(ValueProp), 2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -43,7 +47,7 @@ public sealed class RisingPalm(
         // ⚠ 用弱类型访问器: 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
         await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
                 ValueProp.Move)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(choiceContext);
     }
 }

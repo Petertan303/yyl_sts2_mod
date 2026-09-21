@@ -51,7 +51,9 @@ public sealed class NlCan2 : yylRelicModel, IModifyDamageMultiplicative
             .Concat(combatState.HittableEnemies)
             .Where(c => c.IsAlive)
             .Distinct();
-        await PowerCmd.Apply<InnerDemon>(choiceContext, targets, 1m, Owner.Creature, null);
+        // ★统一走 yylNailong.ApplyMark(demon: true): 联机去重 (同一目标只挂一次),
+        //   且目标已带普通奶龙时**先移除普通奶龙再用心魔覆盖** (心魔优先)。
+        await yylNailong.ApplyMark(choiceContext, targets, Owner.Creature, demon: true);
 
         // 心魔 buff 被赋予实体时: 发出奶龙的声音
         yylAudio.PlaySfx(yylAudio.Sfx("nailong/nailong_voice.ogg"), 0.9f);

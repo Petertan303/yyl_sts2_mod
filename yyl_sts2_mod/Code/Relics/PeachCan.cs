@@ -11,6 +11,7 @@ using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Events;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Relics;
 
@@ -33,16 +34,16 @@ public sealed class PeachCan : yylRelicModel
         // 1) 获得 3 炁
         await yylCmd.GainQi(choiceContext, player, InitialQi, this, null);
         // 2) 把所有敌人视作奶龙 (NailongMark 兼任 "tag + 击杀回血 3")
-        await PowerCmd.Apply<NailongMark>(choiceContext, combatState.HittableEnemies, 1m, Owner.Creature, null);
         // 2b) 队友也一并视为奶龙: 让"给奶龙加防/回血"的卡在联机里有正收益
         //     (单机没有队友, 行为与之前完全一致)。
         //     ⚠ Allies 是"己方全体", 包含玩家自己 —— 必须排除;
         //     把自己标记为奶龙是大瓶黄桃罐头 (NlCan2) 的专属效果。
-        var allies = combatState.Allies
-            .Where(c => c.IsAlive && c != Owner.Creature)
-            .ToList();
-        if (allies.Count > 0)
-            await PowerCmd.Apply<NailongMark>(choiceContext, allies, 1m, Owner.Creature, null);
+        // ★统一走 yylNailong.ApplyMark: 联机时同一目标不会被两个玩家的罐头各挂一次,
+        //   且已带心魔(大瓶)的目标不会被普通奶龙覆盖。
+        await yylNailong.ApplyMark(choiceContext,
+            combatState.HittableEnemies.Concat(
+                combatState.Allies.Where(c => c.IsAlive && c != Owner.Creature)),
+            Owner.Creature);
         // 3) 挂上手牌金光驱动 (隐藏 Power): 条件牌 (崩拳/金光联动/耗炁卡) 满足条件时发光。
         await PowerCmd.Apply<CardGlowDriver>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
     }

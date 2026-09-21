@@ -31,10 +31,15 @@ public sealed class BloodThunder(
     public BloodThunder() : this(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
     {
         WithDamage(22, 6);
+        // ★耗炁限制 (2026-09-21): 打出时失去 2 点炁; 炁不足则"以血代炁" (失去 6 点生命)。
+        //   效果本身不变 —— 代价只是从炁换成血, 给产炁体系一个稳定的消耗出口。
+        WithPower<Qi>("QiLoss", 2, 0);
+        WithCalculatedDamage("HpLoss", 6, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        await PayQiOrHp(choiceContext, cardPlay);
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitFx("vfx/vfx_bloody_impact")
             .Execute(choiceContext);

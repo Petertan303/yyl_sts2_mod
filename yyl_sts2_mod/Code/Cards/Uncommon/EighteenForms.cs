@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Powers;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -26,10 +27,14 @@ public sealed class EighteenForms(
     {
         WithDamage(3, 1);
         WithVars(new RepeatVar(5));
+        // ★耗炁限制 (2026-09-21): 打出时失去 1 点炁; 炁不足则强撑 (失去 4 点生命)。
+        WithPower<Qi>("QiLoss", 1, 0);
+        WithCalculatedDamage("HpLoss", 4, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        await PayQiOrHp(choiceContext, cardPlay);
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitCount(DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_dagger_spray_flurry")

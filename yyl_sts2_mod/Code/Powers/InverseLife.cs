@@ -18,7 +18,9 @@ public sealed class InverseLife : yylPowerModel, IModifyDamageMultiplicative
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
     private static readonly SpireField<Creature, bool> _firstBlockUsed = new(() => false);
-    
+    // 逆生三重的"隔回合"计数 (每当我方回合开始 +1, 奇数回合发无实体)。
+    private static readonly SpireField<Creature, int> _thirdTurnCount = new(() => 0);
+
     public override async Task BeforeSideTurnStart(
         PlayerChoiceContext ctx,
         CombatSide side,
@@ -28,10 +30,22 @@ public sealed class InverseLife : yylPowerModel, IModifyDamageMultiplicative
         if (side != Owner.Side)
             return;
         _firstBlockUsed[Owner] = false;
+
+        if (Amount >= 3)
+        {
+            // ★逆生三重 (2026-09-21 用户定调): 每隔一回合获得 1 层无实体,
+            //   并且**不再享有逆生二重的回血** —— 三重以"无实体"取代"回血"作为收益。
+            //   计数从进入三重后的第一个回合起算 (奇数回合给, 即立刻吃到第一层),
+            //   想改成"第二回合才给"把下面的 %2 判断取反即可。
+            var n = _thirdTurnCount[Owner] + 1;
+            _thirdTurnCount[Owner] = n;
+            if (n % 2 == 1)
+                await PowerCmd.Apply<IntangiblePower>(ctx, Owner, 1, Owner, null);
+            return;
+        }
+
         if (Amount >= 2)
             await CreatureCmd.Heal(Owner, 6);
-        if (Amount >= 3)
-            await PowerCmd.Apply<IntangiblePower>(ctx, Owner, 1, Owner, null);
     }
 
     public decimal ModifyDamageMultiplicativeCompability(

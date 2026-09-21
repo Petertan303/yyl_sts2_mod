@@ -33,8 +33,8 @@ public class GoldenAegis : yylPowerModel
         if (dealer == null || dealer.Side == Owner.Side)
             return amount;
 
-        // 基础每层减伤 2 点; 「守势」会再往上加 (升级后每层 +1)。
-        var perStack = 2m + (Owner.GetPower<ShouShi>()?.Amount ?? 0m);
+        // 基础每层减伤 1 点 (2026-09-21 用户定调: 2 太强); 「守势」会再往上加 (每层 +1)。
+        var perStack = 1m + (Owner.GetPower<ShouShi>()?.Amount ?? 0m);
         // 减到 0 为止 (掉血阶段没有下限钳制, 这是与伤害阶段实现的本质区别)。
         return Math.Max(0m, amount - Amount * perStack);
     }

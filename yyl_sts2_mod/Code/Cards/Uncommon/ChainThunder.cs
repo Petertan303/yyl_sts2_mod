@@ -51,8 +51,10 @@ public sealed class ChainThunder(
         var candidates = combatState.HittableEnemies
             .Where(e => e != null && e.IsHittable && e != target)
             .ToList();
-        if (candidates.Count == 0) return;
-        var splashTarget = Owner.RunState.Rng.CombatCardSelection.NextItem(candidates);
+        // 优先打另一名敌人; 场上只剩主目标时, 溅射回落到主目标身上 (单体时吃满两段)。
+        var splashTarget = candidates.Count > 0
+            ? Owner.RunState.Rng.CombatCardSelection.NextItem(candidates)
+            : (target.IsHittable ? target : null);
         if (splashTarget == null) return;
         await CreatureCmd.Damage(choiceContext, splashTarget, (decimal)splashValue, ValueProp.Move,
             Owner.Creature, this, cardPlay);
