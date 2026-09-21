@@ -3,6 +3,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
@@ -33,6 +34,7 @@ public sealed class WardingBlade(
     public WardingBlade() : this(2, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy)
     {
         WithDamage(8, 3);
+        WithVars(new RepeatVar(3));
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -41,6 +43,10 @@ public sealed class WardingBlade(
         {
             DynamicVars.Damage.BaseValue *= 2;
         }
+
+        // 辟邪剑法: 三道剑气在身前扇面同时射出 (弧形齐射, 段数 = Repeat)。
+        yylVfx.ArcVolley(cardPlay.Target!, "vfx/vfx_flying_slash",
+            DynamicVars.Repeat.IntValue, flipX: false);
 
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitFx("vfx/vfx_attack_slash")

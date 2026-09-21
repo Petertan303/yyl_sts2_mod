@@ -186,6 +186,52 @@ public static class yylVfx
         }
     }
 
+    /// <summary>
+    ///     ★弧形齐射 (通用版, 2026-09-21): <paramref name="count" /> 个自播特效场景
+    ///     (NVfxSpine / NVfxParticleSystem 等 _Ready 自动播放的横向特效) 的发射起点
+    ///     在身前排成一段圆弧 (凸向右), 同帧全部发射; 整体右移
+    ///     <paramref name="widthFraction" /> 个角色横向宽度。
+    ///     与 <see cref="KinBeamColumn" /> 的区别: 不限光束场景、无需触发播放
+    ///     (实例化进树即播), <paramref name="lifeSeconds" /> 后兜底回收。
+    /// </summary>
+    public static void ArcVolley(Creature target, string path, int count, bool flipX = false,
+        float lifeSeconds = 3.5f, float arcDegrees = 50f, float widthFraction = 0.25f)
+    {
+        var size = DisplaySize(target);
+        var anim = yylAnim.FindSprite(target);
+        var sx = Math.Max(anim?.Scale.X ?? 1f, 0.01f);
+        var sy = Math.Max(anim?.Scale.Y ?? 1f, 0.01f);
+        var radius = size.X * 0.5f;
+        var halfArc = arcDegrees / 2f;
+        var scene = ResourceLoader.Load<PackedScene>("res://scenes/" + path + ".tscn");
+        if (scene == null)
+        {
+            MainFile.Logger.Error($"yylVfx.ArcVolley({path}): scene load failed");
+            return;
+        }
+        Node anchor = yylAnim.FindSprite(target)
+            ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(target)?.Visuals);
+        if (anchor == null)
+        {
+            MainFile.Logger.Error($"yylVfx.ArcVolley({path}): creature sprite/visuals not found");
+            return;
+        }
+        for (var i = 0; i < count; i++)
+        {
+            var t = count <= 1 ? 0.5f : (float)i / (count - 1);
+            var ang = (-halfArc + arcDegrees * t) * MathF.PI / 180f;
+            var dx = MathF.Cos(ang) * radius + size.X * widthFraction;
+            var dy = MathF.Sin(ang) * radius;
+            var node = scene.Instantiate<Node2D>();
+            if (node == null) continue;
+            anchor.AddChild(node);
+            node.Position = new Vector2(dx / sx, dy / sy);
+            if (flipX)
+                node.Scale = new Vector2(-1f, 1f);
+            RecycleLater(node, lifeSeconds);
+        }
+    }
+
     /// <summary>延时回收 (光束 Fire 完毕只是隐藏, 必须自己 QueueFree 防节点堆积)。</summary>
     private static async void RecycleLater(Node node, float seconds)
     {
