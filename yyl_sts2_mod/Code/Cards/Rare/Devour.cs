@@ -40,11 +40,14 @@ public sealed class Devour(
             if (teammates.Contains(enemy)) continue;
             var attack = await CommonActions.CardAttack(this, cardPlay, enemy, DynamicVars.Damage.IntValue,
                     ValueProp.Move)
-                .WithHitFx("vfx/vfx_attack_slash")
+                .WithHitFx("vfx/vfx_bite") // 打出特效: 原版撕咬 (照搬)
                 .Execute(choiceContext);
             totalHealed += attack.Results.SelectMany(result => result).Sum(result => result.UnblockedDamage);
         }
         if (totalHealed > 0)
+        {
             await CreatureCmd.Heal(Owner.Creature, totalHealed);
+            yylVfx.OnCreature(Owner.Creature, "vfx/vfx_cross_heal"); // 吸食回复特效
+        }
     }
 }
