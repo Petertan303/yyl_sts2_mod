@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -32,7 +32,7 @@ public sealed class EighteenForms(
     {
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitCount(DynamicVars.Repeat.IntValue)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_dagger_spray_flurry")
             .Execute(choiceContext);
     }
 }

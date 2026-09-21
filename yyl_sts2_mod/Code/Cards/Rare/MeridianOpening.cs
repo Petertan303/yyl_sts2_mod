@@ -38,6 +38,7 @@ public sealed class MeridianOpening(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        yylVfx.BurstOneShot(Owner.Creature, "vfx/common/vfx_common_clean_flare_1"); // 打出特效: 脉门金光
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         var amount = DynamicVars[typeof(Powers.MeridianOpening).Name].IntValue;
         await PowerCmd.Apply<Powers.MeridianOpening>(

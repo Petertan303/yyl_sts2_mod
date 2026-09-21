@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -72,7 +72,7 @@ public sealed class PalmThunder(
         //    读取也必须用弱类型访问器 DynamicVars["Damage"]。
         await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
                 ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);
 
         // 3. 攻击结算完再消耗 1 层金光护体 (保证本次攻击已经吃到 +1)。

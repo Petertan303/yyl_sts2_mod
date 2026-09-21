@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -50,7 +50,7 @@ public class NailongKick(
         // {
         //     // await CommonActions.CardAttack(this, cardPlay)
         //     //     .Targeting(creature)
-        //     //     .WithHitFx("vfx/vfx_attack_slash")
+        //     //     .WithHitFx("vfx/vfx_attack_blunt")
         //     //     .Execute(choiceContext);
         //     // await CommonActions.CardAttack(this, cardPlay)
         //     //     .Targeting(creature)

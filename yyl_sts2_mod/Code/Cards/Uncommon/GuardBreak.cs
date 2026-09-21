@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Extensions;
 using BaseLib.Utils;
@@ -42,7 +42,7 @@ public sealed class GuardBreak(
         var hits = DynamicVars.Repeat.IntValue;
         var attack = await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue,
                 ValueProp.Move, hitCount: hits)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_block_broken")
             .Execute(choiceContext);
 
         if (!yylNailong.IsNailong(target)) return;

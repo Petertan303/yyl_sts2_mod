@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
+using Godot;
 
 namespace yyl_sts2_mod.Code.Cards.Ancient;
 
@@ -71,13 +73,20 @@ public sealed class WhiteWorm(
         // ⚠ 同掌心雷 (2026-09-20): 必须显式传数值 + 弱类型访问器 DynamicVars["Damage"] ——
         // 无参 CardAttack / 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
         var damage = DynamicVars["Damage"].IntValue;
+        var hits = DynamicVars.Repeat.IntValue;
         foreach (var enemy in CombatState?.HittableEnemies ?? [])
         {
             if (enemy == null || !enemy.IsHittable) continue;
-            await CommonActions.CardAttack(this, cardPlay, enemy, damage,
-                    ValueProp.Unblockable, hitCount: DynamicVars.Repeat.IntValue)
-                .WithHitFx("vfx/vfx_attack_slash")
-                .Execute(choiceContext);
+            // 连射演出: 每段从角色中线附近的随机偏移处发射一道光束 (照搬炁冲), 段间 0.3s。
+            for (var i = 0; i < hits; i++)
+            {
+                yylVfx.KinBeam(Owner.Creature, flipX: true, positionOffset:
+                    new Vector2(Random.Shared.Next(-70, 71), Random.Shared.Next(-90, 30)));
+                await CommonActions.CardAttack(this, cardPlay, enemy, damage, ValueProp.Unblockable)
+                    .Execute(choiceContext);
+                if (i < hits - 1)
+                    await Cmd.Wait(0.3f, false);
+            }
         }
 
         // 攻击结算完再消耗 1 层金光护体 (这样本次攻击已经吃到 +1, 消耗发生在之后)。

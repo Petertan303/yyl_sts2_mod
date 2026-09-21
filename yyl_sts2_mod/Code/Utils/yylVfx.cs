@@ -83,7 +83,7 @@ public static class yylVfx
     ///         单实例, 我们每次新建, 必须在 <paramref name="lifeSeconds" /> 后 QueueFree。
     ///     </para>
     /// </summary>
-    public static void KinBeam(Creature spawner, bool flipX = false, float lifeSeconds = 2.5f)
+    public static void KinBeam(Creature spawner, bool flipX = false, float lifeSeconds = 2.5f, Vector2? positionOffset = null)
     {
         try
         {
@@ -105,7 +105,7 @@ public static class yylVfx
                 return;
             }
             anchor.AddChild(beam);
-            beam.Position = Vector2.Zero;
+            beam.Position = positionOffset ?? Vector2.Zero;
             if (flipX)
                 beam.Scale = new Vector2(-1f, 1f); // 左右镜像: 光束朝 +X
             beam.Fire();
