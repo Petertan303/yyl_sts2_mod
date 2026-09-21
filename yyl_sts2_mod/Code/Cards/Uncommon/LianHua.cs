@@ -31,7 +31,7 @@ public sealed class LianHua(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public LianHua() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public LianHua() : this(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithCostUpgradeBy(-1);
         WithKeywords(CardKeyword.Exhaust);

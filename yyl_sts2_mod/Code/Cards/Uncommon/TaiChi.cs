@@ -34,15 +34,15 @@ public sealed class TaiChi(
     public TaiChi() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithPower<TaiChiMark>(1);
-        // 仅用于卡面显示 + 实际读取: 这张卡要花掉的炁 (升级 2 → 1)
-        WithPower<Qi>("QiLoss", 2, -1);
+        // 仅用于卡面显示 + 实际读取: 这张卡要花掉的炁 (2026-09-21 上调: 升级 3 → 2)
+        WithPower<Qi>("QiLoss", 3, -1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await yylAnim.TriggerCast(this);
         yylVfx.OnCreature(Owner.Creature, "vfx/common/vfx_common_ring_polar_a"); // 打出特效: 阴阳环 // 打出动作: 施法帧动画
-        // 炁不足时无额外效果 (耗炁卡统一判定); 消耗量随升级变化 (2 → 1)。
+        // 炁不足时无额外效果 (耗炁卡统一判定); 消耗量随升级变化 (3 → 2)。
         var cost = DynamicVars["QiLoss"].IntValue;
         if (cost > 0 && Owner.Creature.GetPower<Qi>()?.Amount >= cost)
         {
