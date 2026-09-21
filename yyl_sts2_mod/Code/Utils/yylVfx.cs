@@ -154,6 +154,24 @@ public static class yylVfx
         }
     }
 
+    /// <summary>
+    ///     ★光束齐射: <paramref name="count" /> 道灵魂光束沿角色立绘纵向均匀并列
+    ///     (覆盖整个身高), 同帧全部发射 (2026-09-21, 白长虫五连射演出)。
+    ///     间距按显示高度换算成精灵局部坐标 (抵消精灵缩放)。
+    /// </summary>
+    public static void KinBeamColumn(Creature spawner, int count = 5, bool flipX = true, float lifeSeconds = 2.5f)
+    {
+        var anim = yylAnim.FindSprite(spawner);
+        var scaleY = Math.Max(anim?.Scale.Y ?? 1f, 0.01f);
+        // 局部间距 = 显示高 / 条数 ÷ 精灵缩放 (相邻光束中心相距"一个身位/条数")。
+        var spacing = DisplayHeight(spawner) / Math.Max(count, 1) / scaleY;
+        for (var i = 0; i < count; i++)
+        {
+            var dy = (i - (count - 1) / 2f) * spacing;
+            KinBeam(spawner, flipX: flipX, lifeSeconds: lifeSeconds, positionOffset: new Vector2(0, dy));
+        }
+    }
+
     /// <summary>延时回收 (光束 Fire 完毕只是隐藏, 必须自己 QueueFree 防节点堆积)。</summary>
     private static async void RecycleLater(Node node, float seconds)
     {
@@ -175,7 +193,7 @@ public static class yylVfx
     ///     角色立绘的显示高度 (纹理原始高 × 精灵缩放), 用于"上移 N 体位"类定位。
     ///     取不到时返回 0 (调用方偏移自动退化为 0, 无害)。
     /// </summary>
-    private static float DisplayHeight(Creature target)
+    internal static float DisplayHeight(Creature target)
     {
         try
         {
