@@ -188,15 +188,23 @@ public static class yylVfx
 
     /// <summary>
     ///     ★弧形齐射 (通用版, 2026-09-21): <paramref name="count" /> 个自播特效场景
-    ///     (NVfxSpine / NVfxParticleSystem 等 _Ready 自动播放的横向特效) 的发射起点
-    ///     在身前排成一段圆弧 (凸向右), 同帧全部发射; 整体右移
-    ///     <paramref name="widthFraction" /> 个角色横向宽度。
-    ///     与 <see cref="KinBeamColumn" /> 的区别: 不限光束场景、无需触发播放
-    ///     (实例化进树即播), <paramref name="lifeSeconds" /> 后兜底回收。
+    ///     (NVfxSpine / NVfxParticleSystem 等 _Ready 自动播放的横向特效) 沿
+    ///     <paramref name="target" /> <b>身高方向</b>纵向分布 (spreadFraction=1 时即
+    ///     头顶 / 中段 / 脚尖), 横向排成一段圆弧 (凸向 <paramref name="flipX" /> 的
+    ///     反方向) 并整体偏移 <paramref name="widthFraction" /> 个身宽。
+    ///     <paramref name="intervalSeconds" /> &gt; 0 时改为<b>依次落刀</b>: 第 i 个延后
+    ///     i × interval 秒才入树 (入树 = _Ready = 开始播放), 形成连斩节奏。
+    ///     <para>
+    ///         ★挂载语义: <paramref name="target" /> 既可以是<b>施法者</b> (发射类特效,
+    ///         如光束) 也可以是<b>受击者</b> (落点类特效, 如飞斩飞刀) —— 由调用方决定,
+    ///         两者行为的唯一区别是坐标原点属于谁。
+    ///         与 <see cref="KinBeamColumn" /> 的区别: 不限光束场景、无需触发播放
+    ///         (实例化进树即播), <paramref name="lifeSeconds" /> 后兜底回收。
+    ///     </para>
     /// </summary>
     public static void ArcVolley(Creature target, string path, int count, bool flipX = false,
         float lifeSeconds = 3.5f, float arcDegrees = 50f, float widthFraction = 0.25f,
-        float spreadFraction = 1f)
+        float spreadFraction = 1f, float intervalSeconds = 0f)
     {
         var size = DisplaySize(target);
         var anim = yylAnim.FindSprite(target);
@@ -221,16 +229,47 @@ public static class yylVfx
             var t = count <= 1 ? 0.5f : (float)i / (count - 1); // 0 = 最上, 1 = 最下
             // 纵向: 沿身高均匀分布 —— spreadFraction=1 时即头顶 / 中段 / 脚尖三处。
             var dy = (-0.5f + t) * size.Y * spreadFraction;
-            // 横向: 弧线 (中间那条最凸向敌阵) + 整体右移 widthFraction 个身宽。
+            // 横向: 弧线 (中间那条最凸向敌阵) + 整体偏移 widthFraction 个身宽。
             var ang = (-halfArc + arcDegrees * t) * MathF.PI / 180f;
             var dx = MathF.Cos(ang) * size.X * 0.5f + size.X * widthFraction;
             var node = scene.Instantiate<Node2D>();
             if (node == null) continue;
+            AttachLater(anchor, node, i * intervalSeconds, new Vector2(dx / sx, dy / sy), flipX, lifeSeconds);
+        }
+    }
+
+    /// <summary>
+    ///     延时入树 (2026-09-21 连斩/依次落刀用): 自播场景是<b>入树即播</b>, 所以只要
+    ///     延后 AddChild 就能拉出时间间隔。注意 <paramref name="delaySeconds" /> 为 0
+    ///     时同步完成挂载 (与旧的同帧齐射行为一致)。目标/节点中途失效则丢弃该次演出。
+    /// </summary>
+    private static async void AttachLater(Node anchor, Node2D node, float delaySeconds, Vector2 position,
+        bool flipX, float lifeSeconds)
+    {
+        try
+        {
+            if (delaySeconds > 0f)
+            {
+                // 节点尚未入树, 用 anchor 所在的 SceneTree 计时。
+                var tree = anchor.GetTree();
+                if (tree == null) return;
+                await anchor.ToSignal(tree.CreateTimer(delaySeconds), SceneTreeTimer.SignalName.Timeout);
+            }
+            if (!GodotObject.IsInstanceValid(anchor) || !GodotObject.IsInstanceValid(node))
+            {
+                if (GodotObject.IsInstanceValid(node))
+                    node.QueueFree();
+                return;
+            }
             anchor.AddChild(node);
-            node.Position = new Vector2(dx / sx, dy / sy);
+            node.Position = position;
             if (flipX)
                 node.Scale = new Vector2(-1f, 1f);
             RecycleLater(node, lifeSeconds);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.AttachLater: {ex.Message}");
         }
     }
 
