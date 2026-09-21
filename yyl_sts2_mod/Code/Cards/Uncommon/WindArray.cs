@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -30,6 +31,8 @@ public sealed class WindArray(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 原版华丽收场的花瓣粒子: 从玩家位置向右洒落, 扫过敌阵 ("风"起)。
+        yylVfx.BurstOneShot(Owner.Creature, "vfx/grand_finale/vfx_grand_finale_petals");
         var enemies = CombatState?.HittableEnemies ?? [];
         await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
         await CommonActions.Draw(this, choiceContext);

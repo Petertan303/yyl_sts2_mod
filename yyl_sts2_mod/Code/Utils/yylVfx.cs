@@ -125,4 +125,47 @@ public static class yylVfx
             // 回收失败不影响任何逻辑。
         }
     }
+
+    /// <summary>
+    ///     ★一次性粒子爆发: 挂到 <paramref name="target" /> 的角色 Visuals (精灵中心,
+    ///     同坐标系自动跟随), 触发 <c>Emitting</c>, <paramref name="lifeSeconds" /> 后回收。
+    ///     适用于根节点为 one_shot GPUParticles2D 且无脚本的场景 —— 例如华丽收场的花瓣
+    ///     (grand_finale_petals: emitting=false + one_shot=true, <b>必须手动触发
+    ///     Emitting</b>, 走 VfxCmd 只会实例化一片静止的粒子, 什么都看不到)。
+    ///     原版华丽收场整套是 NCombatVfxSpawner.PlayingGrandFinale 脚本序列, 花瓣只是其中
+    ///     一个子场景, 这里单独借用。
+    /// </summary>
+    public static void BurstOneShot(Creature target, string path, float lifeSeconds = 4.5f)
+    {
+        try
+        {
+            var creatureNode = NCombatRoom.Instance?.GetCreatureNode(target);
+            Node visuals = creatureNode?.Visuals;
+            if (visuals == null)
+            {
+                MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): creature visuals not found");
+                return;
+            }
+            var scene = ResourceLoader.Load<PackedScene>("res://scenes/" + path + ".tscn");
+            if (scene == null)
+            {
+                MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): scene load failed");
+                return;
+            }
+            var particles = scene.Instantiate<GpuParticles2D>();
+            if (particles == null)
+            {
+                MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): instantiate returned null");
+                return;
+            }
+            visuals.AddChild(particles);
+            particles.Position = Vector2.Zero;
+            particles.Emitting = true;
+            RecycleLater(particles, lifeSeconds);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): {ex.Message}");
+        }
+    }
 }
