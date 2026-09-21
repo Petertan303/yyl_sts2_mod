@@ -121,17 +121,32 @@ public static class yylVfx
     /// <summary>
     ///     ★华丽收场的命中冲击 (grand_finale_impact, 2026-09-21): 在
     ///     <paramref name="target" /> 身上播放原版华丽收场打中敌人时的冲击序列。
-    ///     原版用法 = 逐目标调静态 <c>NGrandFinaleImpactVfx.Create(Creature)</c>:
-    ///     内部实例化场景、按目标中心/地面位置 InitializePositions、挂载, 进树后
-    ///     _Ready 自动 PlaySequence —— 无需任何手动触发, 也不需要回收
-    ///     (序列自管理)。目标节点不存在时 Create 内部自行跳过。
+    ///     <para>
+    ///         原版两步 (缺一不可): ①静态 <c>Create(Creature)</c> 实例化 + 按目标
+    ///         中心/地面 InitializePositions (内部走 Cache.GetScene, 未预热只打
+    ///         WARN 但仍会现场加载); ②<b>AddChildSafely 挂进战斗场景</b> ——
+    ///         进树后 _Ready 才会自动 PlaySequence, 不挂载就是无声无息。
+    ///         序列自管理, 播完自行退出, 无需回收。
+    ///     </para>
     /// </summary>
     public static void GrandFinaleImpact(Creature target)
     {
         try
         {
             if (target == null) return;
-            NGrandFinaleImpactVfx.Create(target);
+            var impact = NGrandFinaleImpactVfx.Create(target);
+            if (impact == null)
+            {
+                MainFile.Logger.Error("yylVfx.GrandFinaleImpact: Create returned null (target node missing?)");
+                return;
+            }
+            var room = NCombatRoom.Instance;
+            if (room == null)
+            {
+                impact.QueueFree();
+                return;
+            }
+            room.AddChild(impact);
         }
         catch (Exception ex)
         {
