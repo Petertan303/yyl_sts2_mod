@@ -1,5 +1,7 @@
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 
 namespace yyl_sts2_mod.Code.Utils;
 
@@ -55,6 +57,61 @@ public static class yylVfx
         catch (Exception ex)
         {
             MainFile.Logger.Error($"yylVfx.FullScreen({path}): {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     ★怪物特效挪用实验: 从 <paramref name="spawner" /> 位置发射同族祭司的灵魂光束
+    ///     (kin_priest_beam, 2026-09-21)。反汇编确认:
+    ///     <c>_Ready</c> 只缓存节点引用并隐藏自身, 无外部依赖, 可自由实例化;
+    ///     播放靠 <c>Fire()</c> (旋转摆动 + 光束 scale.x 伸出/收回的 tween), tween 完成后
+    ///     仅 Visible=false <b>不回收节点</b> —— 原版由祭司自己复用同一实例, 我们每次
+    ///     新建实例, 因此必须在 <paramref name="lifeSeconds" /> 后 QueueFree。
+    ///     光束贴图朝局部 -X 延伸: 默认 0° 向左, 玩家朝右打敌人传 180°。
+    /// </summary>
+    public static void KinBeam(Creature spawner, float rotationDegrees = 0f, float lifeSeconds = 2.5f)
+    {
+        try
+        {
+            var scene = ResourceLoader.Load<PackedScene>("res://scenes/vfx/monsters/kin_priest_beam_vfx.tscn");
+            if (scene == null)
+            {
+                MainFile.Logger.Error("yylVfx.KinBeam: scene load failed");
+                return;
+            }
+            var beam = scene.Instantiate<NKinPriestBeamVfx>();
+            if (beam == null) return;
+            var container = spawner.GetVfxContainer();
+            if (container == null)
+            {
+                beam.QueueFree();
+                return;
+            }
+            container.AddChild(beam);
+            beam.RotationDegrees = rotationDegrees;
+            beam.Fire();
+            RecycleLater(beam, lifeSeconds);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.KinBeam: {ex.Message}");
+        }
+    }
+
+    /// <summary>延时回收 (光束 Fire 完毕只是隐藏, 必须自己 QueueFree 防节点堆积)。</summary>
+    private static async void RecycleLater(Node node, float seconds)
+    {
+        try
+        {
+            var tree = node.GetTree();
+            if (tree == null) return;
+            await node.ToSignal(tree.CreateTimer(seconds), SceneTreeTimer.SignalName.Timeout);
+            if (GodotObject.IsInstanceValid(node))
+                node.QueueFree();
+        }
+        catch
+        {
+            // 回收失败不影响任何逻辑。
         }
     }
 }

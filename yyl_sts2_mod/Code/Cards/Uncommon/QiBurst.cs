@@ -10,6 +10,7 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -39,8 +40,10 @@ public sealed class QiBurst(
         if (target == null) return;
         if (Owner.Creature.GetPower<Qi>()?.Amount >= 1)
             await yylCmd.LoseQi(choiceContext, Owner, 1, this, cardPlay.Card);
+        // 怪物特效挪用: 同族祭司灵魂光束, 从玩家射向目标 (光束贴图朝局部 -X, 转 180° 朝右)。
+        yylVfx.KinBeam(Owner.Creature, 180f);
         await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);
     }
 }
