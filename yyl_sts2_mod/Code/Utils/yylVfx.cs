@@ -172,23 +172,67 @@ public static class yylVfx
     }
 
     /// <summary>
-    ///     ★一次性粒子爆发: 挂到 <paramref name="target" /> 的角色 Visuals (精灵中心,
+    ///     角色立绘的显示高度 (纹理原始高 × 精灵缩放), 用于"上移 N 体位"类定位。
+    ///     取不到时返回 0 (调用方偏移自动退化为 0, 无害)。
+    /// </summary>
+    private static float DisplayHeight(Creature target)
+    {
+        try
+        {
+            var anim = yylAnim.FindSprite(target);
+            if (anim?.SpriteFrames == null) return 0f;
+            // 优先 idle 立绘帧 (最能代表完整体型)。
+            foreach (var animName in new[] { "idle_loop", "attack", "cast" })
+            {
+                if (!anim.SpriteFrames.HasAnimation(animName)) continue;
+                var tex = anim.SpriteFrames.GetFrameTexture(animName, 0);
+                if (tex != null) return tex.GetHeight() * Math.Abs(anim.Scale.Y);
+            }
+        }
+        catch { }
+        return 0f;
+    }
+
+    /// <summary>
+    ///     在角色身上播特效, 并向上抬高 <paramref name="raiseFraction" /> 个体位
+    ///     (1/3 = 角色立绘下三分之一处, 2026-09-21 B 档特效统一用 1/3)。
+    ///     走原版 PlayVfx 管线: 挂目标 VfxContainer, 全局坐标 = 角色节点位置 -
+    ///     显示高度 × fraction。
+    /// </summary>
+    public static void OnCreatureRaised(Creature target, string path, float raiseFraction)
+    {
+        try
+        {
+            var node = target?.GetCreatureNode();
+            if (target == null || node == null) return;
+            var pos = node.GlobalPosition - new Vector2(0, DisplayHeight(target) * raiseFraction);
+            VfxCmd.PlayVfx(pos, path, target.GetVfxContainer());
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.OnCreatureRaised({path}): {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     ★一次性粒子爆发: 挂到 <paramref name="target" /> 的角色精灵 (纹理中心,
     ///     同坐标系自动跟随), 触发 <c>Emitting</c>, <paramref name="lifeSeconds" /> 后回收。
     ///     适用于根节点为 one_shot GPUParticles2D 且无脚本的场景 —— 例如华丽收场的花瓣
     ///     (grand_finale_petals: emitting=false + one_shot=true, <b>必须手动触发
     ///     Emitting</b>, 走 VfxCmd 只会实例化一片静止的粒子, 什么都看不到)。
     ///     原版华丽收场整套是 NCombatVfxSpawner.PlayingGrandFinale 脚本序列, 花瓣只是其中
-    ///     一个子场景, 这里单独借用。
+    ///     一个子场景, 这里单独借用。<paramref name="raiseFraction" /> 上移 N 个体位。
     /// </summary>
-    public static void BurstOneShot(Creature target, string path, float lifeSeconds = 4.5f)
+    public static void BurstOneShot(Creature target, string path, float lifeSeconds = 4.5f, float raiseFraction = 0f)
     {
         try
         {
-            var creatureNode = NCombatRoom.Instance?.GetCreatureNode(target);
-            Node visuals = creatureNode?.Visuals;
-            if (visuals == null)
+            // 挂角色精灵 (纹理中心) 而非容器原点 (脚底)。
+            Node anchor = yylAnim.FindSprite(target)
+                ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(target)?.Visuals);
+            if (anchor == null)
             {
-                MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): creature visuals not found");
+                MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): creature sprite/visuals not found");
                 return;
             }
             var scene = ResourceLoader.Load<PackedScene>("res://scenes/" + path + ".tscn");
@@ -203,8 +247,15 @@ public static class yylVfx
                 MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): instantiate returned null");
                 return;
             }
-            visuals.AddChild(particles);
-            particles.Position = Vector2.Zero;
+            anchor.AddChild(particles);
+            // 局部偏移受精灵缩放放大: 纹理高 × fraction 的局部距离 ≈ 显示高度 × fraction。
+            var texH = 0f;
+            if (anchor is AnimatedSprite2D anim && anim.SpriteFrames != null && anim.SpriteFrames.HasAnimation("idle_loop"))
+            {
+                var tex = anim.SpriteFrames.GetFrameTexture("idle_loop", 0);
+                if (tex != null) texH = tex.GetHeight();
+            }
+            particles.Position = new Vector2(0, -texH * raiseFraction);
             particles.Emitting = true;
             RecycleLater(particles, lifeSeconds);
         }

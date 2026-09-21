@@ -81,11 +81,11 @@ public sealed class WhiteWorm(
             for (var i = 0; i < hits; i++)
             {
                 yylVfx.KinBeam(Owner.Creature, flipX: true, positionOffset:
-                    new Vector2(Random.Shared.Next(-70, 71), Random.Shared.Next(-90, 30)));
+                    new Vector2(0, Random.Shared.Next(-90, 30)));
                 await CommonActions.CardAttack(this, cardPlay, enemy, damage, ValueProp.Unblockable)
                     .Execute(choiceContext);
                 if (i < hits - 1)
-                    await Cmd.Wait(0.3f, false);
+                    await Cmd.Wait(0.1f, false);
             }
         }
 
