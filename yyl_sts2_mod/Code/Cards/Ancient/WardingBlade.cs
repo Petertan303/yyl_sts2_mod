@@ -44,8 +44,8 @@ public sealed class WardingBlade(
             DynamicVars.Damage.BaseValue *= 2;
         }
 
-        // 辟邪剑法: 三道剑气在身前扇面同时射出 (弧形齐射, 段数 = Repeat)。
-        yylVfx.ArcVolley(cardPlay.Target!, "vfx/vfx_flying_slash",
+        // 辟邪剑法: 三道剑气从施法者身前扇面同时射出 (头顶 / 中段 / 脚尖三处)。
+        yylVfx.ArcVolley(Owner.Creature, "vfx/vfx_flying_slash",
             DynamicVars.Repeat.IntValue, flipX: false);
 
         await CommonActions.CardAttack(this, cardPlay)

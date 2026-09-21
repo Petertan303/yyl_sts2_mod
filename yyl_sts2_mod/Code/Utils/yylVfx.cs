@@ -195,13 +195,13 @@ public static class yylVfx
     ///     (实例化进树即播), <paramref name="lifeSeconds" /> 后兜底回收。
     /// </summary>
     public static void ArcVolley(Creature target, string path, int count, bool flipX = false,
-        float lifeSeconds = 3.5f, float arcDegrees = 50f, float widthFraction = 0.25f)
+        float lifeSeconds = 3.5f, float arcDegrees = 50f, float widthFraction = 0.25f,
+        float spreadFraction = 1f)
     {
         var size = DisplaySize(target);
         var anim = yylAnim.FindSprite(target);
         var sx = Math.Max(anim?.Scale.X ?? 1f, 0.01f);
         var sy = Math.Max(anim?.Scale.Y ?? 1f, 0.01f);
-        var radius = size.X * 0.5f;
         var halfArc = arcDegrees / 2f;
         var scene = ResourceLoader.Load<PackedScene>("res://scenes/" + path + ".tscn");
         if (scene == null)
@@ -218,10 +218,12 @@ public static class yylVfx
         }
         for (var i = 0; i < count; i++)
         {
-            var t = count <= 1 ? 0.5f : (float)i / (count - 1);
+            var t = count <= 1 ? 0.5f : (float)i / (count - 1); // 0 = 最上, 1 = 最下
+            // 纵向: 沿身高均匀分布 —— spreadFraction=1 时即头顶 / 中段 / 脚尖三处。
+            var dy = (-0.5f + t) * size.Y * spreadFraction;
+            // 横向: 弧线 (中间那条最凸向敌阵) + 整体右移 widthFraction 个身宽。
             var ang = (-halfArc + arcDegrees * t) * MathF.PI / 180f;
-            var dx = MathF.Cos(ang) * radius + size.X * widthFraction;
-            var dy = MathF.Sin(ang) * radius;
+            var dx = MathF.Cos(ang) * size.X * 0.5f + size.X * widthFraction;
             var node = scene.Instantiate<Node2D>();
             if (node == null) continue;
             anchor.AddChild(node);
