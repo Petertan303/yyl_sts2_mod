@@ -146,7 +146,7 @@
   "YYL_STS2_MOD-ZHU_XIE.title": "Zhu Xie",
   "YYL_STS2_MOD-WARDING_BLADE.description": "Deal {Damage:diff()} damage {Repeat:diff()} times. If the target has [gold]Vulnerable[/gold], [gold]Weak[/gold], [gold]Poison[/gold] or the [gold]Nailong[/gold] mark, this damage is doubled.",
   "YYL_STS2_MOD-WARDING_BLADE.title": "Evil-Warding Swordplay",
-  "YYL_STS2_MOD-WHITE_WORM.description": "Deal {Damage:diff()} damage {Repeat:diff()} times to ALL enemies, ignoring Block, and apply {VulnerablePower:diff()} [gold]Vulnerable[/gold] and {WeakPower:diff()} [gold]Weak[/gold]. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
+  "YYL_STS2_MOD-WHITE_WORM.description": "Deal {Damage:diff()} damage {Repeat:diff()} times to ALL enemies, and apply {VulnerablePower:diff()} [gold]Vulnerable[/gold] and {WeakPower:diff()} [gold]Weak[/gold]. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
   "YYL_STS2_MOD-WHITE_WORM.title": "White Worm",
   "YYL_STS2_MOD-REBIRTH_THREE.description": "Enter [gold]Reverse Life III[/gold].",
   "YYL_STS2_MOD-REBIRTH_THREE.title": "Reverse Life III",

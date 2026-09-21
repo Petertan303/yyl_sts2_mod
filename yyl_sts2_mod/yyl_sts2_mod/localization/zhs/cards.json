@@ -146,7 +146,7 @@
   "YYL_STS2_MOD-ZHU_XIE.title": "诛邪",
   "YYL_STS2_MOD-WARDING_BLADE.description": "造成{Damage:diff()}点伤害{Repeat:diff()}次。若目标带有[gold]易伤[/gold]、[gold]虚弱[/gold]、[gold]中毒[/gold]或[gold]奶龙[/gold]标记，则本次伤害翻倍。",
   "YYL_STS2_MOD-WARDING_BLADE.title": "辟邪剑法",
-  "YYL_STS2_MOD-WHITE_WORM.description": "对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次，无视格挡，并给予{VulnerablePower:diff()}层[gold]易伤[/gold]与{WeakPower:diff()}层[gold]虚弱[/gold]。若你有[gold]金光护体[/gold]，消耗1层，本次每段伤害提高{Bonus:diff()}点。",
+  "YYL_STS2_MOD-WHITE_WORM.description": "对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次，并给予{VulnerablePower:diff()}层[gold]易伤[/gold]与{WeakPower:diff()}层[gold]虚弱[/gold]。若你有[gold]金光护体[/gold]，消耗1层，本次每段伤害提高{Bonus:diff()}点。",
   "YYL_STS2_MOD-WHITE_WORM.title": "白长虫",
   "YYL_STS2_MOD-REBIRTH_THREE.description": "进入[gold]逆生三重[/gold]。",
   "YYL_STS2_MOD-REBIRTH_THREE.title": "逆生三重",

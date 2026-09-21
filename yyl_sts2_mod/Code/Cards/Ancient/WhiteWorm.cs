@@ -17,10 +17,12 @@ namespace yyl_sts2_mod.Code.Cards.Ancient;
 
 /// <summary>
 ///     白长虫: 先古卡 (原「阴五雷」), 与掌心雷对应的 ancestral 形态。
-///     对所有敌人造成 2 → 3 点伤害 5 次, 无视格挡, 并挂 1 → 2 层易伤与虚弱;
+///     对所有敌人造成 2 → 3 点伤害 5 次 (普通伤害, 吃格挡), 并挂 1 → 2 层易伤与虚弱;
 ///     若身上有金光护体, 消耗 1 层使本次伤害 +1。
 ///     <para>
-///         阴雷走内伤、穿透: 同样的一发雷, 比掌心雷更重且不吃格挡。
+///         阴雷比掌心雷更重 (2→3 vs 1→2 每段), 但仍走普通伤害管线 —— 声明与结算
+///         都带 <c>ValueProp.Move</c>, 才能吃到力量/易伤等常规攻击加成 (⚠不能传
+///         <c>ValueProp.None</c>: 那不算"攻击", 力量等加成会全部失效)。
 ///         白长虫是独立卡牌 (见构造函数里的独立升级 2 → 3),
 ///         本体通过「古老牙齿」(Ancient Tooth) 遗物从掌心雷转化而来,
 ///         不应在普通升级流程中互相变形。
@@ -38,7 +40,7 @@ public sealed class WhiteWorm(
 {
     public WhiteWorm() : this(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies)
     {
-        // 伤害变量名仍叫 Damage, 但带上 Unblockable —— 阴雷吃"内伤", 不吃格挡。
+        // 伤害变量名仍叫 Damage; props = Move (普通攻击, 吃格挡也吃力量/易伤)。
         // (AttackCommand 没有 WithValueProp, 伤害的 ValueProp 只能在声明伤害变量时给。)
         //
         // 注意: CalculatedDamageVar 没有可写的 BaseValue 属性, 因此"金光护体 +1 伤害"
@@ -49,7 +51,7 @@ public sealed class WhiteWorm(
             "Damage",
             2,
             (card, _) => card.Owner.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0m,
-            ValueProp.Unblockable,
+            ValueProp.Move,
             1,
             0);
         WithVars(new RepeatVar(5));
@@ -79,7 +81,7 @@ public sealed class WhiteWorm(
             // 五条光束上下并列同时发射 (演出), 结算仍为一次 5 段攻击。
             yylVfx.KinBeamColumn(Owner.Creature, DynamicVars.Repeat.IntValue, flipX: true);
             await CommonActions.CardAttack(this, cardPlay, enemy, damage,
-                    ValueProp.Unblockable, hitCount: DynamicVars.Repeat.IntValue)
+                    ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
                 .Execute(choiceContext);
         }
 

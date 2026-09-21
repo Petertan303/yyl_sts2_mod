@@ -30,10 +30,14 @@
 
 ### 1.2 触发型
 
-| 名称 | 效果 | 备注 |
+> **v0.3 修正（2026-09-15）**: 这两个能力的语义此前是**反的**（丹噬做的是格挡、温养做的是伤害），
+> 现按"产炁偏防 → 需要输出 / 耗炁偏攻 → 需要保命"的设计意图对调，并各自配了一张能力牌。
+> 层数即数值（同原版「荆棘」写法），多张叠加。
+
+| 名称 | 效果 | 对应卡牌 |
 |---|---|---|
-| **温养 (WenYang)** | **获得炁时**,对所有敌人造成 4 → 6 伤害 | 需新建 `IGainQi` 钩子 |
-| **丹噬 (DanShi)** | **失去炁时**,获得 4 → 6 格挡 | 需新建 `ILoseQi` 钩子 |
+| **丹噬 (CinnabarBite)** | **获得炁时**,对所有敌人造成 4 → 6 点伤害 | `Cards/Rare/CinnabarBite.cs` · 2 费 · Rare |
+| **温养 (Nurture)** | **失去炁时**,获得 4 → 6 点格挡 | `Cards/Uncommon/Nurture.cs` · 1 费 · Uncommon |
 
 ### 1.3 阶段型
 
@@ -234,11 +238,11 @@
 | 名称 | 稀有度 | 费 | 效果 |
 |---|---|---|---|
 | **掌心雷 (PalmThunder)** | Basic (初始牌) | 1 | 对所有敌人造成 1 → 2 点伤害 5 次, 挂 1 层易伤 + 1 层虚弱; 有金光护体则消耗 1 层使本次伤害 +1 |
-| **白长虫 (WhiteWorm)** | **Ancient** | 1 | 对所有敌人造成 2 → 3 点伤害 5 次 (**无视格挡**), 挂 1 → 2 层易伤 + 虚弱; 金光护体规则同上 |
+| **白长虫 (WhiteWorm)** | **Ancient** | 1 | 对所有敌人造成 2 → 3 点伤害 5 次 (**普通伤害, 吃格挡**, 2026-09-21 起), 挂 1 → 2 层易伤 + 虚弱; 金光护体规则同上 |
 
 - 初始牌组把原来的 `SolarThunder` 换成 `PalmThunder`(`Code/Character/yyl_sts2_mod.cs`)。
 - **升级即变形**: 掌心雷被升级时, 由 `Code/Patches/PalmThunderUpgradePatch.cs` 在 `CardCmd.Upgrade` 之后调用 `CardCmd.TransformTo<WhiteWorm>`。StS2 没有声明式的"升级成另一张牌"接口(只有 `MaxUpgradeLevel` 控制层数), 所以用了 Harmony 后置补丁; 变形失败只记警告并保留普通升级结果。
-- **无视格挡**的实现注记: `AttackCommand` 没有 `WithValueProp`, 伤害的 `ValueProp` 只能在声明伤害变量时给 —— 用 `WithCalculatedDamage("Damage", 2, _ => 0m, ValueProp.Unblockable, 1, 0)`(变量名故意仍叫 `Damage`, 卡面写法与其它卡一致)。
+- **ValueProp 的实现注记**(2026-09-21 更新): `AttackCommand` 没有 `WithValueProp`, 伤害的 `ValueProp` **只能在声明伤害变量时给** —— 用 `WithCalculatedDamage("Damage", 2, calc, ValueProp.Move, 1, 0)`(变量名故意仍叫 `Damage`, 卡面写法与其它卡一致)。⚠结算时也必须传同一个 flag: 传 `ValueProp.None` 的话这不算"攻击", **力量/易伤等常规攻击加成全部失效**; `Unblockable` 则绕过格挡(白长虫已按用户要求改回 `Move`)。
 - ⚠ **待实机验证**: 升级变形是否与营火/事件/遗物的所有升级入口兼容。
 
 ### 7.2 辟邪剑法 (WardingBlade)
