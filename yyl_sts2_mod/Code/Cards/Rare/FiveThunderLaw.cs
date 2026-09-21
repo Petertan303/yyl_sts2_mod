@@ -12,7 +12,6 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
-using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
@@ -53,8 +52,6 @@ public sealed class FiveThunderLaw(
         // 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException (卡死在待打出区)。
         var hits = DynamicVars.Repeat.IntValue;
         var damage = DynamicVars["Damage"].IntValue;
-        // 五雷 = 五道光束齐射扫过敌阵 (一次, 不随敌人数重复)。
-        yylVfx.KinBeamColumn(Owner.Creature, hits, flipX: true);
         foreach (var enemy in CombatState?.HittableEnemies ?? [])
         {
             if (enemy == null || !enemy.IsHittable) continue;

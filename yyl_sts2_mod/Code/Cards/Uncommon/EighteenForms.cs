@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using yyl_sts2_mod.Code.Abstract;
-using yyl_sts2_mod.Code.Utils;
 using yyl_sts2_mod.Code.Character;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
@@ -31,8 +30,6 @@ public sealed class EighteenForms(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 多段齐射演出: 段数道光束在身前扇面同时发射。
-        yylVfx.KinBeamColumn(Owner.Creature, DynamicVars.Repeat.IntValue, flipX: true);
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitCount(DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_dagger_spray_flurry")
