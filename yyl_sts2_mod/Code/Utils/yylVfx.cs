@@ -118,6 +118,27 @@ public static class yylVfx
         }
     }
 
+    /// <summary>
+    ///     ★华丽收场的命中冲击 (grand_finale_impact, 2026-09-21): 在
+    ///     <paramref name="target" /> 身上播放原版华丽收场打中敌人时的冲击序列。
+    ///     原版用法 = 逐目标调静态 <c>NGrandFinaleImpactVfx.Create(Creature)</c>:
+    ///     内部实例化场景、按目标中心/地面位置 InitializePositions、挂载, 进树后
+    ///     _Ready 自动 PlaySequence —— 无需任何手动触发, 也不需要回收
+    ///     (序列自管理)。目标节点不存在时 Create 内部自行跳过。
+    /// </summary>
+    public static void GrandFinaleImpact(Creature target)
+    {
+        try
+        {
+            if (target == null) return;
+            NGrandFinaleImpactVfx.Create(target);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.GrandFinaleImpact: {ex.Message}");
+        }
+    }
+
     /// <summary>延时回收 (光束 Fire 完毕只是隐藏, 必须自己 QueueFree 防节点堆积)。</summary>
     private static async void RecycleLater(Node node, float seconds)
     {

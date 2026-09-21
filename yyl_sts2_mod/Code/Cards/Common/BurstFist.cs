@@ -11,6 +11,7 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Common;
 
@@ -40,9 +41,11 @@ public sealed class BurstFist(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        var target = cardPlay.Target!;
         await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
+        // 华丽收场的命中冲击 (替代原 slash 命中特效)。
+        yylVfx.GrandFinaleImpact(target);
 
         // 伪 0 费: 本回合获得过炁 → 返还 2 能量。
         if (QiGainTracker.GainedThisRound(Owner, Owner.Creature.CombatState))
