@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://2olb70twq2gf"
-path="res://.godot/imported/nailong_rearing_outline.png-fc398c8216cbd98749e4e13a826f805b.ctex"
+uid="uid://i82by8j7alqn"
+path="res://.godot/imported/relic_outline.png-1da3dfc516fd128d08690de064c0c4ac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://yyl_sts2_mod/images/relics/nailong_rearing_outline.png"
-dest_files=["res://.godot/imported/nailong_rearing_outline.png-fc398c8216cbd98749e4e13a826f805b.ctex"]
+source_file="res://yyl_sts2_mod/images/relics/outline/relic_outline.png"
+dest_files=["res://.godot/imported/relic_outline.png-1da3dfc516fd128d08690de064c0c4ac.ctex"]
 
 [params]
 

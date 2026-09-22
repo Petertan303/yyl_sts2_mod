@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1coh4vdgobwf"
-path="res://.godot/imported/yylUI-2.png-663227b55313c3890ecefca905840ade.ctex"
+uid="uid://dwtvp4rymbkxj"
+path="res://.godot/imported/peach_can_outline.png-3eb25edb05519184386180a13fca6bba.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://yyl_sts2_mod/images/charui/yylUI-2.png"
-dest_files=["res://.godot/imported/yylUI-2.png-663227b55313c3890ecefca905840ade.ctex"]
+source_file="res://yyl_sts2_mod/images/relics/outline/peach_can_outline.png"
+dest_files=["res://.godot/imported/peach_can_outline.png-3eb25edb05519184386180a13fca6bba.ctex"]
 
 [params]
 

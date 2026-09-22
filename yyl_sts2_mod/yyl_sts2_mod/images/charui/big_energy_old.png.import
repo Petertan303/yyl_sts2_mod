@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cqi2ehcar4d1l"
-path="res://.godot/imported/nl_can2_outline.png-a4de70df57bc260ad6f776a489b62df1.ctex"
+uid="uid://crercv6ldeq61"
+path="res://.godot/imported/big_energy_old.png-76406dec5a95de1d264149126874e108.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://yyl_sts2_mod/images/relics/nl_can2_outline.png"
-dest_files=["res://.godot/imported/nl_can2_outline.png-a4de70df57bc260ad6f776a489b62df1.ctex"]
+source_file="res://yyl_sts2_mod/images/charui/big_energy_old.png"
+dest_files=["res://.godot/imported/big_energy_old.png-76406dec5a95de1d264149126874e108.ctex"]
 
 [params]
 

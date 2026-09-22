@@ -81,4 +81,8 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
     public override string CustomCharacterSelectIconPath => "char_select_char_name.png".CharacterUiPath();
     public override string CustomCharacterSelectLockedIconPath => "char_select_char_name_locked.png".CharacterUiPath();
     public override string CustomMapMarkerPath => "map_marker_char_name.png".CharacterUiPath();
+
+    // 底部战斗能量计数器（左下角大球）用自定义场景渲染 bigger_energy.png，
+    // 与卡费图标(BigEnergyIconPath=big_energy.png)、文字能量(text_energy.png)三者解耦。
+    public override string CustomEnergyCounterPath => "res://yyl_sts2_mod/scenes/yyl_energy_counter.tscn";
 }

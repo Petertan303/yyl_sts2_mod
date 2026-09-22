@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hyxb47uh1v31"
-path="res://.godot/imported/yylUI-3.png-62ec89b952c738ff9984001c67abbcf0.ctex"
+uid="uid://dyylbigenrg2c"
+path="res://.godot/imported/bigger_energy.png-79a2f61ee1bb2e3e86a202077b04f331.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://yyl_sts2_mod/images/charui/yylUI-3.png"
-dest_files=["res://.godot/imported/yylUI-3.png-62ec89b952c738ff9984001c67abbcf0.ctex"]
+source_file="res://yyl_sts2_mod/images/charui/bigger_energy.png"
+dest_files=["res://.godot/imported/bigger_energy.png-79a2f61ee1bb2e3e86a202077b04f331.ctex"]
 
 [params]
 

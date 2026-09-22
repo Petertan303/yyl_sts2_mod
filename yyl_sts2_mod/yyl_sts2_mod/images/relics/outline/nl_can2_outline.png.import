@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dl7sslop8c2bj"
-path="res://.godot/imported/relic_outline.png-087b3210eb069df07f729f64b06a7020.ctex"
+uid="uid://dw1e5bkvrctia"
+path="res://.godot/imported/nl_can2_outline.png-c7e5239cbdb85a33a6077f347cb3a977.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://yyl_sts2_mod/images/relics/relic_outline.png"
-dest_files=["res://.godot/imported/relic_outline.png-087b3210eb069df07f729f64b06a7020.ctex"]
+source_file="res://yyl_sts2_mod/images/relics/outline/nl_can2_outline.png"
+dest_files=["res://.godot/imported/nl_can2_outline.png-c7e5239cbdb85a33a6077f347cb3a977.ctex"]
 
 [params]
 
