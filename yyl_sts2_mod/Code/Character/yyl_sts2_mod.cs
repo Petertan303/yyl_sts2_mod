@@ -20,6 +20,25 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
     public static readonly Color Color = new("fbfac2");
 
     public override Color NameColor => Color;
+
+    /*  左下角大能量球上「数字外圈描边」的颜色。
+        引擎链路（已反编译 sts2.dll 确认）：
+            NEnergyCounter.RefreshLabel
+              -> _label.AddThemeColorOverride(FontOutlineColor,
+                     Energy > 0 ? get_OutlineColor() : unplayableEnergyCostOutline)
+              -> get_OutlineColor()  ==  _player.Character.EnergyLabelOutlineColor
+
+        基类 CharacterModel 默认返回 Color("0000000D") —— 黑色但 alpha 仅 13/255(约 5%)，
+        等于「几乎没有描边」，奶黄数字直接贴在大球上缺乏暗色托底。
+        静默猎手把这里覆写为深绿 "004f04FF"（注意与其 NameColor 是两套值），
+        此处同样覆写为深墨绿。
+
+        重要：这个属性与 NameColor(fbfac2) 完全无关 ——
+          * 改这里不会影响角色名颜色；
+          * 也不会影响卡牌颜色（卡牌的墨绿来自卡池 H/S/V 着色，见 yyl_sts2_modCardPool）。
+        想再暗/再绿，直接改下面这个 16 进制值即可。 */
+    public override Color EnergyLabelOutlineColor => new("004f04FF");
+
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 85;
 

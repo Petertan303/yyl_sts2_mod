@@ -2,6 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://dyylbigenrg2c" path="res://yyl_sts2_mod/images/charui/bigger_energy.png" id="1_big"]
 
+; 描边色由 CharacterModel.EnergyLabelOutlineColor 驱动（见 yyl_sts2_mod.cs），
+; 运行时 NEnergyCounter.RefreshLabel 会用 AddThemeColorOverride 重新写入，
+; 这里的值只在刷新前作为初值兜底，故与 C# 中的深墨绿保持一致。
 [node name="YylEnergyCounter" type="Control"]
 layout_mode = 3
 anchors_preset = 0
@@ -45,7 +48,7 @@ offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0.309804, 0.015686, 1)
 theme_override_constants/outline_size = 16
 theme_override_font_sizes/font_size = 36
 text = "3/3"
