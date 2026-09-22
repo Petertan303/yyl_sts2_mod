@@ -16,7 +16,7 @@ namespace yyl_sts2_mod.Code.Powers;
 public sealed class HeartGuard : yylPowerModel, IModifyDamageMultiplicative
 {
     public override PowerType Type => PowerType.Buff;
-    public override PowerStackType StackType => PowerStackType.Single;
+    public override PowerStackType StackType => PowerStackType.Counter;
 
     public decimal ModifyDamageMultiplicativeCompability(
         Creature? target,

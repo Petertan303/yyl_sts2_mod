@@ -97,5 +97,11 @@
   "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "Qi flows around you.",
   "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.title": "Reverse Life 1",
   "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.description": "The first Block you gain each turn is doubled.",
-  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.smartDescription": "The first Block you gain each turn is doubled."
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.smartDescription": "The first Block you gain each turn is doubled.",
+  "YYL_STS2_MOD-LONG_NU.description": "Damage taken from [gold]Nailong[/gold] is doubled this turn.",
+  "YYL_STS2_MOD-LONG_NU.smartDescription": "Damage taken from [gold]Nailong[/gold] is doubled this turn.",
+  "YYL_STS2_MOD-LONG_NU.title": "Dragon Wrath",
+  "YYL_STS2_MOD-LU_LONG_YIN.description": "Deal doubled damage to [gold]Nailong[/gold].",
+  "YYL_STS2_MOD-LU_LONG_YIN.smartDescription": "Deal doubled damage to [gold]Nailong[/gold].",
+  "YYL_STS2_MOD-LU_LONG_YIN.title": "Dragonsbane Seal"
 }

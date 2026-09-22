@@ -12,7 +12,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     太极: 1 费, 失去 2 点炁 (升级后 1 点), 本回合你受到的伤害转移给一名随机敌人。
+///     太极: 0 费, 失去 2 点炁 (升级后 1 点), 本回合你受到的伤害转移给一名随机敌人。
 ///     <para>
 ///         机制化 AoE / 防御 (设计笔记 §6-②): 借力打力, 以彼之道还施彼身。
 ///         转移由 <see cref="Powers.TaiChiMark" /> + Harmony 前缀
@@ -20,6 +20,7 @@ namespace yyl_sts2_mod.Code.Cards.Uncommon;
 ///         目标的单体重定向到随机敌人; 回合结束 (敌方回合收尾) 自动散去。
 ///         [rule 2026-09-18] 耗炁卡统一判定: 炁不足时无额外效果。
 ///         [balance 2026-09-19] 稀有度 Rare → Uncommon; 升级效果改为耗炁 2 → 1 (用户定调)。
+///         [balance 2026-09-21] 费用 1 → 0 (用户定调); 耗炁维持 3 → 2。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -31,7 +32,7 @@ public sealed class TaiChi(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public TaiChi() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public TaiChi() : this(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithPower<TaiChiMark>(1);
         // 仅用于卡面显示 + 实际读取: 这张卡要花掉的炁 (2026-09-21 上调: 升级 3 → 2)

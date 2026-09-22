@@ -23,7 +23,7 @@ public partial class WrathActivationBurst : Node2D
 
         _lines = new BurstLine[LineCount];
         var mat = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
-        var texture = PreloadManager.Cache.GetAsset<Texture2D>("res://yyl_sts2_mod/images/vfx/strike_line.png");
+        var texture = ResourceLoader.Load<Texture2D>("res://yyl_sts2_mod/images/vfx/strike_line.png");
 
         for (var i = 0; i < LineCount; i++)
         {

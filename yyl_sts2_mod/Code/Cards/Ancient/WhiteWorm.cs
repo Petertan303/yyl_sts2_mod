@@ -17,7 +17,7 @@ namespace yyl_sts2_mod.Code.Cards.Ancient;
 
 /// <summary>
 ///     白长虫: 先古卡 (原「阴五雷」), 与掌心雷对应的 ancestral 形态。
-///     对所有敌人造成 2 → 3 点伤害 5 次 (普通伤害, 吃格挡), 并挂 1 → 2 层易伤与虚弱;
+///     对所有敌人造成 2 → 3 点伤害 5 次 (普通伤害, 吃格挡), 并挂 2 → 3 层易伤与虚弱;
 ///     若身上有金光护体, 消耗 1 层使本次伤害 +1。
 ///     <para>
 ///         阴雷比掌心雷更重 (2→3 vs 1→2 每段), 但仍走普通伤害管线 —— 声明与结算
@@ -56,9 +56,9 @@ public sealed class WhiteWorm(
             0);
         WithVars(new RepeatVar(5));
         // 消耗金光护体时每段额外伤害 (卡面用)
-        WithCalculatedDamage("Bonus", 1, (_, _) => 0m, 0, 0, 0);
-        WithPower<VulnerablePower>(1, 1);
-        WithPower<WeakPower>(1, 1);
+        WithCalculatedDamage("Bonus", 2, (_, _) => 0m, 0, 0, 0);
+        WithPower<VulnerablePower>(2, 1);
+        WithPower<WeakPower>(2, 1);
 
         WithPower<GoldenAegis>(-1);
         // 仅用于卡面显示: 这次要消耗几层

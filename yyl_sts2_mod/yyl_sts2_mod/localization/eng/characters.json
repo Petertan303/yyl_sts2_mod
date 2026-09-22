@@ -1,0 +1,17 @@
+{
+  "YYL_STS2_MOD-YYL_STS2_MOD.aromaPrinciple": "Lore",
+  "YYL_STS2_MOD-YYL_STS2_MOD.banter.alive.endTurnPing": "Hurry up.",
+  "YYL_STS2_MOD-YYL_STS2_MOD.banter.dead.endTurnPing": "...",
+  "YYL_STS2_MOD-YYL_STS2_MOD.cardsModifierDescription": "__ cards will now appear in rewards and shops.",
+  "YYL_STS2_MOD-YYL_STS2_MOD.cardsModifierTitle": "__ Cards",
+  "YYL_STS2_MOD-YYL_STS2_MOD.description": "A mysterious man from the East, bearing the cryptic title of 'the Most Nailong One'.\nHe entered the Spire to vanquish the yellow creature.",
+  "YYL_STS2_MOD-YYL_STS2_MOD.eventDeathPrevention": "Co-op survival line",
+  "YYL_STS2_MOD-YYL_STS2_MOD.goldMonologue": "Line spoken when obtaining a large amount of gold",
+  "YYL_STS2_MOD-YYL_STS2_MOD.possessiveAdjective": "his",
+  "YYL_STS2_MOD-YYL_STS2_MOD.pronounObject": "him",
+  "YYL_STS2_MOD-YYL_STS2_MOD.pronounPossessive": "his",
+  "YYL_STS2_MOD-YYL_STS2_MOD.pronounSubject": "he",
+  "YYL_STS2_MOD-YYL_STS2_MOD.title": "Yilin",
+  "YYL_STS2_MOD-YYL_STS2_MOD.titleObject": "Yilin",
+  "YYL_STS2_MOD-YYL_STS2_MOD.unlockText": "Play a game with [pink]{Prerequisite}[/pink] to unlock this character."
+}

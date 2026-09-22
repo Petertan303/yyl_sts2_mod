@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -47,15 +50,28 @@ public class QiMeridianEnchantReward : Reward
 
     protected override async Task<bool> OnSelect()
     {
-        var enchantment = ModelDb.Enchantment<QiMeridian>();
-        var prefs = new CardSelectorPrefs(CardSelectorPrefs.EnchantSelectionPrompt, _count);
-        var selected = await CardSelectCmd.FromDeckForEnchantment(Player, enchantment, _count, prefs);
-        foreach (var card in selected)
+        try
         {
-            // CardCmd.Enchant 是同步的: 施加附魔并返回附魔实例本身。
-            CardCmd.Enchant(enchantment, card, 1m);
-        }
+            var enchantment = ModelDb.Enchantment<QiMeridian>();
+            var prefs = new CardSelectorPrefs(CardSelectorPrefs.EnchantSelectionPrompt, _count);
+            var selected = (await CardSelectCmd.FromDeckForEnchantment(Player, enchantment, _count, prefs)).ToList();
 
-        return true;
+            MainFile.Logger.Info($"QiMeridianEnchantReward: selected {selected.Count} card(s).");
+
+            foreach (var card in selected)
+            {
+                // 用泛型重载: 内部会自己取/建附魔实例并挂到牌上。
+                CardCmd.Enchant<QiMeridian>(card, 1m);
+            }
+
+            MainFile.Logger.Info($"QiMeridianEnchantReward: enchanted {selected.Count} card(s).");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // 不吞异常: 记下来, 否则表现为"确认后什么都没发生、奖励还卡着"。
+            MainFile.Logger.Error($"QiMeridianEnchantReward.OnSelect failed.\n{ex}");
+            return false;
+        }
     }
 }

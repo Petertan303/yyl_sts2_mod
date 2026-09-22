@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,6 +10,7 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -33,6 +34,7 @@ public sealed class GoldenWall(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        yylVfx.OnCreatureRaised(Owner.Creature, "vfx/vfx_block", 1f/3f); // 打出特效: 金钟护体
         await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
     }
 }

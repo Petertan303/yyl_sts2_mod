@@ -37,7 +37,7 @@ public partial class ScreenFlashEffect : CanvasLayer
 
         _tex = new TextureRect();
         _tex.MouseFilter = Control.MouseFilterEnum.Ignore;
-        _tex.Texture = PreloadManager.Cache.GetAsset<Texture2D>(texturePath);
+        _tex.Texture = ResourceLoader.Load<Texture2D>(texturePath);
         _tex.Material = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
         _tex.StretchMode = TextureRect.StretchModeEnum.Scale;
         _tex.AnchorRight = 1;

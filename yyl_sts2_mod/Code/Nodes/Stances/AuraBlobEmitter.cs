@@ -25,7 +25,7 @@ public partial class AuraBlobEmitter : Node2D
         ];
 
         var cpu = new CpuParticles2D();
-        cpu.Texture = PreloadManager.Cache.GetAsset<Texture2D>("res://yyl_sts2_mod/images/vfx/big_blur.png");
+        cpu.Texture = ResourceLoader.Load<Texture2D>("res://yyl_sts2_mod/images/vfx/big_blur.png");
         cpu.Material = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
 
         cpu.Amount = 6;

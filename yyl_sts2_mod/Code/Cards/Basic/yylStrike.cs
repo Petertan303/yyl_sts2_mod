@@ -7,6 +7,9 @@ using yyl_sts2_mod.Code.Character;
 
 namespace yyl_sts2_mod.Code.Cards.Basic;
 
+/// <summary>
+///     打击: 初始牌, 1 费, 造成 6 → 9 点伤害。
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class YylStrike(
     int canonicalEnergyCost,

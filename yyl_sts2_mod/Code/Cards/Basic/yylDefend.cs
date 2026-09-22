@@ -7,6 +7,9 @@ using yyl_sts2_mod.Code.Character;
 
 namespace yyl_sts2_mod.Code.Cards.Basic;
 
+/// <summary>
+///     防御: 初始牌, 1 费, 获得 5 → 8 点格挡。
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class YylDefend(
     int canonicalEnergyCost,

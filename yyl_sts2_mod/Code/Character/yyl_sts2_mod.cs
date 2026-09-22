@@ -29,6 +29,8 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
         ModelDb.Card<YylStrike>(),
         ModelDb.Card<YylStrike>(),
         ModelDb.Card<YylStrike>(),
+        ModelDb.Card<YylStrike>(),
+        ModelDb.Card<YylDefend>(),
         ModelDb.Card<YylDefend>(),
         ModelDb.Card<YylDefend>(),
         ModelDb.Card<YylDefend>(),

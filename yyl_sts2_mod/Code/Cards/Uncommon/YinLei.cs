@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -41,7 +41,7 @@ public sealed class YinLei(
         // 先施加易伤, 让本次攻击直接吃到 1.5x (与掌心雷同序)。
         await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
         await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);
     }
 }

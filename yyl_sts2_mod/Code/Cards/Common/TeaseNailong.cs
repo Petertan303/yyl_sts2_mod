@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -40,7 +40,7 @@ public sealed class TeaseNailong(
         if (target == null) return;
         var isNailong = yylNailong.IsNailong(target);
         await CommonActions.CardAttack(this, cardPlay)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_bite")
             .Execute(choiceContext);
         if (isNailong)
             await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);

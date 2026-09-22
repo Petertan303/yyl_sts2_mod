@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
@@ -34,6 +35,7 @@ public sealed class Purge(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        yylVfx.OnCreatureRaised(Owner.Creature, "vfx/vfx_smoke_puff", 1f/3f); // 打出特效: 浊气散去
         var debuffs = Owner.Creature.Powers
             .Where(p => p.Type == PowerType.Debuff)
             .ToList();

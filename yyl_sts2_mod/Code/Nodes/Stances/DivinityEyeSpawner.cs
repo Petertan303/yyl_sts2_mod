@@ -30,7 +30,7 @@ public partial class DivinityEyeSpawner : Node2D
         _rng.Randomize();
         _mat = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
 
-        var strip = PreloadManager.Cache.GetAsset<Texture2D>("res://yyl_sts2_mod/images/vfx/eye_anim.png");
+        var strip = ResourceLoader.Load<Texture2D>("res://yyl_sts2_mod/images/vfx/eye_anim.png");
         _frames = new AtlasTexture[7];
         for (var i = 0; i < 7; i++)
         {

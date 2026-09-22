@@ -41,6 +41,11 @@ public sealed class NailongRearing : yylRelicModel, IModifyDamageAdditive
         BeforeDeath 时怪物还活着, 标记仍在, IsNailong 的存活判定也成立。 */
     public override Task BeforeDeath(Creature creature)
     {
+        // 诊断用: 确认钩子到底有没有触发 / 判定为什么失败。
+        MainFile.Logger.Info(
+            $"NailongRearing.BeforeDeath: creature={creature?.GetType().Name}, " +
+            $"isNailong={yylNailong.IsNailong(creature)}, stack={StackCount}");
+
         if (!yylNailong.IsNailong(creature)) return Task.CompletedTask;
         if (StackCount >= MaxStacks) return Task.CompletedTask;
 

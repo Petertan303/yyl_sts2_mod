@@ -26,11 +26,11 @@ public sealed class CinnabarBite : yylPowerModel, IGainQi
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    /// <summary>卡牌默认给予的数值 (升级后 6)。</summary>
-    public const int DefaultAmount = 4;
+    /// <summary>卡牌默认给予的数值 (基础 1 层, 升级后 2 层 — 2026-09-21 用户下调)。</summary>
+    public const int DefaultAmount = 1;
 
-    /// <summary>升级时增加的数值。</summary>
-    public const int UpgradeAmount = 2;
+    /// <summary>升级时增加的数值 (1 → +1 = 2 层)。</summary>
+    public const int UpgradeAmount = 1;
 
     public int ModifyQiGain(Player player, int amount)
     {

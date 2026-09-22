@@ -34,7 +34,7 @@ public partial class WrathGlowSparkSpawner : Node2D
         _rng = new RandomNumberGenerator();
         _rng.Randomize();
         _mat = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
-        _texture = PreloadManager.Cache.GetAsset<Texture2D>("res://yyl_sts2_mod/images/vfx/glow_spark.png");
+        _texture = ResourceLoader.Load<Texture2D>("res://yyl_sts2_mod/images/vfx/glow_spark.png");
 
         for (var i = 0; i < 20; i++)
         {

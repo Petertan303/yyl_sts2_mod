@@ -73,7 +73,7 @@ public static class yylAnim
             sprite.Play(frameAnimation);
     }
 
-    private static AnimatedSprite2D? FindSprite(Creature creature)
+    internal static AnimatedSprite2D? FindSprite(Creature creature)
     {
         var visuals = NCombatRoom.Instance?.GetCreatureNode(creature)?.Visuals;
         if (visuals == null) return null;

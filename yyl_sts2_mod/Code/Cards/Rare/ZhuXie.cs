@@ -1,4 +1,4 @@
-using BaseLib.Abstracts;
+﻿using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
@@ -43,11 +44,12 @@ public sealed class ZhuXie(
         if (target == null) return;
 
         await CommonActions.CardAttack(this, cardPlay, target, DynamicVars.Damage.IntValue, ValueProp.Move)
-            .WithHitFx("vfx/vfx_attack_slash")
+            .WithHitFx("vfx/vfx_dramatic_stab")
             .Execute(choiceContext);
 
         // 目标被斩杀后, 处决其他敌人中生命值最低且达线 (≤ {Threshold} 点) 的那一个。
         if (!target.IsDead) return;
+        yylVfx.GrandFinaleImpact(target); // 斩杀演出: 华丽收场冲击
         var combatState = Owner.Creature.CombatState;
         if (combatState == null) return;
 
@@ -65,5 +67,6 @@ public sealed class ZhuXie(
         // 直接取当前生命值 + Unblockable: 无视格挡, 必定致命。
         await CreatureCmd.Damage(choiceContext, weakest, weakest.CurrentHp, ValueProp.Unblockable,
             Owner.Creature, this, cardPlay);
+        yylVfx.GrandFinaleImpact(weakest); // 连斩演出
     }
 }

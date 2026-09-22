@@ -1,0 +1,11 @@
+{
+  "YYL_STS2_MOD-NAILONG_REARING.description": "Each time you kill a [gold]Nailong[/gold], gain 1 stack (max 10). Each stack deals 1 extra damage when you attack [gold]Nailong[/gold].",
+  "YYL_STS2_MOD-NAILONG_REARING.flavor": "You have finally made up your mind to raise it.",
+  "YYL_STS2_MOD-NAILONG_REARING.title": "Raise the Nailong",
+  "YYL_STS2_MOD-NL_CAN2.description": "At the start of combat, gain 5 Qi. Each point of Qi deals 20% extra damage. Treat all as Nailong; when you kill a Nailong, heal 6 HP.",
+  "YYL_STS2_MOD-NL_CAN2.flavor": "A whole can of tissue samples from the yellow creature; the vivid yellow trembles in the air. You begin to hear its voice.",
+  "YYL_STS2_MOD-NL_CAN2.title": "Large Yellow Peach Can",
+  "YYL_STS2_MOD-PEACH_CAN.description": "At the start of combat, gain 3 Qi. Treat all enemies as Nailong.",
+  "YYL_STS2_MOD-PEACH_CAN.flavor": "A glass can holding a chunk of tissue sample from the yellow creature. The sample pulses slowly.",
+  "YYL_STS2_MOD-PEACH_CAN.title": "Yellow Peach Can"
+}

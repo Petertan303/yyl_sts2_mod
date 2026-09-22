@@ -9,6 +9,10 @@ using yyl_sts2_mod.Code.Powers;
 
 namespace yyl_sts2_mod.Code.Cards.Basic;
 
+/// <summary>
+///     金光咒: 2 费, 获得 8 → 12 点格挡, 并获得 1 层金光护体 (每层受伤 -2)。
+///     金光护体体系的第一条获取途径; 防御端核心牌。
+/// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class GoldenCharm(
     int canonicalEnergyCost,

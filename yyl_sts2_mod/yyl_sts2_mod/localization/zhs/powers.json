@@ -97,5 +97,11 @@
   "YYL_STS2_MOD-CARD_GLOW_DRIVER.smartDescription": "炁在周身流转。",
   "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.title": "逆生一重",
   "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.description": "每回合第一次获得格挡时，该次格挡翻倍。",
-  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.smartDescription": "每回合第一次获得格挡时，该次格挡翻倍。"
+  "YYL_STS2_MOD-REBIRTH_STANCE_ONE_POWER.smartDescription": "每回合第一次获得格挡时，该次格挡翻倍。",
+  "YYL_STS2_MOD-LONG_NU.description": "本回合受到来自[gold]奶龙[/gold]的伤害翻倍。",
+  "YYL_STS2_MOD-LONG_NU.smartDescription": "本回合受到来自[gold]奶龙[/gold]的伤害翻倍。",
+  "YYL_STS2_MOD-LONG_NU.title": "龙怒",
+  "YYL_STS2_MOD-LU_LONG_YIN.description": "攻击[gold]奶龙[/gold]时造成的伤害翻倍。",
+  "YYL_STS2_MOD-LU_LONG_YIN.smartDescription": "攻击[gold]奶龙[/gold]时造成的伤害翻倍。",
+  "YYL_STS2_MOD-LU_LONG_YIN.title": "戮龙印"
 }

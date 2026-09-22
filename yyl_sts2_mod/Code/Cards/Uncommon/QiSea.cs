@@ -34,6 +34,7 @@ public sealed class QiSea(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        yylVfx.OnCreatureRaised(Owner.Creature, "vfx/vfx_starry_impact", 1f/3f); // 打出特效: 炁海星象
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         var amount = DynamicVars["QiHai"].IntValue;
         await PowerCmd.Apply<QiHai>(choiceContext, new[] { Owner.Creature }, amount, Owner.Creature, cardPlay.Card);

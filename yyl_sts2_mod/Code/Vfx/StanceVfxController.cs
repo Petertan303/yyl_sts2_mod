@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Nodes;
@@ -18,20 +19,35 @@ public class StanceVfxController(StanceVfxConfig cfg)
 
     public async Task OnEnter(Creature owner)
     {
-        await CreateAura(owner);
-        PlayEnterSfx();
-        StartAmbience();
-        if (LocalContext.IsMe(owner))
+        // VFX 失败绝不允许冒泡到 SetStance / 卡牌 OnPlay，否则会破坏战斗指令队列（表现为下一战斗首回合卡死）。
+        try
         {
-            PlayScreenFlash();
-            PlayScreenShake();
+            await CreateAura(owner);
+            PlayEnterSfx();
+            StartAmbience();
+            if (LocalContext.IsMe(owner))
+            {
+                PlayScreenFlash();
+                PlayScreenShake();
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PushError($"[yyl] StanceVfxController.OnEnter failed (VFX skipped, combat safe): {e}");
         }
     }
 
     public async Task OnExit(Creature owner)
     {
-        RemoveAura();
-        StopAmbience();
+        try
+        {
+            RemoveAura();
+            StopAmbience();
+        }
+        catch (Exception e)
+        {
+            GD.PushError($"[yyl] StanceVfxController.OnExit failed: {e}");
+        }
         await Task.CompletedTask;
     }
 
@@ -39,32 +55,40 @@ public class StanceVfxController(StanceVfxConfig cfg)
 
     private Task CreateAura(Creature owner)
     {
-        if (cfg.AuraScenePath == null || !ResourceLoader.Exists(cfg.AuraScenePath)) return Task.CompletedTask;
-
-        var visuals = NCombatRoom.Instance?.GetCreatureNode(owner)?.Visuals;
-        if (visuals == null) return Task.CompletedTask;
-
-        var container = visuals.GetNodeOrNull<Node2D>("StanceVfxContainer")
-                        ?? CreateContainer(visuals);
-
-        if (_vfxInstance != null && GodotObject.IsInstanceValid(_vfxInstance))
-            _vfxInstance.QueueFree();
-
-        var packedScene = ResourceLoader.Load<PackedScene>(cfg.AuraScenePath);
-        if (packedScene == null) return Task.CompletedTask;
-        _vfxInstance = packedScene.Instantiate<Node2D>();
-        _vfxInstance.Position = Vector2.Zero;
-        _vfxInstance.Scale = Vector2.One;
-        container.AddChild(_vfxInstance);
-
-        foreach (var burst in _vfxInstance.GetChildren()
-                     .Where(c => c.Name.ToString().Contains("Burst"))
-                     .Cast<Node2D>())
+        try
         {
-            var pos = burst.GlobalPosition;
-            burst.Reparent(visuals);
-            burst.GlobalPosition = pos;
-            visuals.MoveChild(burst, 0);
+            if (cfg.AuraScenePath == null || !ResourceLoader.Exists(cfg.AuraScenePath))
+                return Task.CompletedTask;
+
+            var visuals = NCombatRoom.Instance?.GetCreatureNode(owner)?.Visuals;
+            if (visuals == null) return Task.CompletedTask;
+
+            var container = visuals.GetNodeOrNull<Node2D>("StanceVfxContainer")
+                            ?? CreateContainer(visuals);
+
+            if (_vfxInstance != null && GodotObject.IsInstanceValid(_vfxInstance))
+                _vfxInstance.QueueFree();
+
+            var packedScene = ResourceLoader.Load<PackedScene>(cfg.AuraScenePath);
+            if (packedScene == null) return Task.CompletedTask;
+            _vfxInstance = packedScene.Instantiate<Node2D>();
+            _vfxInstance.Position = Vector2.Zero;
+            _vfxInstance.Scale = Vector2.One;
+            container.AddChild(_vfxInstance);
+
+            foreach (var burst in _vfxInstance.GetChildren()
+                         .Where(c => c.Name.ToString().Contains("Burst"))
+                         .Cast<Node2D>())
+            {
+                var pos = burst.GlobalPosition;
+                burst.Reparent(visuals);
+                burst.GlobalPosition = pos;
+                visuals.MoveChild(burst, 0);
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PushError($"[yyl] StanceVfxController.CreateAura failed: {e}");
         }
 
         return Task.CompletedTask;

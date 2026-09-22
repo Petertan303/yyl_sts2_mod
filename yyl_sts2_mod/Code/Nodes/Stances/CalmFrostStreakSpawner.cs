@@ -26,7 +26,7 @@ public partial class CalmFrostStreakSpawner : Node2D
         _rng = new RandomNumberGenerator();
         _rng.Randomize();
         _mat = new CanvasItemMaterial { BlendMode = CanvasItemMaterial.BlendModeEnum.Add };
-        _texture = PreloadManager.Cache.GetAsset<Texture2D>("res://yyl_sts2_mod/images/vfx/frost_streak.png");
+        _texture = ResourceLoader.Load<Texture2D>("res://yyl_sts2_mod/images/vfx/frost_streak.png");
 
         for (var i = 0; i < 15; i++)
         {

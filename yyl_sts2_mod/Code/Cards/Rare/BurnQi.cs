@@ -15,7 +15,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     燃炁: 0 费, 失去 6 点生命, 获得 6 → 9 点炁, 抽 3 张。
+///     燃炁: 0 费, 失去 3 点生命, 获得 6 → 9 点炁, 抽 3 张。
 ///     对标原版"祭品": 用血量换一手资源。丹噬 / 天火 / 散炁 都能把这笔炁立刻放大。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -32,7 +32,7 @@ public sealed class BurnQi(
         WithPower<Qi>(6, 3);
         WithCards(3);
         // 自伤代价 (卡面用)
-        WithCalculatedDamage("HpLoss", 6, (_, _) => 0m, 0, 0, 0);
+        WithCalculatedDamage("HpLoss", 3, (_, _) => 0m, 0, 0, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
