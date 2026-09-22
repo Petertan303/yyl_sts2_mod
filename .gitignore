@@ -5,3 +5,10 @@ riderModule.iml
 /_ReSharper.Caches/
 _art_preview/
 _card_art_backup*/
+_delete*/
+
+# Markdown 文档仅作本地备份，不进仓库
+*.md
+
+# Rider/IntelliJ 工程配置（残留文件夹，不进仓库）
+.idea/
