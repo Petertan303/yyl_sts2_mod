@@ -24,12 +24,16 @@ public sealed class LaShang(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public LaShang() : this(0, CardType.Status, CardRarity.Status, TargetType.None)
+    // cost = -1: 与原版"感染/灼伤"等状态牌一致 —— 能量球不渲染, 手中只显示划线图标。
+    public LaShang() : this(-1, CardType.Status, CardRarity.Status, TargetType.None)
     {
         WithKeywords(CardKeyword.Unplayable);
         // 每回合结束的自伤 (卡面用)
         WithCalculatedDamage("HpLoss", 2, (_, _) => 0m, 0, 0, 0);
     }
+
+    // 原版状态牌均不可升级 (Infection/Burn/Wound 同款)
+    public override int MaxUpgradeLevel => 0;
 
     public override bool HasTurnEndInHandEffect => true;
 
