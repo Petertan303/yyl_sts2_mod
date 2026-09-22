@@ -27,9 +27,10 @@ public sealed class YinSha(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public YinSha() : this(0, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies)
+    public YinSha() : this(1, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies)
     {
         WithPower<WeakPower>(99);
+        WithCostUpgradeBy(-1);
         WithKeywords(CardKeyword.Exhaust);
     }
 

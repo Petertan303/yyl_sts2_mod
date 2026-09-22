@@ -29,11 +29,11 @@ public class PeasantDrill(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public PeasantDrill() : this(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
+    public PeasantDrill() : this(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
         WithPower<QiInfant>(1);
         // WithCostUpgradeBy(-1);
-        WithKeyword(CardKeyword.Retain);
+        WithKeyword(CardKeyword.Retain, UpgradeType.Add);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
