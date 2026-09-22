@@ -1,4 +1,7 @@
 {
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.description": "你获得的格挡恒定为15。（战斗结束时移除）",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.flavor": "从今天起，格挡由我接管。",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.title": "东尼之霸",
   "YYL_STS2_MOD-NAILONG_REARING.description": "每击杀一个[gold]奶龙[/gold]，层数+1（最多10层）。每层使你攻击[gold]奶龙[/gold]时额外造成1点伤害。",
   "YYL_STS2_MOD-NAILONG_REARING.flavor": "你终于下定决心，把它养起来。",
   "YYL_STS2_MOD-NAILONG_REARING.title": "养龙",

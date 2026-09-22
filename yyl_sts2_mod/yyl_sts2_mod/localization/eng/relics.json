@@ -1,4 +1,7 @@
 {
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.description": "Block you gain is always set to 15. (Removed at the end of combat.)",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.flavor": "Block? That's Toni's business now.",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.title": "Toni's Supremacy",
   "YYL_STS2_MOD-NAILONG_REARING.description": "Each time you kill a [gold]Nailong[/gold], gain 1 stack (max 10). Each stack deals 1 extra damage when you attack [gold]Nailong[/gold].",
   "YYL_STS2_MOD-NAILONG_REARING.flavor": "You have finally made up your mind to raise it.",
   "YYL_STS2_MOD-NAILONG_REARING.title": "Raise the Nailong",

@@ -125,6 +125,8 @@
   "YYL_STS2_MOD-DARK_HUMOR.title": "黑色幽默",
   "YYL_STS2_MOD-DEVOUR.description": "对所有非队友的[gold]奶龙[/gold]造成{Damage:diff()}点伤害，回复等同造成伤害的生命。",
   "YYL_STS2_MOD-DEVOUR.title": "大啖食粮",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.description": "获得遗物[gold]东尼之霸[/gold]（战斗结束时移除）。你获得的格挡恒定为15。",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.title": "东尼之霸",
   "YYL_STS2_MOD-FIVE_THUNDER_LAW.description": "对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次。若有[gold]金光护体[/gold]，消耗1层，本次每段伤害提高{Bonus:diff()}点。",
   "YYL_STS2_MOD-FIVE_THUNDER_LAW.title": "五雷正法",
   "YYL_STS2_MOD-GONG_TONG_SHOU_LIE.description": "指定一名队友，该队友攻击[gold]奶龙[/gold]时造成的伤害翻倍。",
@@ -161,9 +163,9 @@
   "YYL_STS2_MOD-REBIRTH_THREE.title": "逆生三重",
   "YYL_STS2_MOD-REBIRTH_TWO.description": "进入[gold]逆生二重[/gold]。将一张逆生三重放入手牌中。",
   "YYL_STS2_MOD-REBIRTH_TWO.title": "逆生二重",
-  "YYL_STS2_MOD-LA_SHANG.description": "不可打出。回合结束时若在你手中，失去{HpLoss:diff()}点生命。",
-  "YYL_STS2_MOD-LA_SHANG.title": "拉伤",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "每回合开始时获得{GoldenWard:diff()}层[gold]金光护体[/gold]。",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "金光护体源",
+  "YYL_STS2_MOD-LA_SHANG.description": "不可打出。回合结束时若在你手中，失去{HpLoss:diff()}点生命。",
+  "YYL_STS2_MOD-LA_SHANG.title": "拉伤",
   "YYL_STS2_MOD-QUICKSTEP.description": "抽{Cards:diff()}张牌。"
 }

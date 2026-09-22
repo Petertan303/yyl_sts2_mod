@@ -125,6 +125,8 @@
   "YYL_STS2_MOD-DARK_HUMOR.title": "Dark Humor",
   "YYL_STS2_MOD-DEVOUR.description": "Deal {Damage:diff()} damage to all non-teammate [gold]Nailong[/gold] and heal for the damage dealt.",
   "YYL_STS2_MOD-DEVOUR.title": "Devour the Feast",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.description": "Gain relic [gold]Toni's Supremacy[/gold] (removed at the end of combat). Block you gain is always set to 15.",
+  "YYL_STS2_MOD-DONG_NI_ZHI_BA.title": "Toni's Supremacy",
   "YYL_STS2_MOD-FIVE_THUNDER_LAW.description": "Deal {Damage:diff()} damage to ALL enemies {Repeat:diff()} times. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
   "YYL_STS2_MOD-FIVE_THUNDER_LAW.title": "Five Thunder Law",
   "YYL_STS2_MOD-GONG_TONG_SHOU_LIE.description": "Target a teammate. They deal doubled damage to [gold]Nailong[/gold].",
@@ -161,9 +163,9 @@
   "YYL_STS2_MOD-REBIRTH_THREE.title": "Reverse Life III",
   "YYL_STS2_MOD-REBIRTH_TWO.description": "Enter [gold]Reverse Life II[/gold]. Add a Reverse Life III into your hand.",
   "YYL_STS2_MOD-REBIRTH_TWO.title": "Reverse Life II",
-  "YYL_STS2_MOD-LA_SHANG.description": "Unplayable. At the end of your turn, if this is in your hand, lose {HpLoss:diff()} HP.",
-  "YYL_STS2_MOD-LA_SHANG.title": "Strain",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.description": "At the start of each turn, gain {GoldenWard:diff()} [gold]Golden Aegis[/gold].",
   "YYL_STS2_MOD-GOLDEN_WARD_CARD.title": "Golden Aegis Source",
+  "YYL_STS2_MOD-LA_SHANG.description": "Unplayable. At the end of your turn, if this is in your hand, lose {HpLoss:diff()} HP.",
+  "YYL_STS2_MOD-LA_SHANG.title": "Strain",
   "YYL_STS2_MOD-QUICKSTEP.description": "Draw {Cards:diff()} card(s)."
 }
