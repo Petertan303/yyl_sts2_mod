@@ -29,6 +29,9 @@ public sealed class DangZai(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
+    // 原版联机卡同款标记 (Sneaky/Fade/Coordinate 等): 单人局不入卡池
+    public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
+
     public DangZai() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.AllAllies)
     {
         WithKeyword(CardKeyword.Exhaust, UpgradeType.Remove);

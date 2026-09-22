@@ -28,6 +28,9 @@ public sealed class ChuanGong(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
+    // 原版联机卡同款标记 (Sneaky/Fade/Coordinate 等): 单人局不入卡池
+    public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
+
     public ChuanGong() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.AllAllies)
     {
         WithCostUpgradeBy(-1);
