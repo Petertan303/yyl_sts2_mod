@@ -27,7 +27,9 @@ public sealed class DongNiZhiBa(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public DongNiZhiBa() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
+    // 2026-09-23 用户定调: 稀有度 Rare → Basic, 并**雪藏**
+    // (shouldShowInCardLibrary = false → 不出现在卡牌图鉴/牌库中, 但仍可通过其它途径获得)。
+    public DongNiZhiBa() : this(2, CardType.Power, CardRarity.Basic, TargetType.Self, false)
     {
         WithCostUpgradeBy(-1);
     }

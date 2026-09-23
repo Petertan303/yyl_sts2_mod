@@ -36,15 +36,11 @@ public sealed class FiveThunderLaw(
 {
     public FiveThunderLaw() : this(3, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
-        // ★卡面 {Bonus} 必须声明成 DynamicVar, 否则卡面不解析 (2026-09-21 修复)。
-        //   与掌心雷共用同一个 bonus 函数, 保证预览与卡面显示同源。
-        WithCalculatedDamage("Bonus", 0,
-            (card, _) => PalmThunder.BonusFor(card, card.Owner.Creature), default(ValueProp), 0, 0);
-        // 主伤害 = 3 → 4, 活 calc: 有金光时预览也显示 +1 (白长虫模式)。
-        WithCalculatedDamage("Damage", 3,
-            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0,
-            default(ValueProp), 1, 0);
+        // 主伤害 = 3 → 4 (基础 3, 升级 +1); 金光护体 +1 在 OnPlay 内结算。
+        WithDamage(3, 1);
         WithVars(new RepeatVar(5));
+        // 卡面 {Bonus} = 普通 DynamicVar, 战斗外显示预期值 1。
+        WithVar("Bonus", 1, 0);
         // 金光护体联动: 声明 -1 层供 ApplySelf 消耗 (与掌心雷同款写法)。
         WithPower<GoldenAegis>(-1);
         // 仅用于卡面显示: 这次要消耗几层
@@ -53,11 +49,8 @@ public sealed class FiveThunderLaw(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 伤害变量自带金光加成 (活 calc, 与预览同源)。
-        // ⚠ 同掌心雷: 显式传数值 + 弱类型访问器 DynamicVars["Damage"] ——
-        // 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException (卡死在待打出区)。
         var hits = DynamicVars.Repeat.IntValue;
-        var damage = DynamicVars["Damage"].IntValue;
+        var damage = DynamicVars["Damage"].IntValue + (Owner.HasPower<GoldenAegis>() ? 1 : 0);
         foreach (var enemy in CombatState?.HittableEnemies ?? [])
         {
             if (enemy == null || !enemy.IsHittable) continue;

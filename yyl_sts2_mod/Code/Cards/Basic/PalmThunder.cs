@@ -40,22 +40,18 @@ public sealed class PalmThunder(
 {
     public PalmThunder() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
     {
-        // 主伤害 = 3 → 4, 活 calc: 预览与结算同源 (白长虫模式) —— 有金光时预览也显示 +1。
-        WithCalculatedDamage("Damage", 3,
-            (card, _) => BonusFor(card, card.Owner.Creature), default(ValueProp), 1, 0);
+        // 主伤害 = 3 → 4 (基础 3, 升级 +1)。金光护体 +1 在 OnPlay 内按实际状态结算,
+        // 卡面 {Damage} 用普通 DamageVar (战斗外 IConvertible 返回 BaseValue=3, 不再显示 0/花括号)。
+        WithDamage(3, 1);
         WithVars(new RepeatVar(2));
-        // 卡面"本次每段伤害提高 {Bonus} 点": 有金光显示 1, 没有显示 0 (与金光高亮一致)。
-        WithCalculatedDamage("Bonus", 0, BonusFor, default(ValueProp), 0, 0);
+        // 卡面"本次每段伤害提高 {Bonus} 点": 普通 DynamicVar, 战斗外显示预期值 1。
+        WithVar("Bonus", 1, 0);
         WithPower<VulnerablePower>(1, 1);
         // 金光护体联动: 声明 -1 层供 ApplySelf 消耗, 与白长虫 (WhiteWorm) 同一写法。
         WithPower<GoldenAegis>(-1);
         // 仅用于卡面显示: 这次要消耗几层
         WithPower<GoldenAegis>("AegisCost", 1, 0);
     }
-
-    /// <summary>金光联动的单一事实来源: 预览 bonusFunc 与 OnPlay 共用。(必须返回 decimal —— 方法组转换不做 int→decimal 装箱)</summary>
-    internal static decimal BonusFor(CardModel card, Creature? self)
-        => self != null && self.HasPower<GoldenAegis>() ? 1m : 0m;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -65,12 +61,11 @@ public sealed class PalmThunder(
         // 1. 先施加易伤 (让本次攻击直接吃到 1.5x)。
         await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
 
-        // 2. 攻击: 伤害变量自带金光加成 (活 calc, 与预览同源)。
-        //    ⚠ 必须显式传伤害数值: 无参 CardAttack 内部按强类型读 DynamicVars.Damage,
-        //    而 "Damage" 已被 CustomCalculatedDamageVar 替换, 强转 DamageVar 会抛
-        //    InvalidCastException → OnPlay 中断 → 卡卡在待打出区 (2026-09-20 实测)。
-        //    读取也必须用弱类型访问器 DynamicVars["Damage"]。
-        await CommonActions.CardAttack(this, cardPlay, target, DynamicVars["Damage"].IntValue,
+        // 2. 攻击: 基础伤害取普通 DamageVar, 金光护体 +1 在这里按实际状态结算
+        //    (卡面 {Damage}=3 与 {Bonus}=1 已给出预期值, OnPlay 才是真正结算)。
+        var hasAegis = Owner.HasPower<GoldenAegis>();
+        var damage = DynamicVars["Damage"].IntValue + (hasAegis ? 1 : 0);
+        await CommonActions.CardAttack(this, cardPlay, target, damage,
                 ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);

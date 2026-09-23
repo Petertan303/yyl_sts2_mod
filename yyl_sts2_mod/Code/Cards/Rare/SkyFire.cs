@@ -43,14 +43,20 @@ public sealed class SkyFire(
 
         var totalDamage = DynamicVars.Damage.IntValue * current;
 
-        // 先走 LoseQi(让 CinnabarBite 之类的 follow-up 触发)
-        await yylCmd.LoseQi(choiceContext, Owner, current, this, cardPlay.Card);
-        // 再群伤
+        /*  ★2026-09-22 修复: 实际伤害比卡面预览少。
+            原先先 LoseQi 再群伤 —— 炁被清空后, 伤害管线里「炁」的增伤乘区
+            (Qi.ModifyDamageMultiplicativeCompability, 0.27·ln(1+炁)) 也跟着归零,
+            于是打出来的数字低于悬停时看到的预览值。
+            改为**先结算伤害**(此时炁还在, 乘区与预览同源), 再失去所有炁。
+            失去炁的后续 (温养给格挡 / 行炁抽牌 等 ILoseQi 订阅) 仍然照常触发,
+            只是排到了伤害之后, 不影响本卡结算。 */
         foreach (var enemy in combatState.HittableEnemies)
         {
             await CommonActions.CardAttack(this, cardPlay, enemy, totalDamage, ValueProp.Move)
                 .WithHitFx("vfx/vfx_fire_burst")
                 .Execute(choiceContext);
         }
+        // 伤害打完再清空炁
+        await yylCmd.LoseQi(choiceContext, Owner, current, this, cardPlay.Card);
     }
 }

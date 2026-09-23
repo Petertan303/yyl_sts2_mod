@@ -10,12 +10,9 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
-using yyl_sts2_mod.Code.Patches;
-using yyl_sts2_mod.Code.Powers;
 using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Relics;
@@ -23,18 +20,21 @@ namespace yyl_sts2_mod.Code.Relics;
 /// <summary>
 ///     大瓶黄桃罐头 (先古): 合并了原「心魔」与「大瓶黄桃罐头」。
 ///     战斗第一回合抽牌前: 获得 5 点炁; 将玩家自身、队友与所有敌人视作心魔(奶龙);
-///     并播放奶龙的声音。持有时每点炁额外造成 20% 伤害。
+///     并播放奶龙的声音。
+///     <para>
+///         [balance 2026-09-22] 移除了原本自带的「每点炁额外造成 20% 伤害」线性增伤:
+///         它与炁自身的对数加成<b>相乘</b>, 40 炁时可达约 18 倍伤害, 过于失控。
+///         本遗物现在<b>不再自行增伤</b>, 伤害完全交给炁的对数曲线处理
+///         (见 <see cref="Powers.Qi" />), 其价值集中在「开局 5 点炁 + 全员心魔」上。
+///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modRelicPool))]
-public sealed class NlCan2 : yylRelicModel, IModifyDamageMultiplicative
+public sealed class NlCan2 : yylRelicModel
 {
     public override RelicRarity Rarity => RelicRarity.Ancient;
 
     /// <summary>战斗开始时获得的炁。</summary>
     public const int InitialQi = 5;
-
-    /// <summary>每点炁在炁自身 10% 之外额外提供的伤害加成。</summary>
-    public const decimal PerStackDamageBonus = 0.20m;
 
     public override async Task BeforeHandDraw(
         Player player,
@@ -57,20 +57,5 @@ public sealed class NlCan2 : yylRelicModel, IModifyDamageMultiplicative
 
         // 心魔 buff 被赋予实体时: 发出奶龙的声音
         yylAudio.PlaySfx(yylAudio.Sfx("nailong/nailong_voice.ogg"), 0.9f);
-    }
-
-    public decimal ModifyDamageMultiplicativeCompability(
-        Creature? target,
-        decimal amount,
-        ValueProp props,
-        Creature? dealer,
-        CardModel? cardSource,
-        CardPlay? cardPlay)
-    {
-        if (dealer != Owner.Creature) return 1m;
-        if (props.HasFlag(ValueProp.Unpowered)) return 1m;
-        var qi = Owner.Creature.GetPower<Qi>()?.Amount ?? 0;
-        if (qi <= 0) return 1m;
-        return 1m + PerStackDamageBonus * qi;
     }
 }

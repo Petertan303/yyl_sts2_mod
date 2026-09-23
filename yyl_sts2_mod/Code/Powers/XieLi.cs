@@ -56,13 +56,8 @@ public sealed class XieLi : yylPowerModel, IModifyDamageMultiplicative
         await PowerCmd.Remove(this);
     }
 
-    /// <summary>敌方回合收尾时仍未触发则散去 (保护窗口 = 本回合 + 敌方回合)。</summary>
-    public override Task BeforeSideTurnEnd(
-        PlayerChoiceContext ctx,
-        CombatSide side,
-        IEnumerable<Creature> creatures)
-    {
-        if (side == Owner.Side) return Task.CompletedTask;
-        return PowerCmd.Remove(this);
-    }
+    /*  ★2026-09-22 用户定调: 卸力改为**不随回合减少**的 buff。
+        原先这里在敌方回合收尾时把自己移除 (保护窗口 = 本回合 + 敌方回合),
+        导致攒着不用就会白白过期。现已去掉 —— 卸力会一直保留,
+        直到真正吃掉一次攻击伤害后由 AfterAttack 散去 (仍是一次性)。 */
 }

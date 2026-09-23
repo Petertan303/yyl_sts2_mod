@@ -38,6 +38,7 @@ public sealed class BorrowForce(
                 ? card.DynamicVars["Bonus"].IntValue
                 : 0,
             default(ValueProp), 2, 0);
+        // (雪藏卡: SeedCalculatedBaseValue 已删除其调用; 战斗内 CalculatedVar 正常, 无需播种)
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -35,9 +35,11 @@ public sealed class RisingPalm(
         //   有金光护体时的额外伤害: 基础 3, 升级 +1 → 升级后 8+4=12。
         WithCalculatedDamage("Bonus", 3, (_, _) => 0m, default(ValueProp), 1, 0);
         // 主伤害 = 6 → 8, 活 calc: 有金光时改为 9 → 12, 预览与结算同源。
+        // ★战斗外 Owner 为 null (卡面会显示 0), 统一走 SelfHasPower 做空值保护。
         WithCalculatedDamage("Damage", 6,
-            (card, _) => card.Owner.Creature.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0,
+            (card, _) => yylCardModel.SelfHasPower<GoldenAegis>(card) ? card.DynamicVars["Bonus"].IntValue : 0,
             default(ValueProp), 2, 0);
+        // (雪藏卡: SeedCalculatedBaseValue 已删除其调用; 战斗内 CalculatedVar 正常, 无需播种)
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -41,22 +41,12 @@ public sealed class WhiteWorm(
     public WhiteWorm() : this(1, CardType.Attack, CardRarity.Ancient, TargetType.AllEnemies)
     {
         // 伤害变量名仍叫 Damage; props = Move (普通攻击, 吃格挡也吃力量/易伤)。
-        // (AttackCommand 没有 WithValueProp, 伤害的 ValueProp 只能在声明伤害变量时给。)
-        //
-        // 注意: CalculatedDamageVar 没有可写的 BaseValue 属性, 因此"金光护体 +1 伤害"
-        // 不能像掌心雷那样 DynamicVars.Damage.BaseValue += 1 —— 那会在拥有金光护体时
-        // 抛异常, 导致卡牌卡在待打出区、不生效。改为在 calc 里根据"当前是否拥有金光护体"
-        // 返回 +1 / 0, 由攻击结算时按次读取。
-        WithCalculatedDamage(
-            "Damage",
-            2,
-            (card, _) => card.Owner.HasPower<GoldenAegis>() ? card.DynamicVars["Bonus"].IntValue : 0m,
-            ValueProp.Move,
-            1,
-            0);
+        // 主伤害 = 2 → 3 (基础 2, 升级 +1); 金光护体每段 +1 在 OnPlay 内结算。
+        // 卡面 {Damage}=2 / {Bonus}=1 为普通 DynamicVar, 战斗外也能正确显示 (不再 0/花括号)。
+        WithDamage(2, 1);
         WithVars(new RepeatVar(5));
-        // 消耗金光护体时每段额外伤害 (卡面用)
-        WithCalculatedDamage("Bonus", 2, (_, _) => 0m, 0, 0, 0);
+        // 消耗金光护体时每段额外伤害 (卡面用): 普通 DynamicVar, 战斗外显示预期值 1。
+        WithVar("Bonus", 1, 0);
         WithPower<VulnerablePower>(2, 1);
         WithPower<WeakPower>(2, 1);
 
@@ -71,10 +61,8 @@ public sealed class WhiteWorm(
         await CommonActions.Apply<VulnerablePower>(choiceContext, enemies, this);
         await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
 
-        // 先结算攻击: calc 会在读取伤害时根据"是否拥有金光护体"给出 +1/次。
-        // ⚠ 同掌心雷 (2026-09-20): 必须显式传数值 + 弱类型访问器 DynamicVars["Damage"] ——
-        // 无参 CardAttack / 强类型 DynamicVars.Damage 对 calc 变量会抛 InvalidCastException。
-        var damage = DynamicVars["Damage"].IntValue;
+        // 先结算攻击: 基础伤害 + 金光护体每段 +1 (卡面 {Damage}=2/{Bonus}=1 为预期值)。
+        var damage = DynamicVars["Damage"].IntValue + (Owner.HasPower<GoldenAegis>() ? 1 : 0);
         foreach (var enemy in CombatState?.HittableEnemies ?? [])
         {
             if (enemy == null || !enemy.IsHittable) continue;

@@ -157,19 +157,7 @@ internal static class TaiChiRedirectMultiPatch
         // 用索引绑定 __1 (第二参 targets), 不依赖参数名; dealer/props 按名绑定。
         private static void Prefix(ref IEnumerable<Creature> __1, ref Creature dealer, ValueProp props)
         {
-            if (__1 == null) return;
-            var list = __1 as IList<Creature> ?? __1.ToList();
-            var changed = false;
-            for (var i = 0; i < list.Count; i++)
-            {
-                var victim = TaiChiRedirectUtil.PickVictim(list[i], dealer, props, true);
-                if (victim == null) continue;
-                list[i] = victim;
-                changed = true;
-            }
-            if (!changed) return;
-            __1 = list;
-            dealer = null;
+            RedirectAllOrNothing(ref __1, ref dealer, props);
         }
     }
 
@@ -181,20 +169,44 @@ internal static class TaiChiRedirectMultiPatch
 
         private static void Prefix(ref IEnumerable<Creature> __1, ref Creature dealer)
         {
-            if (__1 == null) return;
-            var list = __1 as IList<Creature> ?? __1.ToList();
-            var changed = false;
-            for (var i = 0; i < list.Count; i++)
-            {
-                var victim = TaiChiRedirectUtil.PickVictim(list[i], dealer, null, true);
-                if (victim == null) continue;
-                list[i] = victim;
-                changed = true;
-            }
-            if (!changed) return;
-            __1 = list;
-            dealer = null;
+            RedirectAllOrNothing(ref __1, ref dealer, null);
         }
+    }
+
+    /// <summary>
+    ///     ★★ 多目标重定向的"全有或全无"判定 (2026-09-22 修复)。
+    ///     <para>
+    ///         <b>dealer 是整次 <c>CreatureCmd.Damage</c> 调用共享的</b>, 无法只对列表中的
+    ///         某一个元素置空。之前只要有一个元素被转嫁就把整次调用的 dealer 置 null,
+    ///         于是同一次 AoE 里<b>没有太极印记的队友</b>也一起变成了"无来源伤害" ——
+    ///         他们那些按来源判定的减伤 (心防/挡灾等"来自奶龙的伤害减半") 会全部失效。
+    ///     </para>
+    ///     <para>
+    ///         因此这里改为: <b>只有当本次调用的每一个目标都能被转嫁时才重定向</b>;
+    ///         只要有一个目标无法转嫁 (典型: 队友身上没有太极印记), 就整次放弃 ——
+    ///         宁可这一击不保护自己, 也不能把队友的减伤搞坏 (也不能让敌人替我们挨打时
+    ///         保留原攻击者, 那会触发蜂巢类反制直接卡死, 见本文件顶部铁律①)。
+    ///     </para>
+    /// </summary>
+    private static void RedirectAllOrNothing(ref IEnumerable<Creature> targets, ref Creature dealer, ValueProp? props)
+    {
+        if (targets == null) return;
+        var list = targets as IList<Creature> ?? targets.ToList();
+        if (list.Count == 0) return;
+
+        // 第一遍: 先确认所有目标都能转嫁, 任一不行就整体放弃。
+        var victims = new Creature?[list.Count];
+        for (var i = 0; i < list.Count; i++)
+        {
+            var victim = TaiChiRedirectUtil.PickVictim(list[i], dealer, props, true);
+            if (victim == null) return; // 放弃整次, 不改动 targets/dealer
+            victims[i] = victim;
+        }
+
+        // 第二遍: 确认可行后再落地。
+        for (var i = 0; i < list.Count; i++) list[i] = victims[i]!;
+        targets = list;
+        dealer = null;
     }
 
     private static IEnumerable<MethodBase> MultiTargets(bool requireProps)

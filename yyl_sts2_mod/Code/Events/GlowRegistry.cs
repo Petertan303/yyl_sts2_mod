@@ -42,8 +42,11 @@ public static class GlowRegistry
         [typeof(AcupointShift)] = HasEnoughQi,
         [typeof(FreeFlow)] = HasEnoughQi,
         [typeof(QiDispersal)] = HasEnoughQi,
-        [typeof(QiBurst)] = HasEnoughQi,
         // ---- 炁量 > 0 ----
+        // ⚠ 炁冲**没有**声明 QiLoss 变量 (它只在有炁时补一段, 不是耗炁卡),
+        //    之前把它注册成 HasEnoughQi 会在抽牌瞬间读 DynamicVars["QiLoss"] 抛
+        //    KeyNotFoundException, 直接冻死游戏 (2026-09-22 修复)。
+        [typeof(QiBurst)] = c => GetQi(c) > 0,
         [typeof(SkyFire)] = c => GetQi(c) > 0,
     };
 
@@ -93,7 +96,9 @@ public static class GlowRegistry
     /// <summary>炁量达到卡面声明的 QiLoss (随升级变化) 才有额外效果。</summary>
     private static bool HasEnoughQi(CardModel c)
     {
-        var need = c.DynamicVars["QiLoss"].IntValue;
-        return GetQi(c) >= need;
+        // ★防御: 卡没声明 QiLoss 时绝不能抛异常 —— 本方法跑在抽牌/出牌的事件钩子里,
+        //   任何未捕获异常都会让战斗流程卡死 (炁冲曾因此冻结整个游戏)。
+        if (!c.DynamicVars.TryGetValue("QiLoss", out var qiLoss)) return false;
+        return GetQi(c) >= qiLoss.IntValue;
     }
 }

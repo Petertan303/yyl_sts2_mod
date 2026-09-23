@@ -11,10 +11,11 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     丹噬: 2 费稀有能力牌, 获得 1 → 2 层[丹噬] —— 获得炁时对所有敌人造成「本次获得炁量 × 层数」点伤害。
+///     丹噬: 2 费罕见(蓝)能力牌, 获得 2 → 3 层[丹噬] —— 获得炁时对所有敌人造成「本次获得炁量 × 层数」点伤害。
 ///     <para>
 ///         产炁体系本是防御向, 缺输出; 丹噬把"获得炁"这个动作直接换成群伤,
 ///         让"防转攻"成为一条独立路线。层数即伤害值, 与「温养」正好互补。
+///         [balance 2026-09-22] 稀有度 Rare → Uncommon(蓝卡), 层数 1→2 提升为 2→3 (用户定调)。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -27,7 +28,7 @@ public sealed class CinnabarBite(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public CinnabarBite() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
+    public CinnabarBite() : this(2, CardType.Power, CardRarity.Uncommon, TargetType.Self)
     {
         WithPower<Powers.CinnabarBite>(
             Powers.CinnabarBite.DefaultAmount,

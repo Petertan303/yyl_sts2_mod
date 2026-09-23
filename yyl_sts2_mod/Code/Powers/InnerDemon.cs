@@ -28,28 +28,15 @@ public sealed class InnerDemon : yylPowerModel
     public override PowerStackType StackType => PowerStackType.None;
     public override PowerInstanceType InstanceType => PowerInstanceType.InstancedPerApplier;
 
-    private bool _applierIsAttacking;
-
-    public override Task BeforeAttack(AttackCommand command)
-    {
-        if (command.Attacker == Applier)
-            _applierIsAttacking = true;
-        return Task.CompletedTask;
-    }
-
+    /*  ★2026-09-22 修复: 击杀心魔不回血 (与 NailongMark 同因)。
+        去掉了 `_applierIsAttacking` 守卫 —— 该标记恒为 false, 导致回血永远不触发
+        (详见 NailongMark.cs 中的说明)。改为「带心魔标记者死亡 → 其施加者回血」。 */
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
     {
-        if (Applier == null || wasRemovalPrevented || !_applierIsAttacking || creature != Owner) return;
+        if (Applier == null || wasRemovalPrevented || creature != Owner) return;
         if (Applier.IsAlive)
         {
             await CreatureCmd.Heal(Applier, 6m);
         }
-    }
-
-    public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
-    {
-        if (command.Attacker == Applier)
-            _applierIsAttacking = false;
-        return Task.CompletedTask;
     }
 }
