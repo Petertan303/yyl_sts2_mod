@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Events;
 using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Relics;
@@ -54,6 +55,10 @@ public sealed class NlCan2 : yylRelicModel
         // ★统一走 yylNailong.ApplyMark(demon: true): 联机去重 (同一目标只挂一次),
         //   且目标已带普通奶龙时**先移除普通奶龙再用心魔覆盖** (心魔优先)。
         await yylNailong.ApplyMark(choiceContext, targets, Owner.Creature, demon: true);
+
+        // 3) 挂上手牌金光驱动 (隐藏 Power): 与黄桃罐头一致, 让条件牌在战斗中随状态发光。
+        //    ⚠ 不能省略 —— 否则升级到 NlCan2 后金光不会被战斗事件钩子刷新 (回归)。
+        await PowerCmd.Apply<CardGlowDriver>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
 
         // 心魔 buff 被赋予实体时: 发出奶龙的声音
         yylAudio.PlaySfx(yylAudio.Sfx("nailong/nailong_voice.ogg"), 0.9f);
