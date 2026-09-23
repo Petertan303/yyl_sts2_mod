@@ -62,16 +62,13 @@ public sealed class WhiteWorm(
         await CommonActions.Apply<WeakPower>(choiceContext, enemies, this);
 
         // 先结算攻击: 基础伤害 + 金光护体每段 +1 (卡面 {Damage}=2/{Bonus}=1 为预期值)。
+        // ★AllEnemies 卡: CommonActions.CardAttack 会忽略传入的 target、自动打全体,
+        //   若再 foreach 循环敌人会把每段伤害按敌人数翻倍 → 只调一次即可。
         var damage = DynamicVars["Damage"].IntValue + (Owner.HasPower<GoldenAegis>() ? 1 : 0);
-        foreach (var enemy in CombatState?.HittableEnemies ?? [])
-        {
-            if (enemy == null || !enemy.IsHittable) continue;
-            // 五条光束上下并列同时发射 (演出), 结算仍为一次 5 段攻击。
-            yylVfx.KinBeamColumn(Owner.Creature, DynamicVars.Repeat.IntValue, flipX: true);
-            await CommonActions.CardAttack(this, cardPlay, enemy, damage,
-                    ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
-                .Execute(choiceContext);
-        }
+        yylVfx.KinBeamColumn(Owner.Creature, DynamicVars.Repeat.IntValue, flipX: true);
+        await CommonActions.CardAttack(this, cardPlay, null, damage,
+                ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
+            .Execute(choiceContext);
 
         // 攻击结算完再消耗 1 层金光护体 (这样本次攻击已经吃到 +1, 消耗发生在之后)。
         if (Owner.HasPower<GoldenAegis>())

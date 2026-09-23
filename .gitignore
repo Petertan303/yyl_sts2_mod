@@ -12,3 +12,10 @@ _delete*/
 
 # Rider/IntelliJ 工程配置（残留文件夹，不进仓库）
 .idea/
+
+# 本地备份图（不进仓库，但保留在本地）
+**/bigger_energy_ori.png
+**/bigger_energy_ori.png.import
+
+# 三段旧 Code 副本（已改名为 Code_old，不参与编译，不进仓库，保留在本地对照）
+**/Code_old/

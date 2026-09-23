@@ -9,33 +9,28 @@ using yyl_sts2_mod.Code.Events;
 namespace yyl_sts2_mod.Code.Powers;
 
 /// <summary>
-///     温养: <b>失去炁时</b>, 获得 4 → 6 点格挡。
+///     温养: <b>获得炁时</b>, 获得「本次获得的炁量 × 温养层数」点格挡。
 ///     <para>
-///         设计意图: 耗炁牌偏攻击与运转, 血量压力大 —— 温养把"失去炁"这个代价换成格挡,
-///         让攻转防、续航。层数即格挡值(同原版「荆棘」的写法), 多张温养叠加。
+///         设计意图: 产炁牌偏防御, 缺输出 —— 温养把"获得炁"这个动作换成格挡,
+///         让防转续航。与「丹噬」(获得炁→伤害) 正好互补: 丹噬把炁换算成输出,
+///         温养把炁换算成防御。层数即<b>倍率</b>, 攒一大笔炁再吃下去才是正确用法。
 ///     </para>
 ///     <para>
-///         Hook-based: 实现 <see cref="ILoseQi" />, 在每次失去炁后作为后续副作用结算。
+///         Hook-based: 实现 <see cref="IGainQi" />, 在每次获得炁后作为后续副作用结算。
 ///     </para>
 /// </summary>
-public sealed class Nurture : yylPowerModel, ILoseQi
+public sealed class Nurture : yylPowerModel, IGainQi
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    /// <summary>卡牌默认给予的数值 (升级后 6)。</summary>
-    public const int DefaultAmount = 4;
-
-    /// <summary>升级时增加的数值。</summary>
-    public const int UpgradeAmount = 2;
-
-    public int ModifyQiLoss(Player player, int amount)
+    public int ModifyQiGain(Player player, int amount)
     {
-        // 不参与数值修改, 只挂 AfterModifyingQiLoss 后续结算。
+        // 不参与数值修改, 只挂 AfterModifyingQiGain 后续结算。
         return amount;
     }
 
-    public async Task AfterModifyingQiLoss(
+    public async Task AfterModifyingQiGain(
         PlayerChoiceContext ctx,
         Player player,
         int originalAmount,
@@ -43,7 +38,8 @@ public sealed class Nurture : yylPowerModel, ILoseQi
     {
         if (modifiedAmount <= 0) return;
 
-        var block = Amount;
+        // ★格挡 = 本次获得的炁量 × 温养层数 (2026-09-23 改, 与丹噬对称)。
+        var block = (decimal)modifiedAmount * Amount;
         if (block <= 0) return;
 
         await CreatureCmd.GainBlock(player.Creature, block, ValueProp.Unpowered, null);

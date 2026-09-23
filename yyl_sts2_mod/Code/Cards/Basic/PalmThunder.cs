@@ -36,7 +36,7 @@ public sealed class PalmThunder(
     CardRarity rarity,
     TargetType targetType,
     bool shouldShowInCardLibrary = true)
-    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
+    : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary), ITranscendenceCard
 {
     public PalmThunder() : this(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
     {
@@ -73,5 +73,14 @@ public sealed class PalmThunder(
         // 3. 攻击结算完再消耗 1 层金光护体 (保证本次攻击已经吃到 +1)。
         if (Owner.HasPower<GoldenAegis>())
             await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
+    }
+
+    /// <summary>
+    ///     先古转化: 持有「古老牙齿」(Archaic Tooth) 遗物时, 掌心雷转化为先古卡白长虫 (WhiteWorm)。
+    ///     采用 vanilla <see cref="ITranscendenceCard" /> 接口 (与 WatcherMod 的 Eruption 同款写法)。
+    /// </summary>
+    public CardModel GetTranscendenceTransformedCard()
+    {
+        return ModelDb.Card<WhiteWorm>();
     }
 }
