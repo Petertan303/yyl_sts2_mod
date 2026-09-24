@@ -38,15 +38,17 @@ public sealed class NailongRearing : yylRelicModel, IModifyDamageAdditive
     /*  用 BeforeDeath 而不是 AfterDeath:
         到了 AfterDeath, 怪物身上的能力(奶龙标记/心魔)已经被清掉了,
         HasPower<T>() 查不到, 判定永远失败、层数永远不涨。
-        BeforeDeath 时怪物还活着, 标记仍在, IsNailong 的存活判定也成立。 */
+        注意 BeforeDeath 触发时怪物 IsAlive 已经是 false, 因此这里必须用
+        IsNailongMarked(只看标记、不要求存活), 不能用 IsNailong(要求 IsAlive:true),
+        否则判定永远失败、层数永远不涨。 */
     public override Task BeforeDeath(Creature creature)
     {
         // 诊断用: 确认钩子到底有没有触发 / 判定为什么失败。
         MainFile.Logger.Info(
             $"NailongRearing.BeforeDeath: creature={creature?.GetType().Name}, " +
-            $"isNailong={yylNailong.IsNailong(creature)}, stack={StackCount}");
+            $"isNailongMarked={yylNailong.IsNailongMarked(creature)}, stack={StackCount}");
 
-        if (!yylNailong.IsNailong(creature)) return Task.CompletedTask;
+        if (!yylNailong.IsNailongMarked(creature)) return Task.CompletedTask;
         if (StackCount >= MaxStacks) return Task.CompletedTask;
 
         IncrementStackCount();
