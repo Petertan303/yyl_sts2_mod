@@ -20,8 +20,9 @@ public abstract class yyl_sts2_modRelic : CustomRelicModel
 {
     public override string PackedIconPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".RelicImagePath();
 
+    // ★轮廓图在 relics/outline/ 子目录，不是 relics/ 根 —— 用 RelicOutlineImagePath() 而非 RelicImagePath()。
     protected override string PackedIconOutlinePath =>
-        $"{Id.Entry.RemovePrefix().ToLowerInvariant()}_outline.png".RelicImagePath();
+        $"{Id.Entry.RemovePrefix().ToLowerInvariant()}_outline.png".RelicOutlineImagePath();
 
     protected override string BigIconPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigRelicImagePath();
 }

@@ -14,7 +14,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     诛邪: 2 费, 造成 9 → 13 伤害。若目标因此死亡, 斩杀其他敌人中**生命值最低**
+///     诛邪: 1 费, 造成 9 → 13 伤害。若目标因此死亡, 斩杀其他敌人中**生命值最低**
 ///     的那一个 (其当前生命值不高于 {Threshold} 点, 无视格挡)。
 ///     <para>
 ///         [balance 2026-09-19] 用户定调: 斩杀线由"最大生命值 50%"改为**定值 40 点**,
@@ -31,7 +31,7 @@ public sealed class ZhuXie(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public ZhuXie() : this(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+    public ZhuXie() : this(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
     {
         WithDamage(9, 4);
         // 斩杀线 (定值生命, 卡面用; 升级不变)

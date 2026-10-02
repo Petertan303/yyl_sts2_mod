@@ -3,6 +3,7 @@ using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Extensions;
 
 namespace yyl_sts2_mod.Code.Enchantments;
 
@@ -18,6 +19,12 @@ public sealed class QiMeridian : CustomEnchantmentModel
 {
     /// <summary>每次打出被附魔的牌, 额外获得的炁。</summary>
     public const int QiPerPlay = 1;
+
+    /// <summary>
+    ///     附魔图标。BaseLib 的 <c>CustomEnchantmentModel</c> 默认返回 null
+    ///     （不指定图标），所以必须在这里显式覆写，否则炁脉在 UI 上没有图。
+    /// </summary>
+    protected override string? CustomIconPath => "qi_meridian.png".PowerImagePath();
 
     public override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay? cardPlay)
     {

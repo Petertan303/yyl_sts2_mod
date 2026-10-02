@@ -103,5 +103,17 @@
   "YYL_STS2_MOD-LONG_NU.title": "Dragon Wrath",
   "YYL_STS2_MOD-LU_LONG_YIN.description": "Deal doubled damage to [gold]Nailong[/gold].",
   "YYL_STS2_MOD-LU_LONG_YIN.smartDescription": "Deal doubled damage to [gold]Nailong[/gold].",
-  "YYL_STS2_MOD-LU_LONG_YIN.title": "Dragonsbane Seal"
+  "YYL_STS2_MOD-LU_LONG_YIN.title": "Dragonsbane Seal",
+  "YYL_STS2_MOD-JIN_GUANG_HUA_QI.title": "Aegis to Qi",
+  "YYL_STS2_MOD-JIN_GUANG_HUA_QI.description": "Whenever you consume 1 stack of [gold]Golden Aegis[/gold], gain {Amount} [gold]Qi[/gold].",
+  "YYL_STS2_MOD-JIN_GUANG_HUA_QI.smartDescription": "Whenever you consume 1 stack of [gold]Golden Aegis[/gold], gain {Amount} [gold]Qi[/gold].",
+  "YYL_STS2_MOD-YU_LONG.title": "Dragon Reign",
+  "YYL_STS2_MOD-YU_LONG.description": "Attacks deal [blue]{Amount}%[/blue] more damage to [gold]Nailong[/gold].",
+  "YYL_STS2_MOD-YU_LONG.smartDescription": "Attacks deal [blue]{Amount}%[/blue] more damage to [gold]Nailong[/gold].",
+  "YYL_STS2_MOD-ZU_QI_FORM.title": "Ancestral Qi Form",
+  "YYL_STS2_MOD-ZU_QI_FORM.description": "Qi no longer has diminishing returns: each [gold]Qi[/gold] increases damage you deal by {Amount}%.",
+  "YYL_STS2_MOD-ZU_QI_FORM.smartDescription": "Qi no longer has diminishing returns: each [gold]Qi[/gold] increases damage you deal by {Amount}%.",
+  "YYL_STS2_MOD-SNAKE_FLOWER_GUARD.title": "Snake Flower Guard",
+  "YYL_STS2_MOD-SNAKE_FLOWER_GUARD.description": "Snake Flower Miss's own [gold]Block[/gold] absorbs damage redirected to her.",
+  "YYL_STS2_MOD-SNAKE_FLOWER_GUARD.smartDescription": "Snake Flower Miss's own [gold]Block[/gold] absorbs damage redirected to her."
 }

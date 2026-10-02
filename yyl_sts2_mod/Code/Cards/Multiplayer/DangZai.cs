@@ -39,9 +39,14 @@ public sealed class DangZai(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var allies = Owner.Creature.CombatState
-            .GetTeammatesOf(Owner.Creature)
-            .Where(c => c != Owner.Creature && c.IsAlive && c.Player != null)
+        // ★联机健壮性: Owner / Creature / CombatState 任一为空时静默退出。
+        //   4 人联机的切换与预览场景会出现这些空值, 一旦把异常抛向引擎就会冻结整场战斗。
+        if (Owner?.Creature is not { } self) return;
+        if (self.CombatState is not { } combatState) return;
+
+        var allies = combatState
+            .GetTeammatesOf(self)
+            .Where(c => c != self && c.IsAlive && c.Player != null)
             .ToList();
         if (allies.Count == 0) return;
 

@@ -12,7 +12,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     天师度 卡牌: 2 费, 获得 30 → 40 炁 + 5 层金光护体, 同时给予 天师度 Power
+///     天师度 卡牌: 1 费, 获得 30 → 40 炁 + 5 层金光护体, 同时给予 天师度 Power
 ///     (回合一结束 -10 炁 / 层)。类比 Wraith Form: 强力正向 + 持续负面。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -24,7 +24,7 @@ public sealed class HeavenlyRite(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public HeavenlyRite() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
+    public HeavenlyRite() : this(1, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
         WithPower<Qi>(30, 10);
         WithPower<GoldenAegis>(5, 0);

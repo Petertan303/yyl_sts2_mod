@@ -31,7 +31,7 @@ public sealed class LianHua(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public LianHua() : this(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public LianHua() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
         WithCostUpgradeBy(-1);
         WithKeywords(CardKeyword.Exhaust);
@@ -39,16 +39,34 @@ public sealed class LianHua(
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // ★排查日志 (2026-09-29: 用户报告打出时卡死, 但所有日志里都没有本卡的打出行,
+        //   无法定位卡死点) —— 开始/每张消耗/结束 全程打点, 复现后按日志定位, 定位完可删。
+        MainFile.Logger.Info("[炼化] OnPlay 开始");
         var hand = PileType.Hand.GetPile(Owner);
-        if (hand == null) return;
+        if (hand == null)
+        {
+            MainFile.Logger.Info("[炼化] 手牌为空, 结束");
+            return;
+        }
 
         // 迭代副本: 消耗会改变牌堆内容。
         var cards = hand.Cards.ToList();
+        MainFile.Logger.Info($"[炼化] 待消耗 {cards.Count} 张: {string.Join(", ", cards.Select(c => c.Id.Entry))}");
+        var n = 0;
         foreach (var card in cards)
+        {
+            n++;
+            MainFile.Logger.Info($"[炼化] 消耗第 {n}/{cards.Count} 张: {card.Id.Entry}");
             await CardCmd.Exhaust(choiceContext, card);
+        }
 
         if (cards.Count > 0)
+        {
+            MainFile.Logger.Info($"[炼化] 施加金光护体 {cards.Count} 层");
             await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature },
                 cards.Count, Owner.Creature, cardPlay.Card);
+        }
+
+        MainFile.Logger.Info("[炼化] OnPlay 结束");
     }
 }

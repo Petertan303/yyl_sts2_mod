@@ -22,6 +22,12 @@ public sealed class Qi : yylPowerModel, IModifyDamageMultiplicative
     /// </summary>
     public const decimal LogCoeff = 0.27m;
 
+    /// <summary>
+    ///     线性系数不再写死在这里 —— 「祖炁形态」下每 1 点炁的加成百分比
+    ///     取自 <see cref="ZuQiForm" /> 能力的层数（基础 8 / 升级 12），
+    ///     便于直接通过卡牌数值调整强度。
+    /// </summary>
+
     public decimal ModifyDamageMultiplicativeCompability(
         Creature? target,
         decimal amount,
@@ -35,7 +41,13 @@ public sealed class Qi : yylPowerModel, IModifyDamageMultiplicative
             // 「守势」: 把炁的攻击收益换成金光的防御收益 —— 有守势时炁不提供增伤。
             if (Owner.HasPower<ShouShi>()) return 1m;
             if (Amount <= 0) return 1m;
-            decimal bonus = LogCoeff * (decimal)Math.Log(1.0 + Amount);
+
+            // 「祖炁形态」: 切换为线性加成，取消对数衰减。
+            // 每 1 点炁的加成百分比取自形态能力自身的层数 (基础 8 / 升级 12)。
+            var form = Owner.GetPower<ZuQiForm>();
+            decimal bonus = form != null
+                ? (decimal)form.Amount / 100m * Amount
+                : LogCoeff * (decimal)Math.Log(1.0 + Amount);
             return 1m + bonus;
         }
         return 1m;

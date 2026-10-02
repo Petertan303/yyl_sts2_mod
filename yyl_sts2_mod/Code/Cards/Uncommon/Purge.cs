@@ -12,7 +12,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     涤荡: 2 → 1 费, 移除你所有的负面状态 (清除层数, 而非当回合免疫)。
+///     涤荡: 1 费，消耗，移除你所有的负面状态 (清除层数, 而非当回合免疫)。
 ///     <para>
 ///         「永久清除」型净化 (设计笔记 §5 罕见位): 与「清心咒」的
 ///         "当回合无效"区分语义。直接用 <see cref="PowerCmd.Remove(PowerModel)" />
@@ -28,9 +28,9 @@ public sealed class Purge(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public Purge() : this(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public Purge() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
-        WithCostUpgradeBy(-1);
+        WithKeywords(CardKeyword.Exhaust);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

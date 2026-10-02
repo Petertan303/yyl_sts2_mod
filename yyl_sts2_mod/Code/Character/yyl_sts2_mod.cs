@@ -104,4 +104,19 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
     // 底部战斗能量计数器（左下角大球）用自定义场景渲染 bigger_energy.png，
     // 与卡费图标(BigEnergyIconPath=big_energy.png)、文字能量(text_energy.png)三者解耦。
     public override string CustomEnergyCounterPath => "res://yyl_sts2_mod/scenes/yyl_energy_counter.tscn";
+
+    /*  ★通关后与建筑师对话的攻击特效 (TheArchitect.AnimPlayerAttackIfNecessary 按得分分批循环播放)。
+        之前没覆写 → 落到 BaseLib 占位符的通用钝器/挥砍列表, 而且玩家侧攻击动画因视觉是
+        AnimatedSprite2D(非 Spine) 靠 BaseLib 的 CustomAnimationPatch 映射到 SpriteFrames 的
+        "attack" 动画 —— 那个动画此前只有 1 帧与 idle 同图, 播了也看不出来。
+        本列表全部用原版已验证可加载的路径 (vfx_attack_lightning 就是 TheArchitect 事件自己
+        反过来打玩家用的那个), 主题=雷法+居合斩。 */
+    public override List<string> GetArchitectAttackVfx() => new()
+    {
+        "vfx/vfx_attack_lightning",
+        "vfx/vfx_attack_slash",
+        "vfx/vfx_heavy_blunt",
+        "vfx/vfx_bloody_impact",
+        "vfx/vfx_rock_shatter"
+    };
 }

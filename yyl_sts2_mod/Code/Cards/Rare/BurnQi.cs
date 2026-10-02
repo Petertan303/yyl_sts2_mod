@@ -33,6 +33,10 @@ public sealed class BurnQi(
         WithCards(3);
         // 自伤代价 (卡面用)
         WithCalculatedDamage("HpLoss", 3, (_, _) => 0m, 0, 0, 0);
+        // ★启动卡需要"一次性爆发"的仪式感 —— 补上消耗关键字。
+        //   文档一直按"消耗、失6血"记载，但代码此前既无 Exhaust、代价也只有 3，
+        //   导致它实际是张可反复使用的平淡运转件。现在代价保持 3，只补消耗。
+        WithKeyword(CardKeyword.Exhaust);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

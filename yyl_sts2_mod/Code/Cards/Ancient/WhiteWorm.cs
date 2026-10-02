@@ -72,6 +72,6 @@ public sealed class WhiteWorm(
 
         // 攻击结算完再消耗 1 层金光护体 (这样本次攻击已经吃到 +1, 消耗发生在之后)。
         if (Owner.HasPower<GoldenAegis>())
-            await CommonActions.ApplySelf<GoldenAegis>(choiceContext, this);
+            await yyl_sts2_mod.Code.Utils.yylAegis.Consume(choiceContext, this);
     }
 }

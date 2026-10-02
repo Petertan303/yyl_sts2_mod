@@ -53,7 +53,16 @@ public sealed class QiInfant : yylPowerModel
         }
 
         _hasTakenExtraTurn = false;
-        await PowerCmd.Decrement(this);
+
+        // ★铁律: 钩子绝不抛异常。
+        try
+        {
+            await PowerCmd.Decrement(this);
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Warn($"[yyl_sts2_mod] 炁婴层数递减失败, 已忽略: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -68,42 +77,51 @@ public sealed class QiInfant : yylPowerModel
             return;
         }
 
-        var combatState = player.Creature.CombatState;
-        Flash();
-
-        using (CardSelectCmd.PushSelector(new VakuuCardSelector()))
+        // ★铁律: 钩子绝不抛异常。自动出牌循环会打出任意卡牌, 任何一张牌的 OnPlay 抛异常
+        // 都会直冲引擎并冻结整场战斗 —— 这里整体兜住, 异常只告警, 保证额外回合能安全收尾。
+        try
         {
-            var cardsPlayed = 0;
-            for (; cardsPlayed < 30; cardsPlayed++)
+            var combatState = player.Creature.CombatState;
+            Flash();
+
+            using (CardSelectCmd.PushSelector(new VakuuCardSelector()))
             {
-                if (CombatManager.Instance.IsOverOrEnding)
+                var cardsPlayed = 0;
+                for (; cardsPlayed < 30; cardsPlayed++)
                 {
-                    break;
+                    if (CombatManager.Instance.IsOverOrEnding)
+                    {
+                        break;
+                    }
+
+                    if (CombatManager.Instance.IsPlayerReadyToEndTurn(player))
+                    {
+                        break;
+                    }
+
+                    var hand = PileType.Hand.GetPile(Owner.Player).Cards;
+                    var card = hand.FirstOrDefault(c => c.CanPlay());
+                    if (card == null)
+                    {
+                        break;
+                    }
+
+                    var target = GetTarget(card, combatState!);
+                    await card.SpendResources();
+                    await CardCmd.AutoPlay(choiceContext, card, target, skipXCapture: true);
                 }
 
-                if (CombatManager.Instance.IsPlayerReadyToEndTurn(player))
+                if (cardsPlayed == 0)
                 {
-                    break;
+                    return;
                 }
 
-                var hand = PileType.Hand.GetPile(Owner.Player).Cards;
-                var card = hand.FirstOrDefault(c => c.CanPlay());
-                if (card == null)
-                {
-                    break;
-                }
-
-                var target = GetTarget(card, combatState!);
-                await card.SpendResources();
-                await CardCmd.AutoPlay(choiceContext, card, target, skipXCapture: true);
+                PlayerCmd.EndTurn(Owner.Player, false);
             }
-
-            if (cardsPlayed == 0)
-            {
-                return;
-            }
-
-            PlayerCmd.EndTurn(Owner.Player, false);
+        }
+        catch (Exception e)
+        {
+            MainFile.Logger.Warn($"[yyl_sts2_mod] 炁婴自动出牌回合异常, 已安全中止该额外回合: {e.Message}");
         }
     }
 

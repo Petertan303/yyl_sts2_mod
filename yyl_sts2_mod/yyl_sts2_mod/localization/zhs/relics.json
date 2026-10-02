@@ -2,13 +2,16 @@
   "YYL_STS2_MOD-DONG_NI_ZHI_BA.description": "你获得的格挡恒定为15。（战斗结束时移除）",
   "YYL_STS2_MOD-DONG_NI_ZHI_BA.flavor": "从今天起，格挡由我接管。",
   "YYL_STS2_MOD-DONG_NI_ZHI_BA.title": "东尼之霸",
-  "YYL_STS2_MOD-NAILONG_REARING.description": "每击杀一个[gold]奶龙[/gold]，层数+1（最多10层）。每层使你攻击[gold]奶龙[/gold]时额外造成1点伤害。",
+  "YYL_STS2_MOD-NAILONG_REARING.description": "每击杀一个[gold]奶龙[/gold]，层数+1（最多[blue]20[/blue]层）。每层使你攻击[gold]奶龙[/gold]造成的伤害提高[blue]5%[/blue]。",
   "YYL_STS2_MOD-NAILONG_REARING.flavor": "你终于下定决心，把它养起来。",
   "YYL_STS2_MOD-NAILONG_REARING.title": "养龙",
-  "YYL_STS2_MOD-NL_CAN2.description": "战斗开始时获得 5 点炁。将所有人视作奶龙；击杀奶龙时，对其造成致命伤的斩杀者回复 6 点生命值。",
+  "YYL_STS2_MOD-NL_CAN2.description": "战斗开始时获得 5 点炁。将所有人视作奶龙；只有持有本遗物的人亲手斩杀奶龙时，回复 3 点生命值。",
   "YYL_STS2_MOD-NL_CAN2.flavor": "一整罐黄色生物的组织样本，鲜黄色震颤着空气。你开始听见它的声音。",
   "YYL_STS2_MOD-NL_CAN2.title": "大瓶黄桃罐头",
   "YYL_STS2_MOD-PEACH_CAN.description": "战斗开始时获得 3 点炁。将所有敌人视作奶龙。",
   "YYL_STS2_MOD-PEACH_CAN.flavor": "玻璃罐头，盛装着一块黄色生物的组织样本。样本正在缓缓搏动着。",
-  "YYL_STS2_MOD-PEACH_CAN.title": "黄桃罐头"
+  "YYL_STS2_MOD-PEACH_CAN.title": "黄桃罐头",
+  "YYL_STS2_MOD-SNAKE_FLOWER_MISS.title": "蛇花小姐",
+  "YYL_STS2_MOD-SNAKE_FLOWER_MISS.description": "战斗开始时召唤蛇花小姐（8点生命）。若战斗结束时蛇花仍存活，下一场战斗时她的生命上限+3。",
+  "YYL_STS2_MOD-SNAKE_FLOWER_MISS.flavor": "你踩碎的那朵，再也长不回来了。"
 }

@@ -27,7 +27,7 @@ public sealed class CinnabarBite : yylPowerModel, IGainQi
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>卡牌默认给予的数值 (基础 2 层, 升级后 3 层 — 2026-09-22 用户定调)。</summary>
-    public const int DefaultAmount = 2;
+    public const int DefaultAmount = 1;
 
     /// <summary>升级时增加的数值 (2 → +1 = 3 层)。</summary>
     public const int UpgradeAmount = 1;

@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -37,11 +38,15 @@ public sealed class LongNu : yylPowerModel, IModifyDamageMultiplicative
         return 1m;
     }
 
-    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants,
-        ICombatState combatState)
+    /// <summary>
+    ///     单回合过期 —— 同 <see cref="HeartGuard"/>: 必须用<b>玩家级</b>钩子而非 side 级钩子。
+    ///     联机时所有玩家同属一个 <c>CombatSide</c>, <c>side == Owner.Side</c> 区分不出是谁的回合,
+    ///     会把全队的龙怒一并抹掉。改用 <c>player == Owner.Player</c>, 只在本人回合开始时结算。
+    /// </summary>
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
-        if (side == Owner.Side)
-            PowerCmd.Remove(this);
-        return base.BeforeSideTurnStart(choiceContext, side, participants, combatState);
+        if (player == Owner.Player)
+            await PowerCmd.Remove(this);
+        await base.AfterPlayerTurnStart(choiceContext, player);
     }
 }

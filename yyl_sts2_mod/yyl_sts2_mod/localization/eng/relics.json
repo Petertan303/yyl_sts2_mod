@@ -2,13 +2,16 @@
   "YYL_STS2_MOD-DONG_NI_ZHI_BA.description": "Block you gain is always set to 15. (Removed at the end of combat.)",
   "YYL_STS2_MOD-DONG_NI_ZHI_BA.flavor": "Block? That's Toni's business now.",
   "YYL_STS2_MOD-DONG_NI_ZHI_BA.title": "Toni's Supremacy",
-  "YYL_STS2_MOD-NAILONG_REARING.description": "Each time you kill a [gold]Nailong[/gold], gain 1 stack (max 10). Each stack deals 1 extra damage when you attack [gold]Nailong[/gold].",
+  "YYL_STS2_MOD-NAILONG_REARING.description": "Each time you kill a [gold]Nailong[/gold], gain 1 stack (max [blue]20[/blue]). Each stack increases damage you deal to [gold]Nailong[/gold] by [blue]5%[/blue].",
   "YYL_STS2_MOD-NAILONG_REARING.flavor": "You have finally made up your mind to raise it.",
   "YYL_STS2_MOD-NAILONG_REARING.title": "Raise the Nailong",
-  "YYL_STS2_MOD-NL_CAN2.description": "At the start of combat, gain 5 Qi. Treat all as Nailong; when a Nailong is killed, the killer (whoever dealt the lethal blow) heals 6 HP.",
+  "YYL_STS2_MOD-NL_CAN2.description": "At the start of combat, gain 5 Qi. Treat all as Nailong; only when the relic holder personally kills a Nailong do they heal 3 HP.",
   "YYL_STS2_MOD-NL_CAN2.flavor": "A whole can of tissue samples from the yellow creature; the vivid yellow trembles in the air. You begin to hear its voice.",
   "YYL_STS2_MOD-NL_CAN2.title": "Large Yellow Peach Can",
   "YYL_STS2_MOD-PEACH_CAN.description": "At the start of combat, gain 3 Qi. Treat all enemies as Nailong.",
   "YYL_STS2_MOD-PEACH_CAN.flavor": "A glass can holding a chunk of tissue sample from the yellow creature. The sample pulses slowly.",
-  "YYL_STS2_MOD-PEACH_CAN.title": "Yellow Peach Can"
+  "YYL_STS2_MOD-PEACH_CAN.title": "Yellow Peach Can",
+  "YYL_STS2_MOD-SNAKE_FLOWER_MISS.title": "Snake Flower Miss",
+  "YYL_STS2_MOD-SNAKE_FLOWER_MISS.description": "At the start of combat, summon Snake Flower Miss (8 HP). If she survives the combat, her Max HP increases by 3 next combat.",
+  "YYL_STS2_MOD-SNAKE_FLOWER_MISS.flavor": "The one you crushed will never grow back."
 }

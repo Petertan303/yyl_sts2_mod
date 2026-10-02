@@ -1,9 +1,12 @@
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
+using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 
 namespace yyl_sts2_mod.Code.Utils;
 
@@ -307,9 +310,202 @@ public static class yylVfx
     }
 
     /// <summary>
-    ///     角色立绘的显示尺寸 (纹理原始宽高 × 精灵缩放), 用于"上移 N 体位"类定位。
-    ///     取不到时返回 Zero (调用方偏移自动退化为 0, 无害)。
+    ///     ★聚光灯 (2026-09-30, 天火蓄力; 三轮修订): 从华丽收场场景中<b>单独摘出</b>聚光灯容器,
+    ///     照原版 NGrandFinaleVfx.PlaySequence 的定位 —— <b>挂到战斗特效层、移到视口顶部中央</b>
+    ///     (不是跟敌人走; 挂敌人身上会因场景内偏移×精灵缩放而错位出黑边)。
+    ///     复刻 1s 淡入 + 触发聚光粒子, <paramref name="lifeSeconds" /> 后 0.4s 淡出并回收。
+    ///     <para>
+    ///         与"实例化整套 NGrandFinaleVfx 再掐断"不同 (那只能卡在 1.2~1.45s,
+    ///         晚了会漏花瓣/斩击), 本方法直接摘 <c>spotlight_container</c> 子树,
+    ///         <b>任意时长都干净</b> —— 花瓣/斩击/结尾容器根本不会被加入场景树。
+    ///         另按实测反馈移除容器内的 <c>vfx_grand_finale_petals_slow</c> (慢花瓣,
+    ///         花瓣另有其主), 只留 <c>vfx_common_specks</c> 光尘。
+    ///         根的 _Ready 会自动播完整序列, 所以<b>绝不把根加入场景树</b> ——
+    ///         实例化后立即摘子节点、丢根。
+    ///     </para>
     /// </summary>
+    public static void Spotlight(float lifeSeconds)
+    {
+        try
+        {
+            var combatVfxContainer = NCombatRoom.Instance?.CombatVfxContainer;
+            if (combatVfxContainer == null) return;
+
+            var scene = ResourceLoader.Load<PackedScene>("res://scenes/vfx/vfx_grand_finale.tscn");
+            if (scene == null)
+            {
+                MainFile.Logger.Error("yylVfx.Spotlight: scene load failed");
+                return;
+            }
+
+            // 实例化根但不入树 (入树即触发脚本 _Ready → 整套演出)。
+            var root = scene.Instantiate<Node2D>();
+            if (root == null) return;
+
+            // 摘出聚光灯容器 (它自带 NParticlesContainer 脚本), 丢弃其余部分。
+            var spotlightContainer = root.GetNode<Node2D>("spotlight_container");
+            root.RemoveChild(spotlightContainer);
+            root.QueueFree();
+            if (spotlightContainer == null) return;
+
+            // 移除慢花瓣 (花瓣特效已被风后奇门占用且用户不要), 只留光尘。
+            spotlightContainer.GetNodeOrNull<Node2D>("vfx_grand_finale_petals_slow")?.QueueFree();
+
+            combatVfxContainer.AddChildSafely(spotlightContainer);
+
+            // ★照 PlaySequence: 聚光组件定到视口顶部中央 (原版同款, 光柱自上而下)。
+            spotlightContainer.GlobalPosition = new Vector2(spotlightContainer.GetViewportRect().Size.X / 2f, 0f);
+
+            // ★照 Initialize + PlaySequence: spotlight 精灵初始全透明, 1s 淡入到白。
+            var spotSprite = spotlightContainer.GetNode<Node2D>("spotlight");
+            if (spotSprite != null)
+            {
+                spotSprite.Modulate = new Color(1f, 1f, 1f, 0f);
+                var fadeIn = spotlightContainer.CreateTween();
+                fadeIn.TweenProperty(spotSprite, "modulate", Colors.White, 1.0);
+            }
+
+            // 触发聚光粒子 (_spotlightParticles 就是容器自身, Restart() 公开)。
+            if (spotlightContainer is NParticlesContainer particlesContainer)
+            {
+                particlesContainer.Restart();
+            }
+            else
+            {
+                // 兜底: 直接点亮容器内所有粒子。
+                foreach (var p in spotlightContainer.GetChildren().OfType<GpuParticles2D>())
+                {
+                    p.Emitting = true;
+                }
+            }
+
+            FadeOutLater(spotlightContainer, lifeSeconds);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.Spotlight: {ex.Message}");
+        }
+    }
+
+    /// <summary>延时 0.4s 淡出后回收 (聚光灯退场, 避免硬消失)。</summary>
+    private static async void FadeOutLater(Node node, float lifeSeconds)
+    {
+        try
+        {
+            var tree = node.GetTree();
+            if (tree == null) return;
+            var wait = MathF.Max(lifeSeconds - 0.4f, 0f);
+            await node.ToSignal(tree.CreateTimer(wait), SceneTreeTimer.SignalName.Timeout);
+            if (!GodotObject.IsInstanceValid(node)) return;
+
+            var fade = node.CreateTween();
+            fade.TweenProperty(node, "modulate", new Color(1f, 1f, 1f, 0f), 0.4);
+            await node.ToSignal(tree.CreateTimer(0.45), SceneTreeTimer.SignalName.Timeout);
+            if (GodotObject.IsInstanceValid(node))
+            {
+                node.QueueFree();
+            }
+        }
+        catch
+        {
+            // 淡出失败不影响任何逻辑。
+        }
+    }
+
+    /// <summary>
+    ///     ★呼唤波纹 (2026-09-30, 天火蓄力): 复刻原版灵魂异鱼「呼唤」(Beckon) 的波纹特效。
+    ///     <para>
+    ///         原理 (反编译 NSoulFyshVfx): 波纹不是独立粒子场景, 而是鱼骨架 Spine 附件
+    ///         (beckonwave 网格) 套着色器材质 <c>soul_fysh_beckonwave_mat</c> —— 着色器用
+    ///         噪声纹理扰动 + <c>amount</c> 参数控制波纹显影 (0.3 隐 → 1.0 全显)。
+    ///         StartBeckon = amount 0.3→1.0 (0.25s EaseOut Quad); EndBeckon = 1.0→0.3 (0.5s EaseIn Quad)。
+    ///         材质/贴图都在游戏 pck 内, 运行时直接加载; 材质必须 <c>Duplicate()</c>
+    ///         (原版共享单实例, 直接改 amount 会互相串扰)。原版形状挂在鱼身上,
+    ///         我们改为独立 Sprite2D 挂施法者精灵中心, 宽度按施法者显示高度定标。
+    ///     </para>
+    ///     <para>
+    ///         时间线: 快速淡入 + amount 展开 0.45s → 保持蓄力 → 结束前 0.5s amount 收回 +
+    ///         0.4s 淡出 → 回收。整体随生命周期轻微向外扩张 (波纹感)。
+    ///     </para>
+    /// </summary>
+    public static void BeckonRipple(Creature caster, float lifeSeconds = 2.0f, float sizeFactor = 1.5f)
+    {
+        try
+        {
+            if (caster == null) return;
+            Node anchor = yylAnim.FindSprite(caster)
+                ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(caster)?.Visuals);
+            if (anchor == null) return;
+
+            var material = ResourceLoader
+                .Load<ShaderMaterial>("res://materials/vfx/monsters/soul_fysh_beckonwave_mat.tres")
+                ?.Duplicate() as ShaderMaterial;
+            var texture = ResourceLoader.Load<Texture2D>("res://vfx/monsters/soul_fysh/beckonwave.png");
+            if (material == null || texture == null)
+            {
+                MainFile.Logger.Error("yylVfx.BeckonRipple: material/texture load failed");
+                return;
+            }
+
+            var wave = new Sprite2D
+            {
+                Texture = texture,
+                Material = material,
+                // 贴图原始分辨率是 Spine 大画布, 按施法者显示高度定标。
+                Scale = Vector2.One * (DisplayHeight(caster) * sizeFactor / MathF.Max(texture.GetWidth(), 1f)),
+                Modulate = new Color(1f, 1f, 1f, 0f),
+            };
+            anchor.AddChild(wave);
+
+            var startScale = wave.Scale;
+            var peak = material; // 便于阅读
+            const float restAmount = 0.3f;
+
+            // 展开: amount 0.3→1.0 (原版 StartBeckon 0.25s, 稍放慢到 0.45s) + 轻微外扩 + 淡入。
+            var rise = wave.CreateTween();
+            rise.SetParallel(true);
+            rise.TweenProperty(peak, "shader_parameter/amount", 1f, 0.45)
+                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).From(restAmount);
+            rise.TweenProperty(wave, "modulate", Colors.White, 0.3).From(new Color(1f, 1f, 1f, 0f));
+            rise.TweenProperty(wave, "scale", startScale * 1.15f, lifeSeconds)
+                .SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.Out);
+
+            // 收回: 结束前 0.5s amount 回落 (原版 EndBeckon) + 淡出, 然后回收。
+            RecycleWave(wave, peak, lifeSeconds, restAmount);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.BeckonRipple: {ex.Message}");
+        }
+    }
+
+    /// <summary>呼唤波纹的收尾: 结束前 0.5s amount 回落 + 0.4s 淡出, 随后回收。</summary>
+    private static async void RecycleWave(Node wave, ShaderMaterial material, float lifeSeconds, float restAmount)
+    {
+        try
+        {
+            var tree = wave.GetTree();
+            if (tree == null) return;
+            var wait = MathF.Max(lifeSeconds - 0.5f, 0f);
+            await wave.ToSignal(tree.CreateTimer(wait), SceneTreeTimer.SignalName.Timeout);
+            if (!GodotObject.IsInstanceValid(wave)) return;
+
+            var fall = wave.CreateTween();
+            fall.SetParallel(true);
+            fall.TweenProperty(material, "shader_parameter/amount", restAmount, 0.5)
+                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+            fall.TweenProperty(wave, "modulate", new Color(1f, 1f, 1f, 0f), 0.4);
+            await wave.ToSignal(tree.CreateTimer(0.55), SceneTreeTimer.SignalName.Timeout);
+            if (GodotObject.IsInstanceValid(wave))
+                wave.QueueFree();
+        }
+        catch
+        {
+            // 收尾失败不影响任何逻辑。
+        }
+    }
+
+    /// <summary>角色立绘的显示尺寸 (纹理原始宽高 × 精灵缩放), 用于"上移 N 体位"类定位。</summary>
     internal static Vector2 DisplaySize(Creature target)
     {
         try

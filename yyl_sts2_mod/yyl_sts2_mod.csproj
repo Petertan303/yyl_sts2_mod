@@ -34,6 +34,11 @@
 
     <ItemGroup>
         <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All"/>
+        <!-- STS2-RitsuLib: 与 BaseLib 平级的共享框架库, 提供原版/BaseLib 没有的内容注册
+             (事件 ModEventTemplate / RegisterActEvent)、生命周期钩子与持久化。
+             注意它是**运行时 mod 依赖** (已在 yyl_sts2_mod.json 的 dependencies 声明 min 0.6.2),
+             玩家侧需订阅创意工坊的 STS2-RitsuLib。版本需与运行时一致, 故锁 0.6.2。 -->
+        <PackageReference Include="STS2.RitsuLib" Version="0.6.2" PrivateAssets="All"/>
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All"/>
         <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>
         <!-- Generates a .pck file when building if only using simple assets. May not work on all setups. Uncomment to test. -->

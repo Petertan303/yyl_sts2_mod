@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Combat.History;
 using MegaCrit.Sts2.Core.Combat.History.Entries;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -47,15 +49,63 @@ public sealed class RebirthStanceOnePower : yylPowerModel
         if (target != Owner || !ValuePropExtensions.IsCardOrMonsterMove(props))
             return 1m;
 
+        // ★联机隔离 (对齐原版 UnmovablePower): 只有**自己打出的牌**带来的格挡才翻倍。
+        //   缺少这层校验时, 队友的牌给本体加格挡同样会触发翻倍; 而下面的计数只统计
+        //   自己出牌产生的格挡, 这次压根消耗不到计数 —— 于是同一回合内可以被
+        //   多名队友反复触发。 (cardSource.Owner 可能为空, 故用 ?. 而非原版裸取。)
+        if (cardSource != null && cardSource.Owner?.Creature != Owner)
+            return 1m;
+
         // 历史查询式"每回合第一次": 本回合本人已有的攻击来源格挡次数 == 0 → 翻倍。
         // 历史条目在真实落账后才追加, 因此预览/结算天然一致。
-        var count = CombatManager.Instance.History.Entries
-            .OfType<BlockGainedEntry>()
-            .Count(e => e.HappenedThisTurn(Owner.CombatState)
-                     && e.CardPlay != null
-                     && e.CardPlay.Player?.Creature == Owner
-                     && ValuePropExtensions.IsCardOrMonsterMove(e.Props));
+        return CountCardBlocksThisTurn(Owner) == 0 ? 2m : 1m;
+    }
 
-        return count == 0 ? 2m : 1m;
+    /// <summary>
+    ///     统计"本回合 / 本人 / 攻击来源"的、已经落账的格挡次数。
+    ///     <para>
+    ///         性能优化 (针对联机卡顿): 原写法每次都全量枚举 <c>History.Entries</c>,
+    ///         该列表随战斗持续增长 (后期上千条), 而本钩子在每次获得格挡时都会触发,
+    ///         4 人联机下开销被成倍放大。
+    ///         <b>依据</b>: 引擎 <c>CombatHistory</c> 内部用
+    ///         <c>List&lt;CombatHistoryEntry&gt;</c> 支撑, 仅对外声明为
+    ///         <c>IEnumerable&lt;CombatHistoryEntry&gt;</c> —— 故可用 <c>as IList</c> 反向索引;
+    ///         历史按时间追加, 本回合的条目必然是<b>尾部连续的一段</b>,
+    ///         扫到第一条不属于本回合的条目即可停止。
+    ///         复杂度从 O(整场历史) 降为 O(本回合条目数), 判定条件与原写法逐条等价。
+    ///         <c>as</c> 若失败则自动回退全量扫描, 行为不变。
+    ///     </para>
+    /// </summary>
+    private static int CountCardBlocksThisTurn(Creature owner)
+    {
+        var combatState = owner.CombatState;
+        if (combatState == null) return 0;
+
+        if (CombatManager.Instance.History.Entries is IList<CombatHistoryEntry> entries)
+        {
+            var count = 0;
+            for (var i = entries.Count - 1; i >= 0; i--)
+            {
+                if (!entries[i].HappenedThisTurn(combatState)) break;
+
+                if (entries[i] is BlockGainedEntry block
+                    && block.CardPlay != null
+                    && block.CardPlay.Player?.Creature == owner
+                    && ValuePropExtensions.IsCardOrMonsterMove(block.Props))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        // 回退: 与改动前完全一致的全量扫描
+        return CombatManager.Instance.History.Entries
+            .OfType<BlockGainedEntry>()
+            .Count(e => e.HappenedThisTurn(combatState)
+                     && e.CardPlay != null
+                     && e.CardPlay.Player?.Creature == owner
+                     && ValuePropExtensions.IsCardOrMonsterMove(e.Props));
     }
 }

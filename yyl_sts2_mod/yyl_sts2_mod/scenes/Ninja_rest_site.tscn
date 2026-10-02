@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dn0qeb412vnc0"]
 
-[ext_resource type="Texture2D" uid="uid://cha121m5o0esw" path="res://yyl_sts2_mod/images/charui/RestSite.png" id="1_w3e04"]
+[ext_resource type="Texture2D" uid="uid://bobrt3teemrh7" path="res://yyl_sts2_mod/images/charui/RestSite.png" id="1_w3e04"]
 
 [node name="NinjaRestSite" type="Node2D"]
 
@@ -25,23 +25,23 @@ offset_bottom = 175.0
 [node name="Hitbox" type="Control" parent="ControlRoot"]
 unique_name_in_owner = true
 anchors_preset = 0
-offset_left = -155.0
-offset_top = -165.0
-offset_right = 154.0
-offset_bottom = 166.0
+offset_left = -141.0
+offset_top = -116.0
+offset_right = 133.0
+offset_bottom = 147.0
 
 [node name="ThoughtBubbleRight" type="Control" parent="ControlRoot"]
 unique_name_in_owner = true
 anchors_preset = 0
-offset_left = 121.0
-offset_top = -125.0
-offset_right = 121.0
-offset_bottom = -125.0
+offset_left = 42.0
+offset_top = -82.0
+offset_right = 50.0
+offset_bottom = -82.0
 
 [node name="ThoughtBubbleLeft" type="Control" parent="ControlRoot"]
 unique_name_in_owner = true
 anchors_preset = 0
-offset_left = -113.0
-offset_top = -95.0
-offset_right = -113.0
-offset_bottom = -95.0
+offset_left = -93.0
+offset_top = -62.0
+offset_right = -93.0
+offset_bottom = -62.0

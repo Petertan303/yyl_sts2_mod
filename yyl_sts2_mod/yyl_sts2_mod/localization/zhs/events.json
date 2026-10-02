@@ -1,0 +1,10 @@
+{
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.CRUSHED.description": "你抬脚碾碎了她。\n\n[red]有一点说不清的凉意从脚底一直爬到心口。[/red]",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.description": "路边的荫蔽处，一朵花正安静地开着。\n\n她有着蛇一样细长而蜷曲的叶，粉红的花苞。\n\n你从没见过这样的东西。",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.CRUSH.description": "获得一张[gold]{CurseCard}[/gold]与一件随机罕见遗物。",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.CRUSH.title": "踩碎它",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.PICK_UP.description": "获得一张[gold]{QuestCard}[/gold]。",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.PICK_UP.title": "小心翼翼地刨开泥土",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.PICKED.description": "你刨开泥土，将她挖走了。\n\n[gold]它似乎也愿意跟你走。[/gold]",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.title": "“蛇花”？"
+}

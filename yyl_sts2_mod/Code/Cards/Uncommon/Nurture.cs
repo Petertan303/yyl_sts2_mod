@@ -11,7 +11,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     温养: 2 费(升级 1 费)罕见能力牌, 获得 1 层[温养] —— 获得炁时获得 (获得炁量 × 温养层数) 格挡。
+///     温养: 1 费(升级 0 费)罕见能力牌, 获得 1 层[温养] —— 获得炁时获得 (获得炁量 × 温养层数) 格挡。
 ///     <para>
 ///         与「丹噬」(获得炁→伤害) 互补: 丹噬把炁换算成输出, 温养把炁换算成防御。
 ///         温养层数即倍率, 攒一大笔炁再吃下去才是正确用法。
@@ -27,9 +27,9 @@ public sealed class Nurture(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public Nurture() : this(2, CardType.Power, CardRarity.Uncommon, TargetType.Self)
+    public Nurture() : this(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
     {
-        // 2 → 1 费 (升级 -1); 获得 1 层温养 (数值为倍率, 不随升级叠加层数)。
+        // 0 → 1 费 (升级 +1); 获得 1 层温养 (数值为倍率, 不随升级叠加层数)。
         WithCostUpgradeBy(-1);
         WithPower<Powers.Nurture>(1, 0);
     }

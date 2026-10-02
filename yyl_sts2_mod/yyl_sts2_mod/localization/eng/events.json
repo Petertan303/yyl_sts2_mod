@@ -1,0 +1,10 @@
+{
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.CRUSHED.description": "You raise your foot, and bring it down.\n\nA very small sound, like thin ice breaking.\n\nYou glance down. Nothing is left - [red]only a chill you cannot name, creeping from your sole up to your chest.[/red]",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.description": "In a shaded spot by the road, a flower is quietly blooming.\n\nIts petals are long and coiled like a snake, so tender they are nearly transparent, trembling faintly in the wind - as if breathing, or as if sizing you up.\n\nYou have never seen anything like it. Is it a flower, or something else that lives?",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.CRUSH.description": "Gain a [gold]{CurseCard}[/gold] and a random Uncommon relic.",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.CRUSH.title": "Crush it",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.PICK_UP.description": "Gain a [gold]{QuestCard}[/gold].",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.INITIAL.options.PICK_UP.title": "Scoop it up, very carefully",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.pages.PICKED.description": "You hold your breath and cup it in both hands, as if carrying a handful of mist that might scatter at any moment.\n\nThe petals brush your palm - cool, soft, and unmistakably moving.\n\nYou take it with you. [gold]It seems willing to go.[/gold]",
+  "YYL_STS2_MOD_EVENT_SNAKE_FLOWER_EVENT.title": "\"Snake Flower\"?"
+}
