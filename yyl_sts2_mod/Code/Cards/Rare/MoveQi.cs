@@ -30,17 +30,17 @@ public sealed class MoveQi(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public MoveQi() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
+    public MoveQi() : this(1, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<XingQi>(1);
+        WithPower<XingQi>(2);
         // 仅用于卡面显示: 每次失去炁时抽几张
-        WithPower<XingQi>("DrawCount", 1, 0);
+        WithPower<XingQi>("DrawCount", 2, 0);
         WithCostUpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
-        await PowerCmd.Apply<XingQi>(choiceContext, new[] { Owner.Creature }, 1, Owner.Creature, cardPlay.Card);
+        await PowerCmd.Apply<XingQi>(choiceContext, new[] { Owner.Creature }, 2, Owner.Creature, cardPlay.Card);
     }
 }

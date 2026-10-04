@@ -89,9 +89,11 @@ public class yylCmd
         CardModel? cardSource = null)
     {
         if (amount <= 0) return;
-        // 记录"本回合获得过炁"(全 mod 唯一产炁入口, 供崩拳等条件牌查询)。
-        QiGainTracker.Mark(player, player.Creature?.CombatState);
+        // 记录"本回合获得过炁"与累计数量 (全 mod 唯一产炁入口, 供崩拳等条件牌查询、
+        //以及"按获炁量成长"的卡使用)。★ 传 **modified**(经养炁/ 祖炁形态等修正后**实际入账**的量),
+        //   而不是原始 amount —— 否则这些乘区会让计数与玩家真正持有的炁对不上。
         var modified = yylHook.ModifyQiGain(player, amount, out var modifiers);
+        QiGainTracker.Mark(player, player.Creature?.CombatState, (int)modified);
         if (modified > 0)
             await PowerCmd.Apply<Qi>(ctx, new[] { player.Creature }, modified, player.Creature, cardSource);
         await yylHook.AfterQiGained(ctx, player, amount, modified);

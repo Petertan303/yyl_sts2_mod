@@ -28,7 +28,7 @@ public sealed class YuLong(
 {
     public YuLong() : this(2, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<Powers.YuLong>(50, 25); // 50% → 75%
+        WithPower<Powers.YuLong>(50); // 50% → 75%
         WithCostUpgradeBy(-1);            // 2 → 1 费
     }
 

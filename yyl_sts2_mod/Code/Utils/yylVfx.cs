@@ -163,6 +163,40 @@ public static class yylVfx
     }
 
     /// <summary>
+    ///     ★坐标版冲击特效 (2026-10-03): 用于**目标节点已被移除之后**补播华丽收场冲击。
+    ///     <para>
+    ///         为什么需要: <see cref="GrandFinaleImpact(Creature)" /> 走
+    ///         <c>NGrandFinaleImpactVfx.Create(creature)</c>, 内部
+    ///         <c>GetCreatureNode(creature)</c> 在 <c>CreatureCmd.Kill</c> 之后会返回
+    ///         <c>null</c>(Kill 会 RemoveCreatureNode) ⇒ <b>特效静默不播</b>。
+    ///         所以处决类效果必须**先抓坐标 → Kill → 再用本方法按坐标重放**。
+    ///     </para>
+    /// </summary>
+    public static void GrandFinaleImpactAt(Vector2 targetCenterPosition, Vector2 targetGroundPosition)
+    {
+        try
+        {
+            var impact = NGrandFinaleImpactVfx.Create(targetCenterPosition, targetGroundPosition);
+            if (impact == null)
+            {
+                MainFile.Logger.Error("yylVfx.GrandFinaleImpactAt: Create returned null");
+                return;
+            }
+            var room = NCombatRoom.Instance;
+            if (room == null)
+            {
+                impact.QueueFree();
+                return;
+            }
+            room.AddChild(impact);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.GrandFinaleImpactAt: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     ///     ★光束齐射: <paramref name="count" /> 道灵魂光束的<b>发射起点</b>在身前排成
     ///     一段圆弧 (凸向右, 上下展开呈扇形), 同帧全部发射; 光束本身保持水平不旋转
     ///     (2026-09-21, 白长虫五连射演出)。整体再右移 <paramref name="widthFraction" />

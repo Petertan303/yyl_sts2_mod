@@ -32,8 +32,8 @@ public sealed class CloseGate(
         // 格挡 5 → 7。卡面 {Bonus} 用普通 DynamicVar 显示"有金光护体时额外 +4 格挡"的预期值:
         // 普通 var 的 IConvertible 返回 BaseValue, 战斗外也能正确显示 4
         // (CalculatedVar 在战斗外被 BaseLib 强制返回 0, 正是之前显示 0/花括号的根因)。
-        WithBlock(5, 2);
-        WithVar("Bonus", 4, 0);
+        WithBlock(5, 3);
+        WithVar("Bonus", 4, 2);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

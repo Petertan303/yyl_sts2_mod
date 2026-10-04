@@ -30,11 +30,15 @@ namespace yyl_sts2_mod.Code.Events;
 ///         注册用 <c>[RegisterActEvent]</c>；该特性的扫描由 MainFile 里的
 ///         <c>ModTypeDiscoveryHub.RegisterModAssembly</c> 触发。
 ///     </para>
+///     <para>
+///         [2026-10-02] **只在第一、二幕出现**（原版四幕全注册）。
+///         任务卡「蛇花」改为「<b>到达第三层时移除</b>」（照 LexNinja2 <c>ISeeYou</c> 的
+///         兑现时机），所以事件必须发生在玩家还有机会走完前两幕时；
+///         若第三、四幕还能遇到，就等于给了一条错过即永久失去的赛道。
+///     </para>
 /// </summary>
 [RegisterActEvent(typeof(Overgrowth))]
 [RegisterActEvent(typeof(Underdocks))]
-[RegisterActEvent(typeof(Glory))]
-[RegisterActEvent(typeof(Hive))]
 public sealed class SnakeFlowerEvent : ModEventTemplate
 {
     /// <summary>

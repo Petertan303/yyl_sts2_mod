@@ -31,6 +31,7 @@ public sealed class Devour(
     public Devour() : this(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
         WithDamage(4, 2);
+        WithKeyword(CardKeyword.Exhaust);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

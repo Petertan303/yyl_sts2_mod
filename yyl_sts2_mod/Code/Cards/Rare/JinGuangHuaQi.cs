@@ -26,7 +26,7 @@ public sealed class JinGuangHuaQi(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public JinGuangHuaQi() : this(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+    public JinGuangHuaQi() : this(0, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
         WithPower<Powers.JinGuangHuaQi>(1, 1); // 1 → 2 层
         // WithCostUpgradeBy(-1);                 // 2 → 1 费

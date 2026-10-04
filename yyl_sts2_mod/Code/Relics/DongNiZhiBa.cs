@@ -38,16 +38,16 @@ public sealed class DongNiZhiBa : yylRelicModel
         if (target != Owner.Creature || block <= 0m)
             return 1m;
 
-        var mult = 15m / block;
-        if (block * mult < 15m)
+        var mult = 16m / block;
+        if (block * mult < 16m)
             mult += 0.0000000000000000000000000001m; // 1e-28: 补齐 decimal 除法的向下舍入
         return mult;
     }
 
-    /// <summary>战斗内遗物：战斗结束自毁（时效与被替换的 Power 版一致）。</summary>
-    public override Task AfterCombatEnd(CombatRoom room)
-    {
-        RelicCmd.Remove(this);
-        return Task.CompletedTask;
-    }
+    // /// <summary>战斗内遗物：战斗结束自毁（时效与被替换的 Power 版一致）。</summary>
+    // public override Task AfterCombatEnd(CombatRoom room)
+    // {
+    //     RelicCmd.Remove(this);
+    //     return Task.CompletedTask;
+    // }
 }

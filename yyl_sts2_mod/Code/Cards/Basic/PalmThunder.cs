@@ -58,17 +58,14 @@ public sealed class PalmThunder(
         var target = cardPlay.Target!;
         if (target == null) return;
 
-        // 1. 先施加易伤 (让本次攻击直接吃到 1.5x)。
-        await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
-
-        // 2. 攻击: 基础伤害取普通 DamageVar, 金光护体 +1 在这里按实际状态结算
-        //    (卡面 {Damage}=3 与 {Bonus}=1 已给出预期值, OnPlay 才是真正结算)。
         var hasAegis = Owner.HasPower<GoldenAegis>();
         var damage = DynamicVars["Damage"].IntValue + (hasAegis ? 1 : 0);
         await CommonActions.CardAttack(this, cardPlay, target, damage,
                 ValueProp.Move, hitCount: DynamicVars.Repeat.IntValue)
             .WithHitFx("vfx/vfx_attack_lightning")
             .Execute(choiceContext);
+
+        await CommonActions.Apply<VulnerablePower>(choiceContext, new[] { target }, this);
 
         // 3. 攻击结算完再消耗 1 层金光护体 (保证本次攻击已经吃到 +1)。
         //    改走统一入口 yylAegis.Consume —— 使「金光化炁」能在这一处挂钩。

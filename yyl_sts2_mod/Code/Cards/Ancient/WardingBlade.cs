@@ -31,11 +31,11 @@ public sealed class WardingBlade(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public WardingBlade() : this(2, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy)
+    public WardingBlade() : this(1, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy)
     {
         WithDamage(8, 3);
         WithVars(new RepeatVar(3));
-        WithCostUpgradeBy(-1);
+        // WithCostUpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

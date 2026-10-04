@@ -11,6 +11,7 @@ using yyl_sts2_mod.Code.Cards.Uncommon;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Powers;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Events;
 
@@ -48,6 +49,10 @@ public static class GlowRegistry
         //    KeyNotFoundException, 直接冻死游戏 (2026-09-22 修复)。
         [typeof(QiBurst)] = c => GetQi(c) > 0,
         [typeof(SkyFire)] = c => GetQi(c) > 0,
+        // ---- 场上存在奶龙 (指认: 已带标记 → 产能量; 未带 → 补标记) ----
+        // ★用 AnyNailong 而非「目标是否带标记」: 指认可以对任意目标打出,
+        //   发光只提示"场上有没有奶龙"这个前提, 与最终选谁无关。
+        [typeof(Identify)] = AnyNailongOnField,
     };
 
     public static bool ShouldGlow(CardModel? card)
@@ -92,6 +97,32 @@ public static class GlowRegistry
     private static bool HasAegis(CardModel c) => c.Owner.Creature.HasPower<GoldenAegis>();
 
     private static int GetQi(CardModel c) => c.Owner.Creature.GetPower<Qi>()?.Amount ?? 0;
+
+    /// <summary>
+    ///     场上是否存在奶龙(敌人中存在即可 —— 含奶龙标记与心魔两种)。
+    ///     <para>
+    ///         ⚠ 防御式实现: 本方法跑在抽牌/出牌的事件钩子里, **绝不能抛异常**
+    ///         (未捕获异常会冻结整场战斗)。因此全程 TryGetValue + 逐项筛选,
+    ///         战斗状态缺失/creature 被移除时一律当作"无奶龙"(不发光), 不抛。
+    ///     </para>
+    /// </summary>
+    private static bool AnyNailongOnField(CardModel c)
+    {
+        try
+        {
+            var combatState = c.Owner.Creature.CombatState;
+            if (combatState == null) return false;
+            foreach (var enemy in combatState.HittableEnemies)
+                if (yylNailong.IsNailongMarked(enemy))
+                    return true;
+            return false;
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Warn($"GlowRegistry.AnyNailongOnField: {ex.Message}");
+            return false;
+        }
+    }
 
     /// <summary>炁量达到卡面声明的 QiLoss (随升级变化) 才有额外效果。</summary>
     private static bool HasEnoughQi(CardModel c)
