@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -63,25 +64,45 @@ public sealed partial class StanceTagIndicator : Control
     /// <summary>绑定到某个玩家与其当前姿态，刷新图标并定位到角色身上。</summary>
     public void Bind(Player owner, yylStanceModel stance)
     {
-        _owner = owner;
-        _stance = stance;
-        _logo!.Texture = ResourceLoader.Load<Texture2D>(stance.PackedIconPath);
-        PositionAboveOwner();
+        try
+        {
+            _owner = owner;
+            _stance = stance;
+            // ★ 图标可能缺失(缺图时引擎只记一条 INFO), 加载失败不能让整个指示器崩掉。
+            var tex = ResourceLoader.Load<Texture2D>(stance.PackedIconPath);
+            if (_logo != null && GodotObject.IsInstanceValid(_logo) && tex != null)
+                _logo.Texture = tex;
+            PositionAboveOwner();
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Warn($"StanceTagIndicator.Bind: {ex.Message}");
+        }
     }
 
     private void PositionAboveOwner()
     {
-        if (_owner == null) return;
-        var room = NCombatRoom.Instance;
-        if (room == null) return;
-        var creatureNode = room.GetCreatureNode(_owner.Creature);
-        if (creatureNode == null) return;
+        // ★ 全程判活 + try/catch: 本方法可能从 Bind / _Process 被调用,
+        //   此时房间或角色节点可能已被引擎释放(SL / 换战斗 / 房间卸载),
+        //   访问已 dispose 的 Godot 对象会抛 ObjectDisposedException。
+        try
+        {
+            if (_owner == null) return;
+            var room = NCombatRoom.Instance;
+            if (room == null || !GodotObject.IsInstanceValid(room)) return;
+            var creatureNode = room.GetCreatureNode(_owner.Creature);
+            if (creatureNode == null || !GodotObject.IsInstanceValid(creatureNode)) return;
 
-        // 命中区：以脚底中心为原点，向上铺满身体
-        _hitArea!.GlobalPosition = creatureNode.GlobalPosition + new Vector2(-BodyWidth / 2f, -BodyHeight);
-        // logo：命中区左下角再往左一点，避免遮挡角色
-        _logo!.GlobalPosition = creatureNode.GlobalPosition +
-            new Vector2(-BodyWidth / 2f - LogoSize - LogoGap, -LogoSize - LogoGap);
+            // 命中区: 以脚底中心为原点, 向上铺满身体
+            _hitArea!.GlobalPosition = creatureNode.GlobalPosition + new Vector2(-BodyWidth / 2f, -BodyHeight);
+            // logo: 命中区左下角再往左一点, 避免遮挡角色
+            _logo!.GlobalPosition = creatureNode.GlobalPosition +
+                new Vector2(-BodyWidth / 2f - LogoSize - LogoGap, -LogoSize - LogoGap);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Warn($"StanceTagIndicator.PositionAboveOwner: {ex.Message}");
+        }
     }
 
     private void OnHovered()

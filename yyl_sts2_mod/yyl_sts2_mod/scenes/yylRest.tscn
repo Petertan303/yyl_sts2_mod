@@ -1,8 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://can4ce04ebo7k"]
+[gd_scene load_steps=3 format=3 uid="uid://can4ce04ebo7k"]
 
+[ext_resource type="Texture2D" path="res://yyl_sts2_mod/images/ui/shadow_oval.png" id="2_shdw"]
 [ext_resource type="Texture2D" uid="uid://bobrt3teemrh7" path="res://yyl_sts2_mod/images/charui/RestSite.png" id="1_fxdon"]
 
 [node name="YylRest" type="Node2D"]
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(5, 86)
+scale = Vector2(0.94, 0.94)
+texture = ExtResource("2_shdw")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(5, -84)

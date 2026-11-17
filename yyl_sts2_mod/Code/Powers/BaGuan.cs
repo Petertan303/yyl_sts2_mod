@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using yyl_sts2_mod.Code.Abstract;
+using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Powers;
 
@@ -39,7 +40,9 @@ public sealed class BaGuan : yylPowerModel
                 .ToList();
             if (debuffs.Count == 0) return;
 
-            var pick = debuffs[Random.Shared.Next(debuffs.Count)];
+            // ★确定性 RNG: 联机 lockstep 下各端必须选中同一个 debuff, 否则 desync。
+            var pick = yylRng.PickCombatTarget(combatState, debuffs);
+            if (pick == null) return;
             await PowerCmd.ModifyAmount(ctx, pick, -1m, Owner, null);
         }
     }

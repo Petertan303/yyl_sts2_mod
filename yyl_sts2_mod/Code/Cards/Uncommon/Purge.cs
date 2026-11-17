@@ -30,7 +30,7 @@ public sealed class Purge(
 {
     public Purge() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     {
-        WithKeywords(CardKeyword.Exhaust);
+        WithKeyword(CardKeyword.Exhaust, UpgradeType.Remove);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

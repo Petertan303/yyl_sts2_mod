@@ -30,6 +30,8 @@ public static class RelicIcons
         Register<DongNiZhiBa>("dong_ni_zhi_ba");
         Register<NailongRearing>("nailong_rearing");
         Register<SnakeFlowerMiss>("snake_flower_miss");
+        Register<GildedMirror>("gilded_mirror");
+        Register<BronzeMirror>("bronze_mirror");
     }
 
     /// <summary>

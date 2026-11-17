@@ -23,6 +23,9 @@ namespace yyl_sts2_mod.Code.Cards.Uncommon;
 ///         选牌 UI 用 FromHand + ExhaustSelectionPrompt (原版燃烧契约同款)。
 ///         费用读取走 card.EnergyCost.GetResolved() (含临时费用修正与 X 费捕获值)。
 ///     </para>
+///     <para>
+///         ★2026-11-02 (雪藏, 用户定调): Uncommon → Basic, 不进奖励池。
+///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class Recycle(
@@ -33,8 +36,10 @@ public sealed class Recycle(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public Recycle() : this(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public Recycle() : this(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
     {
+        // ★2026-11-02 (雪藏, 用户定调): Uncommon → Basic —— 不再进卡牌奖励。
+        //   代码保留, 解雪藏只需把稀有度改回 Uncommon。
         WithCostUpgradeBy(-1);
     }
 

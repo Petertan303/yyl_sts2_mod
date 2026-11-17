@@ -14,7 +14,7 @@ namespace yyl_sts2_mod.Code.Powers;
 
 /// <summary>
 ///     心魔: 大瓶黄桃罐头 (NlCan2) 的奶龙标记。
-///     "Applier 攻击击杀 Owner 时, Applier 回复 6 点生命" (奶龙标记的 6 血版)。
+///     "带心魔标记者死亡时, Applier 回复 6 点生命" (奶龙标记的 6 血版, 不要求亲手斩杀)。
 ///     <para>
 ///         ⚠ <c>Type = PowerType.None</c> —— 必须与 <see cref="NailongMark" /> 完全对齐:
 ///         奶龙/心魔是**身份标记**而非负面, 中性类型才不会被人工制品抵消、
@@ -31,12 +31,15 @@ public sealed class InnerDemon : yylPowerModel
     /*  ★2026-09-22 修复: 击杀心魔不回血 (与 NailongMark 同因)。
         去掉了 `_applierIsAttacking` 守卫 —— 该标记恒为 false, 导致回血永远不触发
         (详见 NailongMark.cs 中的说明)。改为「带心魔标记者死亡 → 其施加者回血」。 */
-    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
-    {
-        if (Applier == null || wasRemovalPrevented || creature != Owner) return;
-        if (Applier.IsAlive)
-        {
-            await CreatureCmd.Heal(Applier, 6m);
-        }
-    }
+    // v0.113.0: AbstractModel.AfterDeath 新增第 3 个参数 source (造成死亡的卡)。
+    // ★2026-11-17 用户定调: 关闭「奶龙(心魔)死亡回血」, 整段逻辑注释保留 (日后想恢复直接解开)。
+    //   心魔标记本身的 identity 用途不受影响, 仅取消死亡回血。
+    // public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
+    // {
+    //     if (Applier == null || wasRemovalPrevented || creature != Owner) return;
+    //     if (Applier.IsAlive)
+    //     {
+    //         await CreatureCmd.Heal(Applier, 6m);
+    //     }
+    // }
 }

@@ -29,7 +29,7 @@ public sealed class DianXue(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
+    bool shouldShowInCardLibrary = false)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     // [balance 2026-09-22] 雪藏: 稀有度 Common → Basic, 暂离卡池 (点穴机制暂唯一, 与炁/金光无联动, 后续补系列卡再启用)。

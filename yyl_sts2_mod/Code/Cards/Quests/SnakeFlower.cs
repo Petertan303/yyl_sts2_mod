@@ -19,7 +19,7 @@ namespace yyl_sts2_mod.Code.Cards.Quests;
 ///     <list type="bullet">
 ///         <item><b>负面</b>: 此牌在手牌中时, 你每次攻击敌人并造成伤害后, 该敌人获得 4 点格挡
 ///             (由 <c>SnakeFlowerPenaltyPatch</c> 补丁实现)。</item>
-///         <item><b>兑现</b>: 到达下一层(通过一场战斗)后, 此牌离开牌组,
+///         <item><b>兑现</b>: 经过 3 场战斗后, 此牌离开牌组,
 ///             并给予遗物「蛇花小姐」与卡牌「蛇花咬」。</item>
 ///     </list>
 ///     <para>
@@ -61,16 +61,17 @@ public sealed class SnakeFlower(
     public const decimal BlockGrantedToEnemy = 4m;
 
     /// <summary>
-    ///     兑现时机: <c>RunState.ActFloor</c> 到达该值时, 战斗结束即移除本牌并发奖。
+    ///     兑现时机: 拿到本牌后**经过 3 场战斗**(每次 <c>AfterCombatEnd</c> 计数 +1),
+    ///     第 3 场战斗结束时移除本牌并发奖。
     ///     <para>
-    ///         [2026-10-02] 原为"经过 1 场战斗"(每次 <c>AfterCombatEnd</c> 计数 +1) ——
-    ///         意味着第二场战斗打完就兑现, 惩罚期只有一场, 太短且与"层"无关。
-    ///         改为照 LexNinja2 <c>ISeeYou</c> 的做法: 指定在**第三层开始时**移除,
-    ///         即 <c>ActFloor >= 3</c> 时兑现(第一幕 ActFloor 1..9, 故跨幕时ActFloor 会归 0 重计,
-    ///         玩家在第二幕后段拿到本牌也能在第三层正常兑现)。
+    ///         [2026-10-02] 曾改为 <c>ActFloor >= 3</c>(照 LexNinja2 ISeeYou 的层号门槛) ——
+    ///         但层号是绝对值: 玩家在第 3 层**之后**拿到本牌时(事件可出现在任意层),
+    ///         下一场战斗结束就立即兑现 ⇒ 用户实测"一场战斗就完成"。
+    ///         [2026-10-20] 改回**战斗计数**并定档 3 场 (用户定调)。
+    ///         <c>FloorsSeen</c> 字段名保留 (存档兼容), 语义已变为"已完成的战斗数"。
     ///     </para>
     /// </summary>
-    public const int CompleteAtActFloor = 3;
+    public const int CompleteAfterBattles = 3;
 
     // BaseLib 要求 public 才能被扫描保存
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -96,16 +97,19 @@ public sealed class SnakeFlower(
             //   ② 已经发过奖就不再进这段;
             //   ③ 已经拿到过奖励 (遗物/卡任一存在) 就不再发 —— 三重保险。
             if (Pile is not { Type: PileType.Deck }) return;
-            if (FloorsSeen >= CompleteAtActFloor) return;
+            if (FloorsSeen >= CompleteAfterBattles) return;
             if (Owner.Relics.Any(r => r is Relics.SnakeFlowerMiss)) return;
             if (PileType.Deck.GetPile(Owner).Cards.OfType<Cards.Token.SnakeFlowerBite>().Any()) return;
 
-            // ★ 兑现条件: 已到达指定层数(ActFloor)。层数在幕重置时归 0,
-            //   故跨幕拿到本牌也不会误判 —— 用"到达门槛"而非"固定计数"更稳。
-            var actFloor = Owner.RunState.ActFloor;
-            if (actFloor < CompleteAtActFloor) return;
-
-            FloorsSeen = actFloor;
+            // ★ 兑现条件: 战斗计数。每场战斗结束 +1, 满 3 场兑现 ——
+            //   与层号/幕完全解耦, 在哪一层拿到本牌都是完整的 3 场惩罚期。
+            FloorsSeen++;
+            if (FloorsSeen < CompleteAfterBattles)
+            {
+                MainFile.Logger.Info($"[yyl_sts2_mod] 任务卡「蛇花」: 第 {FloorsSeen}/{CompleteAfterBattles} 场战斗完成");
+                return;
+            }
+            MainFile.Logger.Info("[yyl_sts2_mod] 任务卡「蛇花」: 3 场战斗完成, 兑现");
 
             // 奖励一: 遗物「蛇花小姐」
             var relic = ModelDb.Relic<SnakeFlowerMiss>().ToMutable();
@@ -115,8 +119,11 @@ public sealed class SnakeFlower(
             var bite = Owner.RunState.CreateCard<SnakeFlowerBite>(Owner);
             await CardPileCmd.Add(bite, PileType.Deck);
 
-            // 任务完成, 本牌离场
-            await CardPileCmd.RemoveFromDeck(this);
+            // 任务完成, 本牌离场。
+            // ★ showPreview=true (2026-10-20): 照原版藏宝图 SpoilsMap.OnQuestComplete 的写法 ——
+            //   RemoveFromDeck 本身就播放移除动画, 第二参 true 额外弹出被移除卡牌的大图预览,
+            //   即"任务完成"的仪式感特效。旧写法只传 card ⇒ showPreview 默认 false, 卡牌无感消失。
+            await CardPileCmd.RemoveFromDeck(this, true);
         }
         catch (Exception ex)
         {

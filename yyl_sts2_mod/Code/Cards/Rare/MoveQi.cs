@@ -15,9 +15,9 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     行炁: 2 → 1 费能力牌, 获得[行炁] —— 每当你失去炁, 抽 1 张牌。
+///     行炁: 1 → 0 费能力牌, 获得 2 层[行炁] —— 每当你失去炁, 每层抽 1 张牌。
 ///     <para>
-///         耗炁流的过牌核心: 温养把"失去炁"换成格挡, 行炁换成过牌。
+///         耗炁流的过牌核心: 丹噬把"失去炁"换成中毒, 行炁换成过牌 (2026-11-08 触发端定调)。
 ///         配合通畅 / 散炁 / 炁化金光, 可以把同一份炁同时当伤害、能量和过牌用。
 ///     </para>
 /// </summary>
@@ -41,6 +41,7 @@ public sealed class MoveQi(
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
-        await PowerCmd.Apply<XingQi>(choiceContext, new[] { Owner.Creature }, 2, Owner.Creature, cardPlay.Card);
+        await PowerCmd.Apply<XingQi>(choiceContext, new[] { Owner.Creature },
+            DynamicVars["XingQi"].IntValue, Owner.Creature, cardPlay.Card);
     }
 }

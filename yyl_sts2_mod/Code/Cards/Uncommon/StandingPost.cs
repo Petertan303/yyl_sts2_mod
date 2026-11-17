@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -16,12 +16,11 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     站桩: 2 费, 获得 16 → 22 点格挡。
-///     罕见位最朴素的防御裸卡: 无任何附加功能, 纯粹把费用换成格挡。
-///     与移穴 (1 费 10 → 15 但要失去 2 炁) 分工: 站桩不需要炁, 移穴更便宜但有代价。
-///     <para>
-///         原为普通卡, 因 2 费 16 格挡已越过普通位防御上限而移入罕见。
-///     </para>
+///     站桩: 2 费, 获得 16 → 22 点格挡 —— 拆成两段, 第二段需要消耗 2 层金光护体。
+///     ★2026-11-02: 代价由 1 炁改为 2 金光 (用户定调, 与金光化炁联动)。
+///     ★2026-11-02 (雪藏, 用户定调): 效果整体上移到「返照」(BaoShan, 消耗全部金光的严格上位版:
+///     同款两段格挡 + 2 倍回流引擎), 本卡改为 <see cref="CardRarity.Basic" /> 雪藏不出。
+///     代码保留 —— 解雪藏只需把稀有度改回 Uncommon。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class StandingPost(
@@ -32,12 +31,14 @@ public sealed class StandingPost(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public StandingPost() : this(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public StandingPost() : this(2, CardType.Skill, CardRarity.Basic, TargetType.Self)
     {
-        // ★2026-09-21: 格挡拆成两半 —— 先拿一半, 另外一半要消耗 1 点炁才拿得到
+        // ★2026-09-21: 格挡拆成两半 —— 先拿一半, 另外一半要消耗 2 层金光才拿得到
         //   (总数与原来一致: 8+8=16 / 11+11=22)。
+        // ★2026-11-02: 代价 1 炁 → 2 金光 (用户定调, 与金光化炁联动)。
+        // ★2026-11-02: 稀有度 Uncommon → Basic (雪藏) —— 效果上移到「返照」, 本卡不出。
         WithBlock(8, 3);
-        WithPower<Qi>("QiLoss", 1, 0);
+        WithPower<GoldenAegis>("AegisCost", 2, 0);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -46,10 +47,11 @@ public sealed class StandingPost(
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
         var half = DynamicVars.Block.IntValue;
         await CommonActions.CardBlock(this, cardPlay);
-        // 后半段: 失去 1 点炁换取等量格挡; 炁不足则只有前半段 (耗炁卡统一判定)。
-        var cost = DynamicVars["QiLoss"].IntValue;
-        if (cost <= 0 || Owner.Creature.GetPower<Qi>()?.Amount < cost) return;
-        await yylCmd.LoseQi(choiceContext, Owner, cost, this, cardPlay.Card);
+        // 后半段: 消耗 2 层金光换取等量格挡; 金光不足则只有前半段。
+        //   走统一入口 yylAegis.Consume —— 「金光化炁」在此挂钩 (2 层金光 → 2 炁)。
+        var cost = DynamicVars["AegisCost"].IntValue;
+        if (cost <= 0 || Owner.Creature.GetPower<GoldenAegis>()?.Amount < cost) return;
+        await yylAegis.Consume(choiceContext, this, cost);
         await CreatureCmd.GainBlock(Owner.Creature, half, ValueProp.Move, cardPlay, false);
     }
 }

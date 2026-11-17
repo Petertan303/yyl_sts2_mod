@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Runs;
 using yyl_sts2_mod.Code.Abstract;
 
 namespace yyl_sts2_mod.Code.Powers;
@@ -16,6 +17,11 @@ namespace yyl_sts2_mod.Code.Powers;
 ///     <para>
 ///         机制照搬 LexNinja2 的「罗汉分身」(TwoMonksPower): 该能力让你多获得一个回合,
 ///         这个回合由系统自动打出所有可打出的牌, 打完即结束回合并消耗 1 层。
+///     </para>
+///     <para>
+///         [2026-11-08] 配套原版「疾影」(BlurPower): 打出「老农功」时额外施加 1 层,
+///         让格挡从当前回合保留到炁婴接管的额外回合。施加点在
+///         <see cref="Cards.Rare.PeasantDrill" /> 的 OnPlay, 不依赖本 power 的生命周期钩子。
 ///     </para>
 /// </summary>
 public sealed class QiInfant : yylPowerModel
@@ -28,7 +34,38 @@ public sealed class QiInfant : yylPowerModel
 
     public override bool ShouldTakeExtraTurn(Player player)
     {
-        return player == Owner.Player;
+        if (player != Owner.Player)
+        {
+            return false;
+        }
+
+        /*  ★2026-11-16 无敌人判断器(用户定调): 克隆老农功会让炁婴在额外回合自动打出
+            其它老农功, 连锁触发更多额外回合; 若敌人已全灭(典型: 带复活机制的敌人死亡后
+            要等正常回合流程复活), 空转的额外回合会让复活流程一直没机会触发。
+            这里在引擎询问「是否再给一个额外回合」时检查: 场上已无可攻击的敌人 → 不再
+            兑换, 回合按正常流程直接结束(SwitchSides), 炁婴层数原样保留 —— 引擎不调
+            AfterTakingExtraTurn, AfterSideTurnEnd 的递减也以 _hasTakenExtraTurn 为门槛,
+            两者都不会走到; 敌人复活或下回合出现敌人后可继续兑换。
+            注: 无法用 PlayersTakingExtraTurn 判断「当前是额外回合链」—— 引擎在每次询问前
+                都会先 Clear 该列表(CombatManager.SwitchFromPlayerToEnemySide IL 已核实),
+                所以按「场上无可攻击的敌人」直接拦截, 与额外回合链场景语义等价且更稳:
+                正常回合结束时敌人全灭, 给额外回合同样是空转。 */
+        try
+        {
+            var combatState = player.Creature?.CombatState;
+            if (combatState != null && !combatState.HittableEnemies.Any())
+            {
+                MainFile.Logger.Info("[yyl] 炁婴: 场上已无可攻击的敌人, 暂停兑换额外回合并保留层数。");
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            // ★铁律: 钩子绝不抛异常。判断失败按原行为放行, 不影响额外回合。
+            MainFile.Logger.Warn($"[yyl] 炁婴 ShouldTakeExtraTurn 无敌人判断异常, 按原行为放行: {e.Message}");
+        }
+
+        return true;
     }
 
     public override Task AfterTakingExtraTurn(Player player)
@@ -84,7 +121,9 @@ public sealed class QiInfant : yylPowerModel
             var combatState = player.Creature.CombatState;
             Flash();
 
-            using (CardSelectCmd.PushSelector(new VakuuCardSelector()))
+            // v0.113.0: CardSelectCmd.PushSelector 已移除。原版 WhisperingEarring 现在的写法是
+            // RunManager.Instance.CardSelectorStack.PushSelector(player, selector)，返回的 scope 同样可 Dispose。
+            using (RunManager.Instance.CardSelectorStack.PushSelector(player, new VakuuCardSelector()))
             {
                 var cardsPlayed = 0;
                 for (; cardsPlayed < 30; cardsPlayed++)

@@ -28,7 +28,7 @@ public sealed class YinLei(
 {
     public YinLei() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
-        WithDamage(8, 3);
+        WithDamage(5, 3);
         WithPower<VulnerablePower>(4, 2);
         WithKeywords(CardKeyword.Exhaust);
     }

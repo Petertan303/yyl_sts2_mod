@@ -1,15 +1,66 @@
-[gd_scene load_steps=12 format=3 uid="uid://dcdog164novx1"]
+[gd_scene load_steps=24 format=3 uid="uid://dcdog164novx1"]
 
-[ext_resource type="Texture2D" uid="uid://b3rqfnynofjd7" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_cwhfs"]
-[ext_resource type="Texture2D" uid="uid://dffb6201unc7v" path="res://yyl_sts2_mod/images/charui/cast3.png" id="2_b3gem"]
-[ext_resource type="Texture2D" uid="uid://de5dyc0r26vrs" path="res://yyl_sts2_mod/images/charui/cast2.png" id="3_omipk"]
-[ext_resource type="Texture2D" uid="uid://p1ec21vywr5p" path="res://yyl_sts2_mod/images/charui/cast1.png" id="4_brc4v"]
-[ext_resource type="Texture2D" uid="uid://d3jdkr6u7jll4" path="res://yyl_sts2_mod/images/charui/fallen.png" id="5_g6fdc"]
-[ext_resource type="Texture2D" uid="uid://rhnxcv0y5nhs" path="res://yyl_sts2_mod/images/charui/hurt.png" id="6_uetf1"]
-[ext_resource type="Texture2D" uid="uid://cn3rthv83xdvj" path="res://yyl_sts2_mod/images/charui/hurt4.png" id="7_uetf1"]
-[ext_resource type="Texture2D" uid="uid://cgr862elqscr8" path="res://yyl_sts2_mod/images/charui/hurt1.png" id="8_po7nr"]
-[ext_resource type="Texture2D" uid="uid://ujdb7j2ppwmf" path="res://yyl_sts2_mod/images/charui/hurt2.png" id="9_3ui6k"]
-[ext_resource type="Texture2D" uid="uid://birsx33olgq76" path="res://yyl_sts2_mod/images/charui/hurt3.png" id="10_kvwn6"]
+[ext_resource type="Texture2D" uid="uid://xxpiv5nlluto" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_cwhfs"]
+[ext_resource type="Texture2D" uid="uid://boht1a2f2kvji" path="res://yyl_sts2_mod/images/charui/cast3.png" id="2_b3gem"]
+[ext_resource type="Texture2D" uid="uid://bue0c7bpxu77m" path="res://yyl_sts2_mod/images/charui/cast2.png" id="3_omipk"]
+[ext_resource type="Texture2D" uid="uid://cwmdspgc8ugln" path="res://yyl_sts2_mod/images/charui/cast1.png" id="4_brc4v"]
+[ext_resource type="Texture2D" uid="uid://ur5s1botqstc" path="res://yyl_sts2_mod/images/charui/fallen.png" id="5_g6fdc"]
+[ext_resource type="Texture2D" uid="uid://br8f8fjb2krdf" path="res://yyl_sts2_mod/images/charui/hurt.png" id="6_uetf1"]
+[ext_resource type="Texture2D" uid="uid://c3i5cfoseikmc" path="res://yyl_sts2_mod/images/charui/hurt4.png" id="7_uetf1"]
+[ext_resource type="Texture2D" uid="uid://b2m7narhudsn7" path="res://yyl_sts2_mod/images/charui/hurt1.png" id="8_po7nr"]
+[ext_resource type="Texture2D" uid="uid://o6g3sp0f6fc" path="res://yyl_sts2_mod/images/charui/hurt2.png" id="9_3ui6k"]
+[ext_resource type="Texture2D" uid="uid://bl5k88qhx2her" path="res://yyl_sts2_mod/images/charui/hurt3.png" id="10_kvwn6"]
+[ext_resource type="Texture2D" uid="uid://0ec3eynyimq4" path="res://yyl_sts2_mod/images/ui/shadow_oval.png" id="11_shdw"]
+[ext_resource type="Texture2D" uid="uid://cqy3tsku472er" path="res://yyl_sts2_mod/images/pets/snake_flower_miss.png" id="12_pet"]
+[ext_resource type="Texture2D" uid="uid://qkm2y35sq7cc" path="res://yyl_sts2_mod/images/ui/contact_shadow_mul.png" id="13_cshdw"]
+[ext_resource type="Texture2D" uid="uid://clb7wh2ah2xv5" path="res://yyl_sts2_mod/images/ui/character_silhouette.png" id="14_silh"]
+[ext_resource type="Texture2D" uid="uid://ck2j55vs1rgoa" path="res://yyl_sts2_mod/images/ui/golden_sdf.png" id="18_gsdf"]
+[ext_resource type="Shader" uid="uid://dp3c673jn1ild" path="res://yyl_sts2_mod/shaders/golden_glow.gdshader" id="19_gshd"]
+[ext_resource type="Shader" uid="uid://brmfoxvtvloru" path="res://yyl_sts2_mod/shaders/buddha_aura.gdshader" id="20_budd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_budd"]
+shader = ExtResource("20_budd")
+shader_parameter/tex_size = Vector2(385, 334)
+shader_parameter/node_scale = Vector2(1.287, 1.342)
+shader_parameter/intensity = 0.5
+shader_parameter/drop_radius = 128.0
+shader_parameter/drop_center_y = -33.0
+shader_parameter/drop_taper = 0.55
+shader_parameter/edge_soft = 10.0
+shader_parameter/stripes = 23.0
+shader_parameter/stripe_sharp = 2.2
+shader_parameter/stripe_bend = 0.14
+shader_parameter/spin_speed = 0.06
+shader_parameter/hue_speed = 0.02
+shader_parameter/hue_sweep = 0.3
+shader_parameter/sat = 0.75
+shader_parameter/core_color = Vector3(1, 0.96, 0.78)
+shader_parameter/core_mix = 0.9
+shader_parameter/gold_color = Vector3(1, 0.82, 0.35)
+shader_parameter/rim_start = 0.5
+shader_parameter/rim_power = 1.2
+shader_parameter/rainbow_full = 0.0
+shader_parameter/rainbow_full_sat = 0.90
+shader_parameter/rainbow_core_keep = 0.30
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ginn"]
+shader = ExtResource("19_gshd")
+shader_parameter/threshold = 0.5139
+shader_parameter/soft = 0.00694
+shader_parameter/glow_color = Color(0.921569, 0.847059, 0.392157, 1)
+shader_parameter/glow_color_2 = Color(1, 0.82, 0.35, 1)
+shader_parameter/intensity = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gout"]
+shader = ExtResource("19_gshd")
+shader_parameter/threshold = 0.5139
+shader_parameter/soft = 0.125
+shader_parameter/glow_color = Color(0.921569, 0.690196, 0.282353, 1)
+shader_parameter/glow_color_2 = Color(1, 0.82, 0.35, 1)
+shader_parameter/intensity = 0.2
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cshdw"]
+blend_mode = 3
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ig6jt"]
 animations = [{
@@ -138,15 +189,75 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="YylCharacter" type="Node2D"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gbody"]
+shader = ExtResource("19_gshd")
+shader_parameter/threshold = 0.4722
+shader_parameter/soft = 0.0417
+shader_parameter/glow_color = Color(1, 0.941176, 0.588235, 1)
+shader_parameter/glow_color_2 = Color(1, 0.82, 0.35, 1)
+shader_parameter/intensity = 0.2
+
+[node name="YylCharacter" type="Node2D" groups=["yyl_character_visual"]]
+
+[node name="BuddhaAura" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_budd")
+position = Vector2(-2.546186, -128.69472)
+scale = Vector2(2.155068, 2.2473373)
+texture = ExtResource("18_gsdf")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, -10)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("11_shdw")
+
+[node name="GoldenInner" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_ginn")
+position = Vector2(0, -139.00002)
+scale = Vector2(1.2870026, 1.3421055)
+texture = ExtResource("18_gsdf")
+
+[node name="GoldenOuter" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_gout")
+position = Vector2(0, -139.00002)
+scale = Vector2(1.2870026, 1.3421055)
+texture = ExtResource("18_gsdf")
+
+[node name="PetSprite" type="Sprite2D" parent="." groups=["yyl_character_visual"]]
+visible = false
+clip_children = 2
+position = Vector2(116, -13)
+scale = Vector2(1.0277, 1.0277)
+texture = ExtResource("12_pet")
+offset = Vector2(0, -124)
+
+[node name="CharShadow" type="Sprite2D" parent="PetSprite"]
+modulate = Color(0, 0, 0, 0.5)
+position = Vector2(-110.78189, -129.90173)
+scale = Vector2(1.2622316, 1.3161734)
+texture = ExtResource("14_silh")
+
+[node name="ContactShadow" type="Sprite2D" parent="PetSprite"]
+material = SubResource("CanvasItemMaterial_cshdw")
+position = Vector2(-105, 6)
+texture = ExtResource("13_cshdw")
 
 [node name="Visuals" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(0, -139.00002)
 scale = Vector2(1.2870026, 1.3421055)
 sprite_frames = SubResource("SpriteFrames_ig6jt")
-animation = &"hurt"
+animation = &"idle_loop"
 autoplay = "idle_loop"
+
+[node name="GoldenBody" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_gbody")
+position = Vector2(0, -139.00002)
+scale = Vector2(1.2870026, 1.3421055)
+texture = ExtResource("18_gsdf")
 
 [node name="Bounds" type="Control" parent="."]
 unique_name_in_owner = true

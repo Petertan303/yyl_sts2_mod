@@ -11,7 +11,9 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
+using Godot;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Monsters;
 using yyl_sts2_mod.Code.Utils;
@@ -87,6 +89,7 @@ public sealed class SnakeFlowerBite(
             }
 
             var damage = DynamicVars["PetDamage"].BaseValue;
+            PlayPetAttackAnim(pet);
 
             for (var i = 0; i < HitCount; i++)
             {
@@ -113,6 +116,47 @@ public sealed class SnakeFlowerBite(
         {
             // ★实测出过 NRE (19:14 局), 带上完整堆栈才能定位。
             MainFile.Logger.Error($"[yyl_sts2_mod] 蛇花咬结算失败: {ex}");
+        }
+    }
+
+    /// <summary>
+    ///     让蛇花小姐播放攻击动画 (纯视觉层, 不影响联机数据同步 —— 各端 OnPlay 各自播放)。
+    ///     <para>
+    ///         为什么手动播: 引擎的怪物攻击动画由<b>回合的 MonsterMove 状态机</b>驱动,
+    ///         而蛇花咬走的是 <c>DamageCmd.Attack</c> + 攻击者替换, 不经过那个状态机,
+    ///         引擎不会自动播宠物的 "attack" 动画。
+    ///     </para>
+    ///     <para>
+    ///         链路: <c>Creature.GetCreatureNode()</c> → <c>NCreature.Visuals</c> →
+    ///         场景的 "Visuals" 子节点 (AnimatedSprite2D) → Play("attack")。
+    ///         非循环动画播完后自动回 idle_loop; 场景用 Spine 或缺动画时静默跳过。
+    ///     </para>
+    /// </summary>
+    private static void PlayPetAttackAnim(Creature pet)
+    {
+        try
+        {
+            var visuals = (pet.GetCreatureNode() as NCreature)?.Visuals;
+            if (visuals == null) return;
+            if (visuals.GetNodeOrNull("Visuals") is not AnimatedSprite2D anim) return;
+            var frames = anim.SpriteFrames;
+            if (frames == null || !frames.HasAnimation("attack")) return;
+
+            anim.Play("attack");
+            if (frames.GetAnimationLoop("attack")) return;
+
+            // 非循环 attack: 播完自动回 idle_loop (一次性事件订阅)。
+            void OnFinished()
+            {
+                anim.AnimationFinished -= OnFinished;
+                if (GodotObject.IsInstanceValid(anim) && anim.SpriteFrames?.HasAnimation("idle_loop") == true)
+                    anim.Play("idle_loop");
+            }
+            anim.AnimationFinished += OnFinished;
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Warn($"[yyl_sts2_mod] 蛇花咬: 播放攻击动画失败: {ex.Message}");
         }
     }
 

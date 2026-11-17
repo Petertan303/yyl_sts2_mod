@@ -30,7 +30,7 @@ public sealed class BloodThunder(
 {
     public BloodThunder() : this(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
     {
-        WithDamage(22, 6);
+        WithDamage(22, 10);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -38,6 +38,6 @@ public sealed class BloodThunder(
         await CommonActions.CardAttack(this, cardPlay)
             .WithHitFx("vfx/vfx_bloody_impact")
             .Execute(choiceContext);
-        await yylCmd.GiveCards<LaShang>(Owner, 2, PileType.Discard, skipAnimation: true);
+        await yylCmd.GiveCards<LaShang>(Owner, 2, PileType.Hand, skipAnimation: true);
     }
 }

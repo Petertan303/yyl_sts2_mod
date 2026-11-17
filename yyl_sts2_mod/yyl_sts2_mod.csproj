@@ -33,11 +33,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All"/>
+        <!-- v0.113.0 起引擎删除了 SingletonModel, BaseLib 3.4.8 的 CustomSingletonModel 才改为直接继承 AbstractModel。
+             锁 3.4.8 而不是 "*", 避免旧包被解析进来后整个 mod 编译失败 / 运行时类型加载失败。 -->
+        <PackageReference Include="Alchyr.Sts2.BaseLib" Version="3.4.8" PrivateAssets="All"/>
         <!-- STS2-RitsuLib: 与 BaseLib 平级的共享框架库, 提供原版/BaseLib 没有的内容注册
              (事件 ModEventTemplate / RegisterActEvent)、生命周期钩子与持久化。
              注意它是**运行时 mod 依赖** (已在 yyl_sts2_mod.json 的 dependencies 声明 min 0.6.2),
-             玩家侧需订阅创意工坊的 STS2-RitsuLib。版本需与运行时一致, 故锁 0.6.2。 -->
+             玩家侧需订阅创意工坊的 STS2-RitsuLib。编译锁 0.6.2 (运行时 workshop 已到 0.6.12,
+             实测二进制兼容); 若 RitsuLib 出现 breaking change 再同步升级。 -->
         <PackageReference Include="STS2.RitsuLib" Version="0.6.2" PrivateAssets="All"/>
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="All"/>
         <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*"/>

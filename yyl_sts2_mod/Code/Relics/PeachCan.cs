@@ -24,16 +24,23 @@ public sealed class PeachCan : yylRelicModel
     public const int InitialQi = 3;
 
     /// <summary>第一回合抽牌前：获得 3 炁，并将所有敌人视作奶龙。</summary>
+    /// <para>
+    ///     ★ [2026-10-19 联机修复] 首次判据从 <c>PlayerCombatState.TurnNumber == 1</c>
+    ///     换成隐藏幂等标记 <see cref="StarterSetup" />：联机对局里各玩家的战斗起始回合数
+    ///     可能错开，"回合数 == 1" 会让本方法<b>整段跳过</b>（开局 0 炁 + 无奶龙标记）。
+    /// </para>
+    /// </summary>
     public override async Task BeforeHandDraw(
         Player player,
         PlayerChoiceContext choiceContext,
         ICombatState combatState)
     {
-        if (player != Owner || Owner.PlayerCombatState is not { TurnNumber: 1 }) return;
+        if (player != Owner) return;
+        if (Owner.Creature.GetPower<StarterSetup>() != null) return;
 
         // 1) 获得 3 炁
         await yylCmd.GainQi(choiceContext, player, InitialQi, this, null);
-        // 2) 把所有敌人视作奶龙 (NailongMark 兼任 "tag + 击杀回血 3")
+        // 2) 把所有敌人视作奶龙 (NailongMark 兼任 "tag + 奶龙死亡时回血 3")
         // 2b) 队友也一并视为奶龙: 让"给奶龙加防/回血"的卡在联机里有正收益
         //     (单机没有队友, 行为与之前完全一致)。
         //     ⚠ Allies 是"己方全体", 包含玩家自己 —— 必须排除;
@@ -46,6 +53,9 @@ public sealed class PeachCan : yylRelicModel
             Owner.Creature);
         // 3) 挂上手牌金光驱动 (隐藏 Power): 条件牌 (崩拳/金光联动/耗炁卡) 满足条件时发光。
         await PowerCmd.Apply<CardGlowDriver>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
+
+        // 4) 打上幂等标记 (最后挂: 中途异常也不会漏发)。
+        await PowerCmd.Apply<StarterSetup>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
     }
 
     public override RelicModel? GetUpgradeReplacement()

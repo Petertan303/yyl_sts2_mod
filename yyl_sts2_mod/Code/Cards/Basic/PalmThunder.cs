@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -70,7 +70,7 @@ public sealed class PalmThunder(
         // 3. 攻击结算完再消耗 1 层金光护体 (保证本次攻击已经吃到 +1)。
         //    改走统一入口 yylAegis.Consume —— 使「金光化炁」能在这一处挂钩。
         if (Owner.HasPower<GoldenAegis>())
-            await yyl_sts2_mod.Code.Utils.yylAegis.Consume(choiceContext, this);
+            await yyl_sts2_mod.Code.Utils.yylAegis.Consume(choiceContext, this, 1);
     }
 
     /// <summary>

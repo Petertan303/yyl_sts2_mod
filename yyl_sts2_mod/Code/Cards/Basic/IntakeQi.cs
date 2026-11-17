@@ -24,7 +24,7 @@ public sealed class IntakeQi(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
+    bool shouldShowInCardLibrary = false)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     // [balance 2026-09-22] 雪藏: 稀有度 Common → Basic, 暂离卡池 (白卡主产炁件, 产炁改由马步/引炁/蓄势承担)。

@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -11,7 +11,7 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Uncommon;
 
 /// <summary>
-///     金光护体源: 2 → 1 费能力牌, 每回合开始时获得 1 层金光护体。
+///     金光护体源: 2 → 1 费能力牌, 每回合开始时获得 2 层金光护体。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class GoldenWardCard(
@@ -24,7 +24,7 @@ public sealed class GoldenWardCard(
 {
     public GoldenWardCard() : this(2, CardType.Power, CardRarity.Uncommon, TargetType.Self)
     {
-        WithPower<GoldenWard>(1);
+        WithPower<GoldenWard>(2);
         WithCostUpgradeBy(-1);
     }
 

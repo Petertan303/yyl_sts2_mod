@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
@@ -62,6 +62,6 @@ public sealed class FiveThunderLaw(
 
         // 攻击结算完再消耗 1 层金光护体。
         if (Owner.HasPower<GoldenAegis>())
-            await yyl_sts2_mod.Code.Utils.yylAegis.Consume(choiceContext, this);
+            await yyl_sts2_mod.Code.Utils.yylAegis.Consume(choiceContext, this, 1);
     }
 }

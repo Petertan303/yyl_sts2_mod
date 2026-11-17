@@ -1,4 +1,6 @@
 using Godot;
+using MegaCrit.Sts2.Core.Assets;
+using MegaCrit.Sts2.Core.Audio.Debug;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
@@ -343,6 +345,132 @@ public static class yylVfx
         }
     }
 
+    /*  ── 按伤害的攻击前摇 (2026-11-16, 天火聚光灯体系的小型版) ──
+        用户定调: 寸劲 / 生生不息在结算伤害前加聚光灯前摇, 时延按**造成的伤害**线性映射
+        (不照搬天火的按炁量); 三张卡时延比例 1:2:3 = 寸劲:生生不息:天火, 聚光灯层数
+        寸劲 1 层 / 生生不息 2 层 / 天火 3 层与之对应。伤害 <10 不触发特效和延时,
+        10~100 线性映射每份 0.45~0.75s, ≥100 封顶。延时结束由调用方触发各自的
+        攻击特效 (寸劲=原版重击 vfx_heavy_blunt / 生生不息=崩拳的命中冲击) 再结算伤害。 */
+
+    /// <summary>伤害下限: 低于此值不触发前摇与聚光灯。</summary>
+    public const decimal DamageCastDelayMin = 10m;
+
+    /// <summary>延迟封顶伤害: 达到后每份时延取上限。</summary>
+    public const decimal DamageCastDelayCap = 100m;
+
+    /// <summary>每份时延的下限/上限秒数 (伤害 10 → 0.45s, 100 → 0.75s, 中间线性)。</summary>
+    public const float DamageCastDelayUnitMin = 0.45f;
+    public const float DamageCastDelayUnitMax = 0.75f;
+
+    /// <summary>
+    ///     按伤害开启聚光灯前摇: 伤害 ≥ <see cref="DamageCastDelayMin" /> 时开聚光灯
+    ///     (lifeSeconds 照天火 = 前摇 + 0.5s), 返回需要 <c>Cmd.Wait</c> 的秒数;
+    ///     伤害不足下限返回 0 (调用方跳过等待与延时特效)。
+    ///     每份时延按伤害在 <see cref="DamageCastDelayUnitMin" />~<see cref="DamageCastDelayUnitMax" />
+    ///     线性并乘以 <paramref name="level" />; 伤害超出 <see cref="DamageCastDelayCap" /> 封顶。
+    ///     <para>
+    ///         ★2026-11-16: <paramref name="spotlightLayers" /> 与 level 解耦 —— 时延仍是
+    ///         寸劲 1 / 生生不息 2 / 天火 3 的 1:2:3 倍率, 但聚光浓度按用户反馈下调为
+    ///         寸劲 <b>0.6 层</b>、生生不息 <b>1 层</b>: 整数层满强度叠加, 余下小数层
+    ///         按该比例调淡入 alpha (0.6 层 = 单层 60% 浓度)。天火不调本方法, 仍是 3 层满强度。
+    ///     </para>
+    ///     整体 try/catch: 特效失败只记日志, 不让结算中断。
+    /// </summary>
+    /// <param name="level">
+    ///     时延份数 (可为小数): ★2026-11-16 手感定调后寸劲 0.6 份 / 生生不息 1 份,
+    ///     天火独立实现约 3 份 (1.3~2.2s), 仍是 0.6:1:3 的缩放关系。
+    /// </param>
+    public static float DamageCastDelay(decimal damage, float level, float spotlightLayers = -1f)
+    {
+        try
+        {
+            if (damage < DamageCastDelayMin) return 0f;
+
+            var clamped = Math.Min(damage, DamageCastDelayCap);
+            var unit = DamageCastDelayUnitMin
+                       + (float)((clamped - DamageCastDelayMin) / (DamageCastDelayCap - DamageCastDelayMin))
+                       * (DamageCastDelayUnitMax - DamageCastDelayUnitMin);
+            var preDelay = unit * level;
+
+            // 未指定则沿用 level 层满强度 (旧行为); 指定则整数层满强度 + 末层按小数浓度。
+            var layers = spotlightLayers < 0f ? (float)level : spotlightLayers;
+            var whole = (int)MathF.Floor(layers);
+            var fraction = layers - whole;
+            for (var i = 0; i < whole; i++)
+                Spotlight(preDelay + 0.5f);
+            if (fraction > 0f)
+                Spotlight(preDelay + 0.5f, fraction);
+
+            return preDelay;
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.DamageCastDelay: {ex.Message}");
+            return 0f;
+        }
+    }
+
+    /// <summary>
+    ///     原版「重击」通用特效 (vfx/vfx_heavy_blunt), 落在目标脚底 (<c>GetBottomOfHitbox</c>),
+    ///     照天火落击的手动实例化写法; <paramref name="scale" />=1 即原尺寸
+    ///     (天火会再乘以炁量缩放与 1.8 系数, 本方法不放大)。
+    ///     目标为空 / 节点缺失 / 场景缺失时静默跳过。
+    /// </summary>
+    public static void HeavyBlunt(Creature target, float scale = 1.0f)
+    {
+        try
+        {
+            if (target == null) return;
+            var creatureNode = NCombatRoom.Instance?.GetCreatureNode(target);
+            if (creatureNode == null) return;
+
+            var scenePath = SceneHelper.GetScenePath("vfx/vfx_heavy_blunt");
+            var blunt = PreloadManager.Cache.GetScene(scenePath)
+                .Instantiate<Node2D>(PackedScene.GenEditState.Disabled);
+            target.GetVfxContainer()?.AddChildSafely(blunt);
+            blunt.GlobalPosition = creatureNode.GetBottomOfHitbox();
+            blunt.Scale = Vector2.One * scale;
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.HeavyBlunt: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     原版「审判」(Judgement, token 稀有度) 的大斩击特效链 (2026-11-16): 照引擎
+    ///     <c>Judgement/&lt;OnPlay&gt;d__6::MoveNext</c> 反汇编原样复刻 —— 两步 + 一个音效:
+    ///     ① <c>NBigSlashVfx.Create(target)</c> (大斩击劈落);
+    ///     ② <c>NBigSlashImpactVfx.Create(target)</c> (斩击冲击/粒子);
+    ///     ③ 音效 <c>heavy_attack.mp3</c> (pitch variance 0)。
+    ///     <para>
+    ///         三者都挂 <c>target.GetVfxContainer()</c> (与原版一致; 不是 NCombatRoom)。
+    ///         均为引擎内置节点 (<c>MegaCrit.Sts2.Core.Nodes.Vfx</c>), 无需额外资源文件。
+    ///         序列自管理、播完自退; Create 内部判 TestMode / 空节点会返回 null, 逐个判空。
+    ///     </para>
+    /// </summary>
+    public static void BigSlash(Creature target)
+    {
+        try
+        {
+            if (target == null) return;
+            var container = target.GetVfxContainer();
+            if (container == null) return;
+
+            var slash = NBigSlashVfx.Create(target);
+            if (slash != null) container.AddChildSafely(slash);
+
+            var impact = NBigSlashImpactVfx.Create(target);
+            if (impact != null) container.AddChildSafely(impact);
+
+            NDebugAudioManager.Instance?.Play("heavy_attack.mp3", 1f, PitchVariance.None);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.BigSlash: {ex.Message}");
+        }
+    }
+
     /// <summary>
     ///     ★聚光灯 (2026-09-30, 天火蓄力; 三轮修订): 从华丽收场场景中<b>单独摘出</b>聚光灯容器,
     ///     照原版 NGrandFinaleVfx.PlaySequence 的定位 —— <b>挂到战斗特效层、移到视口顶部中央</b>
@@ -358,7 +486,11 @@ public static class yylVfx
     ///         实例化后立即摘子节点、丢根。
     ///     </para>
     /// </summary>
-    public static void Spotlight(float lifeSeconds)
+    /// <param name="intensity">
+    ///     聚光强度 (1 = 原版满强度; 0.6 = 单层 60% 浓度)。★2026-11-16 新增:
+    ///     只作用于光柱精灵的淡入目标 alpha (浓度主因是多层叠加), 不动定位/时序。
+    /// </param>
+    public static void Spotlight(float lifeSeconds, float intensity = 1f)
     {
         try
         {
@@ -391,12 +523,13 @@ public static class yylVfx
             spotlightContainer.GlobalPosition = new Vector2(spotlightContainer.GetViewportRect().Size.X / 2f, 0f);
 
             // ★照 Initialize + PlaySequence: spotlight 精灵初始全透明, 1s 淡入到白。
+            //   2026-11-16: 淡入目标 alpha 乘 intensity (1 满强度 / 0.6 单层六成浓度)。
             var spotSprite = spotlightContainer.GetNode<Node2D>("spotlight");
             if (spotSprite != null)
             {
                 spotSprite.Modulate = new Color(1f, 1f, 1f, 0f);
                 var fadeIn = spotlightContainer.CreateTween();
-                fadeIn.TweenProperty(spotSprite, "modulate", Colors.White, 1.0);
+                fadeIn.TweenProperty(spotSprite, "modulate", new Color(1f, 1f, 1f, intensity), 1.0);
             }
 
             // 触发聚光粒子 (_spotlightParticles 就是容器自身, Restart() 公开)。
@@ -590,8 +723,9 @@ public static class yylVfx
     ///     Emitting</b>, 走 VfxCmd 只会实例化一片静止的粒子, 什么都看不到)。
     ///     原版华丽收场整套是 NCombatVfxSpawner.PlayingGrandFinale 脚本序列, 花瓣只是其中
     ///     一个子场景, 这里单独借用。<paramref name="raiseFraction" /> 上移 N 个体位。
+    ///     <paramref name="scaleMul" /> 乘在节点 Scale 上 (粒子材质自带的 scale 之外的整体倍率)。
     /// </summary>
-    public static void BurstOneShot(Creature target, string path, float lifeSeconds = 4.5f, float raiseFraction = 0f)
+    public static void BurstOneShot(Creature target, string path, float lifeSeconds = 4.5f, float raiseFraction = 0f, float scaleMul = 1f)
     {
         try
         {
@@ -624,12 +758,115 @@ public static class yylVfx
                 if (tex != null) texH = tex.GetHeight();
             }
             particles.Position = new Vector2(0, -texH * raiseFraction);
+            if (Math.Abs(scaleMul - 1f) > 0.001f) particles.Scale *= scaleMul;
             particles.Emitting = true;
             RecycleLater(particles, lifeSeconds);
         }
         catch (Exception ex)
         {
             MainFile.Logger.Error($"yylVfx.BurstOneShot({path}): {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     水滴状空间扭曲折射 (原版 starry_impact core, 炁海/天机的"星象涌现"核心一幕)。
+    ///     ★实现并非实时折射 shader —— 是 4 帧 2x2 <b>烘焙序列帧</b> 贴图
+    ///     (starry_impact_core.png, 通用 vfx_flipbook_shader 播放, 曲线控制帧序),
+    ///     GPUParticles2D one_shot / lifetime 0.25s / 自带 scale 2x / emitting=false。
+    ///     ⚠ 因此必须手动触发 Emitting (与 <see cref="BurstOneShot" /> 同款机制),
+    ///     走 VfxCmd.PlayVfx 只会实例化一片静止的粒子。
+    ///     适用: "觉醒/涌现"时刻 —— 例: 金光首达 20 层、佛光点亮 (GoldenAegis.RefreshVfx)。
+    /// </summary>
+    public static void StarryDistortion(Creature target, float raiseFraction = 0.4f, float scaleMul = 1f)
+        => BurstOneShot(target, "vfx/starry_impact/vfx_starry_impact_core", 1.2f, raiseFraction, scaleMul);
+
+    /// <summary>
+    ///     屏幕空间水滴折射 (原版通用组件 <c>vfx_screen_chromatic_aberration</c>,
+    ///     "玻璃球觉醒" vfx_glass_orb_evoke 里那一下空间扭曲折射的真身):
+    ///     BackBufferCopy 拷屏幕 + 单粒子 GPUParticles2D (common_glow 光斑为"水滴"形状,
+    ///     自带 scale 3x) + 屏幕空间色差 shader (instance 参数 base_intensity=0.01,
+    ///     强度/距离由曲线驱动)。one_shot + emitting=false —— 必须手动触发 Emitting
+    ///     (<see cref="BurstOneShot" /> 同款机制)。结构挖自 pck, 与原版逐参数一致。
+    /// </summary>
+    public static void ScreenRefraction(Creature target, float raiseFraction = 0.4f, float scaleMul = 1f, float lifeSeconds = 1.2f)
+        => BurstOneShot(target, "common/vfx_screen_chromatic_aberration", lifeSeconds, raiseFraction, scaleMul);
+
+    /// <summary>
+    ///     ★水波纹空间扭曲 (自研 shader 驱动, 2026-11-04): 径向正弦波纹推挤屏幕画面 +
+    ///     RGB 色差分离, 圆形范围内生效、边缘平滑淡出。强烈且单发 (~0.9s)。
+    ///     组装: BackBufferCopy 拷屏 → Sprite2D (径向遮罩贴图 + yyl_water_ripple.gdshader)
+    ///     → Tween 驱动强度 0→峰值→0、波纹相位 0→1 向外扩散 → 回收。
+    ///     ⚠ 折射类 shader 必须有 BackBufferCopy 在场, 否则读到空屏幕、毫无效果
+    ///     (ScreenRefraction 无效的根因 —— 原版组合场景里 BackBufferCopy 与折射粒子是兄弟节点,
+    ///     单独实例化折射场景时它不在)。
+    /// </summary>
+    public static void WaterRipple(
+        Creature target,
+        float raiseFraction = 0.4f,
+        float sizePx = 340f,
+        float duration = 0.9f,
+        float peakIntensity = 0.05f,
+        float scaleMul = 1f)
+    {
+        try
+        {
+            if (target == null) return;
+            Node anchor = yylAnim.FindSprite(target)
+                ?? (Node)(NCombatRoom.Instance?.GetCreatureNode(target)?.Visuals);
+            if (anchor == null) return;
+
+            var shader = ResourceLoader.Load<Shader>("res://yyl_sts2_mod/shaders/yyl_water_ripple.gdshader");
+            var mask = ResourceLoader.Load<Texture2D>("res://yyl_sts2_mod/images/vfx/yyl_water_ripple_mask.png");
+            if (shader == null || mask == null)
+            {
+                MainFile.Logger.Error("yylVfx.WaterRipple: shader/mask load failed");
+                return;
+            }
+
+            var material = new ShaderMaterial { Shader = shader };
+            material.SetShaderParameter("intensity", 0f);
+            material.SetShaderParameter("phase", 0f);
+
+            var backBuffer = new BackBufferCopy { CopyMode = BackBufferCopy.CopyModeEnum.Viewport };
+            var ripple = new Sprite2D
+            {
+                Texture = mask,
+                Material = material,
+                Scale = Vector2.One * (sizePx * scaleMul / MathF.Max(mask.GetWidth(), 1f)),
+            };
+            backBuffer.AddChild(ripple);
+            anchor.AddChild(backBuffer);
+
+            // 局部偏移: 挂在角色精灵下, 纹理高 × fraction 向上 (与 BurstOneShot 同口径)。
+            var texH = 0f;
+            if (anchor is AnimatedSprite2D anim && anim.SpriteFrames != null && anim.SpriteFrames.HasAnimation("idle_loop"))
+            {
+                var tex = anim.SpriteFrames.GetFrameTexture("idle_loop", 0);
+                if (tex != null) texH = tex.GetHeight();
+            }
+            backBuffer.Position = new Vector2(0, -texH * raiseFraction);
+
+            // 强度: 0 → 峰值 (0.18 · duration, Quad Out); 相位: 0 → 1 全程向外扩散; 轻微外扩。
+            var tw = ripple.CreateTween();
+            tw.SetParallel(true);
+            tw.TweenProperty(material, "shader_parameter/intensity", peakIntensity, duration * 0.18)
+                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).From(0f);
+            tw.TweenProperty(material, "shader_parameter/phase", 1f, duration)
+                .SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.InOut).From(0f);
+            tw.TweenProperty(ripple, "scale", ripple.Scale * 1.12f, duration)
+                .SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.Out);
+
+            // 强度回落 (并行第二条时间线): 保持后 Quad In 归零。
+            var tw2 = ripple.CreateTween();
+            tw2.TweenInterval(duration * 0.42);
+            tw2.TweenProperty(material, "shader_parameter/intensity", 0f, duration * 0.42)
+                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+
+            RecycleLater(backBuffer, duration + 0.15f);
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Error($"yylVfx.WaterRipple: {ex.Message}");
         }
     }
 }

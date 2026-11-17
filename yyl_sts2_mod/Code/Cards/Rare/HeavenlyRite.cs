@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -12,8 +12,9 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     天师度 卡牌: 1 费, 获得 30 → 40 炁 + 5 层金光护体, 同时给予 天师度 Power
+///     天师度 卡牌: 1 费, 获得 30 → 40 炁 + 20 层金光护体, 同时给予 天师度 Power
 ///     (回合一结束 -10 炁 / 层)。类比 Wraith Form: 强力正向 + 持续负面。
+///     ★2026-11-16 用户定调: 金光护体 10 → 20 层 (与产光侧整体 ×2 的口径对齐)。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class HeavenlyRite(
@@ -27,7 +28,7 @@ public sealed class HeavenlyRite(
     public HeavenlyRite() : this(1, CardType.Power, CardRarity.Rare, TargetType.Self)
     {
         WithPower<Qi>(30, 10);
-        WithPower<GoldenAegis>(5, 0);
+        WithPower<GoldenAegis>(20, 0);
         WithPower<HeavenlyBurden>(1, 0);
         // 仅用于卡面显示: 天师度每回合抽走的炁
         WithPower<Qi>("BurdenQi", 10, 0);
@@ -36,7 +37,7 @@ public sealed class HeavenlyRite(
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await yylAnim.TriggerCast(this); // 打出动作: 施法帧动画
-        // 正向: 获得 30 → 40 炁 + 5 层金光护体
+        // 正向: 获得 30 → 40 炁 + 20 层金光护体
         await yylCmd.GainQi(choiceContext, Owner, DynamicVars["Qi"].IntValue, this, cardPlay.Card);
         await PowerCmd.Apply<GoldenAegis>(choiceContext, new[] { Owner.Creature },
             DynamicVars["GoldenAegis"].IntValue, Owner.Creature, cardPlay.Card);

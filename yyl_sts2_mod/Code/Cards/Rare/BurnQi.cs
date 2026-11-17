@@ -15,8 +15,10 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     燃炁: 0 费, 失去 3 点生命, 获得 6 → 9 点炁, 抽 3 张。
+///     燃炁: 0 费, 失去 3 点生命, 获得 6 点炁, 抽 3 → 5 张。
 ///     对标原版"祭品": 用血量换一手资源。丹噬 / 天火 / 散炁 都能把这笔炁立刻放大。
+///     ★2026-11-16 用户定调: 升级效果由「+3 炁 (6→9)」改为「多抽 2 张 (3→5)」,
+///     产炁量升级前后都固定 6 点 —— 避免升级后把炁推得更高、放大线性三兄弟。
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
 public sealed class BurnQi(
@@ -29,8 +31,9 @@ public sealed class BurnQi(
 {
     public BurnQi() : this(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
     {
-        WithPower<Qi>(6, 3);
-        WithCards(3);
+        // 6 点炁固定不升级；升级改为多抽 2 张 (WithCards 第 2 个参数 = 升级增量)。
+        WithPower<Qi>(6, 0);
+        WithCards(3, 2);
         // 自伤代价 (卡面用)
         WithCalculatedDamage("HpLoss", 3, (_, _) => 0m, 0, 0, 0);
         // ★启动卡需要"一次性爆发"的仪式感 —— 补上消耗关键字。

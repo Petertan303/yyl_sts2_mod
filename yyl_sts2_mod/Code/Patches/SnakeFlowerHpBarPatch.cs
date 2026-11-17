@@ -12,25 +12,26 @@ namespace yyl_sts2_mod.Code.Patches;
 /// <summary>
 ///     蛇花小姐的血条与站位。
 ///     <para>
-///         ★血条根因 (2026-09-29 反编译确认): 宠物血条与 <c>MonsterModel.IsHealthBarVisible</c> 无关 ——
-///         <c>NCombatRoom.AddCreature</c> 对所有"非奥斯提"宠物统一调用
-///         <c>ToggleIsInteractable(on: false)</c>（同时关闭血条与鼠标交互），
-///         只有 <c>Monster is Osty</c> 走特殊分支保留血条。官方就是把宠物设计成不显示血条的。
-///         解法: AddCreature 后缀对蛇花小姐重新 <c>ToggleIsInteractable(true)</c>。
-///     </para>
+    ///         ★血条根因 (2026-09-29 反编译确认): 宠物血条与 <c>MonsterModel.IsHealthBarVisible</c> 无关 ——
+    ///         <c>NCombatRoom.AddCreature</c> 对所有"非奥斯提"宠物统一关闭血条与鼠标交互，
+    ///         只有 <c>Monster is Osty</c> 走特殊分支保留血条。官方就是把宠物设计成不显示血条的。
+    ///         解法: AddCreature 后缀对蛇花小姐重新打开交互。
+    ///     </para>
+    ///     <para>
+    ///         ★ v0.113.0 迁移 (2026-11-14): 引擎把这套 API 重命名为
+    ///         <c>MonsterModel.IsInteractable</c> / <c>NCreature.SetIsInteractable(bool, bool)</c>，
+    ///         旧 <c>ToggleIsInteractable(bool)</c> 已删除。旧 dll 在 113 上 JIT 这个 Postfix 时抛
+    ///         MissingMethodException，直接打断 <c>NCombatRoom.CreateAllyNodes</c> ——
+    ///         表现为角色站位错乱、敌人不显示、进战斗卡死。
+    ///     </para>
 ///     <para>
-///         ★站位: 让蛇花稍微离开主角脚边（右移 1/3 主角身位、上移 1/20 身位）。
-///         必须在 <b>两个</b>地方修正位置 —— AddCreature（战斗中途召唤）和
-///         PositionPlayersAndPets（战斗开始统一摆位, 会用绝对坐标覆盖之前的值）；
-///         两处都按"相对主角的绝对偏移"设置, 天然幂等不会叠加。
-///         血条是 NCreature 的子节点, 会跟随本体移动。
+///         ★站位 (2026-10-21 移交): 位置强制指定已移除, 召唤定位与体型成长完全交给
+///         引擎的 <c>OstyScaleToSize</c> (遗物召唤流程调用, 原版奥斯提同款:
+///         tween 到主人身边 + 按生命上限缩放)。本 patch 保留血条显示修复, 并复刻原版 Osty 的层级处理 (蛇花排到主人节点之前, 主人遮挡蛇花)。
 ///     </para>
 /// </summary>
 internal static class SnakeFlowerHpBarPatch
 {
-    private const float OffsetXRatio = 36f / 30f;
-    private const float OffsetYRatio = 1f / 30f;
-
     [HarmonyPatch(typeof(NCombatRoom), nameof(NCombatRoom.AddCreature))]
     internal static class AddCreaturePatch
     {
@@ -44,8 +45,8 @@ internal static class SnakeFlowerHpBarPatch
                 var node = NCombatRoom.Instance?.GetCreatureNode(creature);
                 if (node == null) return;
 
-                node.ToggleIsInteractable(on: true);
-                ApplyOffset(node);
+                // 第二个参数 = changeVisibilityImmediately: 让血条立刻出现，不等动画。
+                node.SetIsInteractable(true, true);
             }
             catch (Exception ex)
             {
@@ -54,39 +55,4 @@ internal static class SnakeFlowerHpBarPatch
         }
     }
 
-    /// <summary>战斗开始统一摆位会把宠物拉回脚边, 这里再修正一次。</summary>
-    [HarmonyPatch(typeof(NCombatRoom), nameof(NCombatRoom.PositionPlayersAndPets))]
-    internal static class PositionPetsPatch
-    {
-        [HarmonyPostfix]
-        internal static void Postfix(List<NCreature> creatureNodes)
-        {
-            try
-            {
-                foreach (var node in creatureNodes)
-                {
-                    if (node?.Entity?.Monster is not SnakeFlowerMissPet) continue;
-                    ApplyOffset(node);
-                }
-            }
-            catch (Exception ex)
-            {
-                MainFile.Logger.Error($"[yyl_sts2_mod] 蛇花小姐站位修正失败: {ex.Message}");
-            }
-        }
-    }
-
-    private static void ApplyOffset(NCreature node)
-    {
-        var ownerNode = NCombatRoom.Instance?.GetCreatureNode(node.Entity.PetOwner?.Creature);
-        if (ownerNode?.Visuals == null) return;
-
-        var w = ownerNode.Visuals.Bounds.Size.X;
-        var h = ownerNode.Visuals.Bounds.Size.Y;
-
-        // 相对主角的绝对偏移 (幂等): 右移 1/3 身位, 上移 1/20 身位。
-        node.Position = new Vector2(
-            ownerNode.Position.X + w * OffsetXRatio,
-            ownerNode.Position.Y - h * OffsetYRatio);
-    }
 }

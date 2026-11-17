@@ -1,11 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
-// using yyl_sts2_mod.Code.Stances;
 
 namespace yyl_sts2_mod.Code.Patches;
 
@@ -60,49 +61,53 @@ internal static class StanceModifyDamageMultiplicativePatch
         var mulMethod = AccessTools.Method(typeof(AbstractModel), "ModifyDamageMultiplicative");
         var addBridge = AccessTools.Method(typeof(StanceModifyDamageMultiplicativePatch), nameof(AdditiveBridge));
         var mulBridge = AccessTools.Method(typeof(StanceModifyDamageMultiplicativePatch), nameof(MultiplicativeBridge));
-        
+
+        var injected = 0;
         for (var i = 0; i < code.Count; i++)
         {
             var isAdd = code[i].Calls(addMethod);
             var isMul = code[i].Calls(mulMethod);
             if (!isAdd && !isMul) continue;
-            
+
             var storeIndex = i + 1;
             if (storeIndex >= code.Count || code[storeIndex].opcode != OpCodes.Stloc_S) continue;
             var numLocal = code[storeIndex].operand;
-            
+
             var listenerLoad = FindListenerLoadBackwards(code, i);
             if (listenerLoad == null) continue;
 
-            var injected = new List<CodeInstruction>
+            var patch = new List<CodeInstruction>
             {
-                listenerLoad.Clone(),                                  
-                new(OpCodes.Ldloc_S, numLocal),       
-                new(OpCodes.Ldarg_2),                  
-                new(OpCodes.Ldloc_0),                
-                new (OpCodes.Ldarg_S, (byte)5),      
-                new (OpCodes.Ldarg_3),                  
-                new (OpCodes.Ldarg_S, (byte)6),       
+                listenerLoad.Clone(),
+                new(OpCodes.Ldloc_S, numLocal),
+                new(OpCodes.Ldarg_2),
+                new(OpCodes.Ldloc_0),
+                new(OpCodes.Ldarg_S, (byte)5),
+                new(OpCodes.Ldarg_3),
+                new(OpCodes.Ldarg_S, (byte)6),
                 hasCardPlay
-                    ? new CodeInstruction(OpCodes.Ldarg_S, (byte)7)    
-                    : new CodeInstruction(OpCodes.Ldnull),           
-                new (OpCodes.Call, isAdd ? addBridge : mulBridge),
-                new (OpCodes.Stloc_S, numLocal),       
+                    ? new CodeInstruction(OpCodes.Ldarg_S, (byte)7)
+                    : new CodeInstruction(OpCodes.Ldnull),
+                new(OpCodes.Call, isAdd ? addBridge : mulBridge),
+                new(OpCodes.Stloc_S, numLocal),
             };
 
-            code.InsertRange(storeIndex + 1, injected);
-            i = storeIndex + injected.Count; 
+            code.InsertRange(storeIndex + 1, patch);
+            i = storeIndex + patch.Count;
+            injected++;
         }
 
+        // 注入计数日志: 正常应看到 2 (additive + multiplicative 各一处)。
+        MainFile.Logger.Info($"[MultiDamage] Transpiler 注入 {injected} 处桥接 (hasCardPlay={hasCardPlay})");
         return code;
     }
-    
+
     private static CodeInstruction? FindListenerLoadBackwards(List<CodeInstruction> code, int callIndex)
     {
         for (var j = callIndex - 1; j >= 0 && j > callIndex - 10; j--)
         {
-            if (code[j].opcode == OpCodes.Ldarg_2) 
-                return code[j - 1];              
+            if (code[j].opcode == OpCodes.Ldarg_2)
+                return code[j - 1];
         }
         return null;
     }

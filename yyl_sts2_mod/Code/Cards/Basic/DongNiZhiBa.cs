@@ -24,7 +24,7 @@ public sealed class DongNiZhiBa(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
+    bool shouldShowInCardLibrary = false)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     // 2026-09-23 用户定调: 稀有度 Rare → Basic, 并**雪藏**

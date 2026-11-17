@@ -17,7 +17,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     引光: 1 费, 获得 1 → 2 层金光护体, 从弃牌堆选择 1 张牌放到抽牌堆顶端。
+///     引光: 1 费, 获得 2 → 4 层金光护体, 从弃牌堆选择 1 张牌放到抽牌堆顶端。
 ///     <para>
 ///         [rework 2026-09-19] 用户定调: 抢步/套步/引光三张廉价过牌定位重叠,
 ///         保留套步, 本卡改为"金光 + 回收"—— 类似原版头槌/全息的弃牌堆调度。
@@ -35,7 +35,7 @@ public sealed class YinGuang(
 {
     public YinGuang() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithPower<GoldenAegis>(1, 1);
+        WithPower<GoldenAegis>(2, 2);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -28,8 +28,8 @@ public sealed class ShoulderStrike(
 {
     public ShoulderStrike() : this(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
-        WithDamage(12, 4);
-        WithBlock(6, 2);
+        WithBlock(12, 4);
+        WithDamage(6, 2);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -33,27 +33,12 @@ public sealed class ShiQi(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    public ShiQi() : this(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+    public ShiQi() : this(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
-        WithDamage(BaseDamage, DamageUpgrade);
-        WithVar("QiCost", QiCost, 0);
-        WithVar("QiRefund", QiRefund, QiRefundUpgrade);
+        WithDamage(26, 6);
+        WithVar("QiCost", 3, 0);
+        WithVar("QiRefund", 6, 3);
     }
-
-    /// <summary>基础伤害 (炁足够时的全额值)。</summary>
-    public const int BaseDamage = 26;
-
-    /// <summary>升级伤害增量: 26 → 32。</summary>
-    public const int DamageUpgrade = 6;
-
-    /// <summary>击杀需要消耗的炁量 (固定, 升级不变)。</summary>
-    public const int QiCost = 3;
-
-    /// <summary>击杀后返还的炁量 (基础)。</summary>
-    public const int QiRefund = 6;
-
-    /// <summary>返还炁的升级增量: 6 → 9。</summary>
-    public const int QiRefundUpgrade = 3;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -71,20 +56,18 @@ public sealed class ShiQi(
 
         if (hasQi)
         {
+            var killed = (await DamageCmd.Attack(damage)
+                    .FromCard(this, cardPlay)
+                    .Targeting(target)
+                    .WithHitFx("vfx/vfx_attack_blunt", null, "heavy_attack.mp3")
+                    .Execute(choiceContext))
+                .Results.SelectMany(r => r)
+                .Any(r => r.WasTargetKilled);
             await yylCmd.LoseQi(choiceContext, Owner, cost, this, cardPlay.Card);
+            if (!killed) return;
+            // 击杀 ⇒ 返还炁 (照 KnockoutBlow 的"击杀才给资源"结构)。
+            await yylCmd.GainQi(choiceContext, Owner, DynamicVars["QiRefund"].IntValue, this, cardPlay.Card);
+
         }
-
-        var killed = (await DamageCmd.Attack(damage)
-                .FromCard(this, cardPlay)
-                .Targeting(target)
-                .WithHitFx("vfx/vfx_attack_blunt", null, "heavy_attack.mp3")
-                .Execute(choiceContext))
-            .Results.SelectMany(r => r)
-            .Any(r => r.WasTargetKilled);
-
-        if (!killed) return;
-
-        // 击杀 ⇒ 返还炁 (照 KnockoutBlow 的"击杀才给资源"结构)。
-        await yylCmd.GainQi(choiceContext, Owner, DynamicVars["QiRefund"].IntValue, this, cardPlay.Card);
     }
 }

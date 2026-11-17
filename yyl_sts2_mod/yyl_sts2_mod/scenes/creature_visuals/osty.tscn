@@ -1,0 +1,117 @@
+[gd_scene load_steps=9 format=3 uid="uid://dceis6nnll6dk"]
+
+[ext_resource type="Texture2D" uid="uid://cqy3tsku472er" path="res://yyl_sts2_mod/images/pets/snake_flower_miss.png" id="1_body"]
+[ext_resource type="Texture2D" uid="uid://eo8shc4d5q62" path="res://yyl_sts2_mod/images/pets/attack_1.png" id="1_nb7qk"]
+[ext_resource type="Texture2D" uid="uid://csh0npyrv515o" path="res://yyl_sts2_mod/images/pets/attack_2.png" id="2_ro0fm"]
+[ext_resource type="Texture2D" uid="uid://q610b28lxxgg" path="res://yyl_sts2_mod/images/pets/attack_3.png" id="3_clge2"]
+[ext_resource type="Texture2D" uid="uid://ccinl0ihbweo2" path="res://yyl_sts2_mod/images/pets/attack_4.png" id="4_it64y"]
+[ext_resource type="Texture2D" uid="uid://cougkujf1kj26" path="res://yyl_sts2_mod/images/pets/attack_5.png" id="5_mgyxx"]
+[ext_resource type="Texture2D" uid="uid://cg0v0jeug2lm4" path="res://yyl_sts2_mod/images/pets/dead.png" id="6_ro0fm"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_sm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_nb7qk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ro0fm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_clge2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_it64y")
+}, {
+"duration": 2.0,
+"texture": ExtResource("5_mgyxx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_nb7qk")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_ro0fm")
+}],
+"loop": true,
+"name": &"dead_loop",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_body")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ro0fm")
+}, {
+"duration": 4.0,
+"texture": ExtResource("3_clge2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ro0fm")
+}],
+"loop": false,
+"name": &"die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_body")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_body")
+}, {
+"duration": 5.0,
+"texture": ExtResource("3_clge2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_body")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_body")
+}],
+"loop": true,
+"name": &"idle_loop",
+"speed": 10.0
+}]
+
+[node name="SnakeFlowerMiss" type="Node2D"]
+metadata/_edit_group_ = true
+
+[node name="Visuals" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+scale = Vector2(0.9, 0.9)
+sprite_frames = SubResource("SpriteFrames_sm")
+animation = &"attack"
+autoplay = "idle_loop"
+offset = Vector2(0, -124)
+
+[node name="Bounds" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -98.0
+offset_top = -204.0
+offset_right = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -107)
+
+[node name="IntentPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -218)

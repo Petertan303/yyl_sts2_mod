@@ -30,7 +30,7 @@ public static class QiGainTracker
 
     private static readonly Dictionary<Player, GainRecord> Records = new();
 
-    /// <summary>打标: 记录本次产炁(累加本回合/本场计数)。amount 为本次获得的炁量。</summary>
+    /// <summary>打标: 记录本次产炁(累加本场计数; 本回合计数按回合重置)。amount 为本次获得的炁量。</summary>
     public static void Mark(Player player, ICombatState? combatState, int amount = 0)
     {
         if (player == null || combatState == null) return;
@@ -42,12 +42,30 @@ public static class QiGainTracker
             Records[player] = rec;
         }
 
-        rec.Round = combatState.RoundNumber;
+        // ★ 2026-10-07 修「思维膨大段数=历史累计」: RoundAmount 之前只累加、**从不在回合切换时归零**,
+        //   于是第 2 回合产炁后读到的仍是「第 1 回合 + 第 2 回合」的总量
+        //   (例: 第1回合拿3 点 → RoundAmount=3; 第2回合拿 2 点 → RoundAmount=5,
+        //    思维膨大按 5 段结算)。而 RoundAmount 语义是"**本回合**获炁量"。
+        //   修法: 回合号变化时先把上一回合的残留清零, 再累加本次。
+        //   CombatAmount 是"本场战斗"总量, **故意不清**。
+        if (rec.Round != combatState.RoundNumber)
+        {
+            rec.Round = combatState.RoundNumber;
+            rec.RoundAmount = 0;
+        }
+
         rec.RoundAmount += amount;
         rec.CombatAmount += amount;
     }
 
-    /// <summary>该玩家在本场战斗的本回合内是否获得过炁。</summary>
+    /// <summary>该玩家在本场战斗的当前回合内是否获得过炁。</summary>
+    /// <para>
+    ///     2026-10-07 修正: <c>Mark</c> 现在会在回合切换时清零 <c>RoundAmount</c>,
+    ///     因此本方法必须<b>同时校验 rec.Round</b>—— 否则"上一回合产过炁、本回合还没产"
+    ///     期间 <c>RoundAmount</c> 仍保留旧值, 会让崩拳这类"本回合产过炁才减费"的牌
+    ///     在错误的时机触发。
+    /// </para>
+    /// </summary>
     public static bool GainedThisRound(Player? player, ICombatState? combatState)
     {
         if (player == null || combatState == null) return false;

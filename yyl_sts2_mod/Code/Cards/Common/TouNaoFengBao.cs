@@ -41,14 +41,8 @@ public sealed class TouNaoFengBao(
 {
     public TouNaoFengBao() : this(2, CardType.Attack, CardRarity.Common, TargetType.AllEnemies)
     {
-        WithDamage(BaseDamage, DamageUpgrade);
+        WithDamage(8, 4);
     }
-
-    /// <summary>基础伤害。</summary>
-    public const int BaseDamage = 12;
-
-    /// <summary>伤害升级增量: 12 → 16。</summary>
-    public const int DamageUpgrade = 4;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

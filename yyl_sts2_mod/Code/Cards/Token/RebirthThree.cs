@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using yyl_sts2_mod.Code.Commands;
+using yyl_sts2_mod.Code.Core;
 
 namespace yyl_sts2_mod.Code.Cards.Token;
 
@@ -23,6 +24,9 @@ public class RebirthThree(
 {
     public RebirthThree() : this(3, CardType.Power, CardRarity.Token, TargetType.None)
     {
+        // ★2026-11-16 用户定调: 额外显示「姿态 + 逆生三重」解释窗,
+        //   照观者 mod 卡牌预览悬浮解释的做法 (RebirthThree 原本没有任何悬浮窗)。
+        WithTips(_ => yylHoverTipFactory.RebirthStanceChain(minLevel: 3));
         WithKeyword(CardKeyword.Retain, UpgradeType.Add);
         WithCostUpgradeBy(-1);
     }

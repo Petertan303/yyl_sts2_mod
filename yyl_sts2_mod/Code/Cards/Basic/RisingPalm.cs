@@ -25,7 +25,7 @@ public sealed class RisingPalm(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
+    bool shouldShowInCardLibrary = false)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     // [balance 2026-09-22] 雪藏: 稀有度 Common → Basic, 暂离卡池 (金光攻击回报件, 后续体系重做时再评估)。

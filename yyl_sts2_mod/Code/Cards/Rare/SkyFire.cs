@@ -1,4 +1,5 @@
-﻿using BaseLib.Abstracts;
+﻿using System;
+using BaseLib.Abstracts;
 using yyl_sts2_mod.Code.Abstract;
 using BaseLib.Utils;
 using Godot;
@@ -20,11 +21,16 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     天火: 2 费, 失去所有炁, 对所有敌人造成 失去值 × 8 → 12 伤害。
+///     天火: 2 费, 失去所有炁, <b>每 3 点炁</b>对所有敌人造成 4 → 6 点伤害。
 ///     [rule 2026-09-18] 炁不足时无额外效果 (不打出一滴伤害)。
 ///     <para>
-///         ⚠ 强清场: 10 炁时群伤 80 → 120; 但炁伤害乘区已改对数,
-///         大量囤炁的直接收益主要就体现在这张卡上。
+///         ★2026-11-16 重做数值(用户定调): 由「每 1 点炁 6 → 9 伤」改为
+///         「<b>每 3 点炁 4 → 6 伤</b>」, 照 <c>ShengShengBuXie</c> 的
+///         <c>WithCalculatedDamage</c> 分档写法(multiplier = floor(当前炁 / 3))。
+///         原因: 炁增伤改两段线性后(见 <c>Powers.Qi</c>), 天火的基数本身随炁线性,
+///         乘区又随炁增长 —— 两条线相乘是 Q² 二次增长, 151 炁可打出上万伤害。
+///         分档后基数只按 Q/3 增长且斜率从 6 降到 4, 把这条二次项压平。
+///         20 炁时基数 24 → 36(旧版 120 → 180), 33 炁时 44 → 66(旧版 198 → 297)。
 ///     </para>
 ///     <para>
 ///         ★2026-09-30 演出重做: 照华丽收场 GrandFinale 的「前摇→伤害」骨架 + 重锤 Bludgeon 的
@@ -63,9 +69,30 @@ public sealed class SkyFire(
     /// (实测火爆天生偏大、重锤偏小); 采用「随炁×1.5」方案而非「火爆0.75/重锤1.25」。</summary>
     public const float HeavyBluntScale = 1.8f;
 
+    /// <summary>每 <see cref="QiPerStack" /> 点炁造成的伤害 (固定, 不随力量等变化)。</summary>
+    public const int PerQiBonus = 8;
+
+    /// <summary>升级时每档伤害的增量 (4 → 6)。</summary>
+    public const int PerQiBonusUpgrade = 4;
+
+    /// <summary>每档消耗的炁量 —— 与生生不息同款, multiplier = floor(当前炁 / 3)。</summary>
+    public const int QiPerStack = 3;
+
     public SkyFire() : this(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
-        WithDamage(8, 4);
+        // ★2026-11-16 重做数值(用户定调): 每 1 点炁 6 → 9 伤 改为 每 3 点炁 4 → 6 伤。
+        // ★2026-10-21 卡面改版 (照生生不息 SHENG_SHENG_BU_XIE 的 CalculatedDamage 三件套):
+        //   每档伤害固定显示 {ExtraDamage} (标准 Damage 变量的显示值会被力量等污染);
+        //   战斗时 {InCombat} 括号显示 {CalculatedDamage} = 每档伤害 × floor(当前炁 / 3)。
+        //   与生生不息的区别: 生生不息读本场累计获炁, 天火读**当前持有炁**(打出前炁还在,
+        //   伤害先结算再清空, 见 OnPlay 注释), 这样卡面预览与实际结算同源。
+        WithCalculatedDamage(
+            0,
+            PerQiBonus,
+            static (card, _) => Math.Floor(
+                (card.Owner.Creature.GetPower<Powers.Qi>()?.Amount ?? 0m) / QiPerStack),
+            upgrade: 0,
+            bonusUpgrade: PerQiBonusUpgrade);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -76,7 +103,7 @@ public sealed class SkyFire(
         var current = Owner.Creature.GetPower<Qi>()?.Amount ?? 0;
         if (current <= 0) return;
 
-        var totalDamage = DynamicVars.Damage.IntValue * current;
+        var totalDamage = DynamicVars.CalculatedDamage;
 
         // ★滚石同款渐近饱和: 炁越大 ratio 越接近 1 但永不超 1, 特效/前摇不会失控。
         var ratio = (float)(current / (current + SaturationDivisor));

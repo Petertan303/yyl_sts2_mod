@@ -78,8 +78,8 @@ public class yylCmd
     }
 
     /// <summary>
-    ///     Gain Qi through the <see cref="IGainQi" /> hook chain (e.g. <c>PeasantDrill</c> modifies
-    ///     the amount, <c>Nurture</c> deals damage as a follow-up side effect).
+    ///     Gain Qi through the <see cref="IGainQi" /> hook chain (e.g. <c>CultivateQi</c> modifies
+    ///     the amount, <c>Nurture</c> gains Block as a follow-up side effect).
     /// </summary>
     public static async Task GainQi(
         PlayerChoiceContext ctx,
@@ -100,8 +100,8 @@ public class yylCmd
     }
 
     /// <summary>
-    ///     Lose Qi through the <see cref="ILoseQi" /> hook chain (e.g. <c>CinnabarBite</c> gains block
-    ///     as a follow-up side effect). The hook is allowed to scale the loss up or down; the
+    ///     Lose Qi through the <see cref="ILoseQi" /> hook chain (e.g. <c>CinnabarBite</c> applies
+    ///     Poison, <c>XingQi</c> draws as follow-up side effects). The hook is allowed to scale the loss up or down; the
     ///     final value is applied to the existing <c>Qi</c> counter.
     /// </summary>
     public static async Task LoseQi(

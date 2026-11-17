@@ -1,0 +1,179 @@
+# StS2 original card pools, extracted build v0.107.1
+# source: slaythespire2.wiki.fextralife.com/The+Ironclad , /The+Silent
+# upgraded values are NOT provided by the wiki; only base values are listed
+# columns: actor | card | cost | base effect
+Ironclad	Bash	2	造成 8 伤害；施加 2 Vulnerable
+Ironclad	Defend	1	获得 5 Block
+Ironclad	Strike	1	造成 6 伤害
+Ironclad	Anger	0	造成 6 伤害；将 1 张本牌复制加入 Discard Pile
+Ironclad	Armaments	1	获得 5 Block；Upgrade 1 张 Hand 中的牌
+Ironclad	Blood Wall	2	失去 2 HP；获得 16 Block
+Ironclad	Bloodletting	0	失去 3 HP；获得 2 Energy
+Ironclad	Body Slam	1	伤害 = 当前 Block
+Ironclad	Breakthrough	1	失去 1 HP；对所有敌人造成 9 伤害
+Ironclad	Cinder	2	造成 18 伤害；随机 Exhaust 1 张牌
+Ironclad	Havoc	1	打出 Draw Pile 顶部 1 张牌并 Exhaust 它
+Ironclad	Headbutt	1	造成 9 伤害；将 Discard Pile 中 1 张牌置于 Draw Pile 顶部
+Ironclad	Iron Wave	1	获得 5 Block；造成 5 伤害
+Ironclad	Molten Fist	1	造成 10 伤害；目标的 Vulnerable ×2；Exhaust
+Ironclad	Perfected Strike	2	造成 6 伤害；每张含 Strike 的牌 +2 伤害
+Ironclad	Pommel Strike	1	造成 9 伤害；抽 1 张牌
+Ironclad	Setup Strike	1	造成 7 伤害；本回合获得 2 Strength
+Ironclad	Shrug It Off	1	获得 8 Block；抽 1 张牌
+Ironclad	Sword Boomerang	1	对随机敌人造成 3 伤害 ×3 次
+Ironclad	Thunderclap	1	对所有敌人造成 4 伤害并施加 1 Vulnerable
+Ironclad	Tremble	1	施加 3 Vulnerable；Exhaust
+Ironclad	True Grit	1	获得 7 Block；随机 Exhaust 1 张牌
+Ironclad	Twin Strike	1	造成 5 伤害 ×2 次
+Ironclad	Ashen Strike	1	造成 6 伤害；Exhaust Pile 中每张牌 +3 伤害
+Ironclad	Battle Trance	0	抽 3 张牌；本回合额外抽牌数 0
+Ironclad	Bludgeon	3	造成 32 伤害
+Ironclad	Bully	0	造成 4 伤害；目标身上每 1 层 Vulnerable +2 伤害
+Ironclad	Burning Pact	1	Exhaust 1 张牌；抽 2 张牌
+Ironclad	Colossus	1	获得 5 Block；本回合受到 Vulnerable 敌人伤害降低 50%
+Ironclad	Demonic Shield	0	失去 1 HP；给另一名玩家等同 Block 的 Block；Exhaust
+Ironclad	Dismantle	1	造成 8 伤害；若敌人处于 Vulnerable，则命中 2 次
+Ironclad	Dominate	1	施加 1 Vulnerable；目标身上每 1 层 Vulnerable 获得 1 Strength；Exhaust
+Ironclad	Drum of Battle	1	抽 2 张牌；此牌被 Exhaust 时获得 2 Energy
+Ironclad	Evil Eye	1	获得 8 Block；若本回合 Exhaust 过牌，再获得 8 Block
+Ironclad	Expect a Fight	2	Hand 中每 1 张 Attack 获得 1 Energy；本回合不能额外获得 Energy
+Ironclad	Feel No Pain	1	每当 1 张牌被 Exhaust，获得 3 Block
+Ironclad	Fight Me!	2	造成 5 伤害 ×2 次；获得 3 Strength；敌人获得 1 Strength
+Ironclad	Flame Barrier	2	获得 12 Block；本回合每次被攻击时反弹 4 伤害
+Ironclad	Forgotten Ritual	1	本回合若 Exhaust 过 1 张牌，获得 3 Energy；Exhaust
+Ironclad	Hemokinesis	1	失去 2 HP；造成 15 伤害
+Ironclad	Howl from Beyond	3	对所有敌人造成 16 伤害
+Ironclad	Infernal Blade	1	将 1 张随机 Attack 加入 Hand；本回合其费用为 0；Exhaust
+Ironclad	Inferno	1	回合开始时失去 1 HP；本回合每失去 HP，便对所有敌人造成 6 伤害
+Ironclad	Inflame	1	获得 2 Strength
+Ironclad	Juggling	1	每回合打出的第 3 张 Attack：将 1 张复制加入 Hand
+Ironclad	Pillage	1	造成 6 伤害；持续抽牌直到抽到 1 张非 Attack 牌
+Ironclad	Rage	0	本回合每打出 1 张 Attack，获得 3 Block
+Ironclad	Rampage	1	造成 9 伤害；本场战斗此牌伤害 +5
+Ironclad	Rupture	1	每当在你回合失去 HP，获得 1 Strength
+Ironclad	Second Wind	1	Exhaust Hand 中所有非 Attack 牌；每张获得 5 Block
+Ironclad	Spite	0	造成 5 伤害；本回合若失去过 HP，则命中 2 次
+Ironclad	Stampede	2	回合结束时将 Hand 中 1 张随机 Attack 对随机敌人打出
+Ironclad	Stomp	3	对所有敌人造成 12 伤害；本回合每打出 1 张 Attack，费用少 1 Energy
+Ironclad	Stone Armor	1	获得 4 Plating
+Ironclad	Taunt	1	获得 7 Block；施加 1 Vulnerable
+Ironclad	Unrelenting	2	造成 14 伤害；下 1 张 Attack 费用 0 Energy
+Ironclad	Uppercut	2	造成 13 伤害；施加 1 Weak；施加 1 Vulnerable
+Ironclad	Vicious	1	每施加 Vulnerable，抽 1 张牌
+Ironclad	Whirlwind	X	对所有敌人造成 5 伤害 ×X 次
+Ironclad	Aggression	1	回合开始时从 Discard Pile 取 1 张随机 Attack 加入 Hand 并 Upgrade 它
+Ironclad	Barricade	3	回合开始时 Block 不移除
+Ironclad	Brand	0	失去 1 HP；Exhaust 1 张牌；获得 1 Strength
+Ironclad	Cascade	X	打出 Draw Pile 顶部 X 张牌
+Ironclad	Conflagration	1	对所有敌人造成 2 伤害 ×4 次
+Ironclad	Crimson Mantle	1	回合开始时失去 1 HP 并获得 8 Block
+Ironclad	Cruelty	1	Vulnerable 敌人额外承受 25% 伤害
+Ironclad	Dark Embrace	2	每当 1 张牌被 Exhaust，抽 1 张牌
+Ironclad	Demon Form	3	回合开始时获得 2 Strength
+Ironclad	Feed	1	造成 10 伤害；若 Fatal，Max HP +3；Exhaust
+Ironclad	Fiend Fire	2	Exhaust 整个 Hand；每张被 Exhaust 的牌造成 7 伤害；Exhaust
+Ironclad	Hellraiser	2	抽到含 Strike 的牌时，对随机敌人自动打出
+Ironclad	Impervious	2	获得 30 Block；Exhaust
+Ironclad	Juggernaut	2	每当获得 Block，对随机敌人造成 6 伤害
+Ironclad	Mangle	3	造成 15 伤害；敌人本回合失去 10 Strength
+Ironclad	Not Yet	2	回复 10 HP；Exhaust
+Ironclad	Offering	0	失去 6 HP；获得 2 Energy；抽 3 张牌；Exhaust
+Ironclad	One-Two Punch	1	本回合下 1 张 Attack 额外打出 1 次
+Ironclad	Pact's End	0	若 Exhaust Pile 中 >=3 张牌，对所有敌人造成 17 伤害
+Ironclad	Primal Force	0	将 Hand 中所有 Attack 转为 Giant Rock
+Ironclad	Pyre	2	每回合开始时获得 1 Energy
+Ironclad	Stoke	1	Exhaust 整个 Hand；每张被 Exhaust 的牌将 1 张随机牌加入 Hand
+Ironclad	Tank	1	来自敌人的伤害 ×2；Allies 来自敌人的伤害 ×1/2
+Ironclad	Tear Asunder	2	造成 5 伤害；本场战斗每发生 1 次失去 HP，额外命中 1 次
+Ironclad	Thrash	1	造成 4 伤害 ×2 次；Exhaust 1 张 Hand 中随机 Attack，并将其伤害加到本牌
+Ironclad	Unmovable	2	每回合第 1 次从卡牌获得 Block 时，获得量 ×2
+Ironclad	Break	1	造成 20 伤害；施加 5 Vulnerable
+Ironclad	Corruption	3	所有 Skills 费用 0 Energy；每打出 1 张 Skill 时 Exhaust 它
+Silent	Defend	1	Gain 5 Block.
+Silent	Neutralize	0	Deal 3 damage. Apply 1 Weak.
+Silent	Strike	1	Deal 6 damage.
+Silent	Survivor	1	Gain 8 Block. Discard 1 card.
+Silent	Anticipate	0	Gain 2 Dexterity this turn.
+Silent	Backflip	1	Gain 5 Block. Draw 2 cards.
+Silent	Blade Dance	1	Add 3 Shivs into your Hand.
+Silent	Cloak and Dagger	1	Gain 6 Block. Add 1 Shiv into your Hand.
+Silent	Dagger Spray	1	Deal 4 damage to ALL enemies twice.
+Silent	Dagger Throw	1	Deal 9 damage. Draw 1 card. Discard 1 card.
+Silent	Deadly Poison	1	Apply 5 Poison.
+Silent	Deflect	0	Gain 4 Block.
+Silent	Dodge and Roll	1	Gain 4 Block. Next turn, gain 4 Block.
+Silent	Flick-Flack	1	Deal 6 damage to ALL enemies.
+Silent	Leading Strike	1	Deal 3 damage. Add 2 Shivs into your Hand.
+Silent	Piercing Wail	1	ALL enemies lose 6 Strength this turn.
+Silent	Poisoned Stab	1	Deal 6 damage. Apply 3 Poison.
+Silent	Predator	2	Deal 15 damage. Next turn, draw 2 cards.
+Silent	Prepared	0	Draw 1 card. Discard 1 card.
+Silent	Ricochet	2	Deal 3 damage to a random enemy 4 times.
+Silent	Slice	0	Deal 6 damage.
+Silent	Snakebite	2	Apply 7 Poison.
+Silent	Sucker Punch	1	Deal 8 damage. Apply 1 Weak.
+Silent	Untouchable	2	Gain 6 Block.
+Silent	Accuracy	1	Shivs deal 4 additional damage.
+Silent	Acrobatics	1	Draw 3 cards. Discard 1 card.
+Silent	Backstab	0	Deal 11 damage.
+Silent	Blur	1	Gain 5 Block. Block is not removed at the start of your next turn.
+Silent	Bouncing Flask	2	Apply 3 Poison to a random enemy 3 times.
+Silent	Bubble Bubble	1	If the enemy has Poison, apply 9 Poison.
+Silent	Calculated Gamble	0	Discard your Hand, then draw that many cards.
+Silent	Dash	2	Gain 10 Block. Deal 10 damage.
+Silent	Escape Plan	0	Draw 1 card. If you draw a Skill, gain 3 Block.
+Silent	Expertise	1	Draw cards until you have 6 in your Hand.
+Silent	Expose	0	Remove all Artifact and Block from the enemy. Apply 2 Vulnerable.
+Silent	Finisher	1	Deal 6 damage for each Attack already played this turn.
+Silent	Flanking	2	The enemy takes double attack damage from other players this turn.
+Silent	Flechettes	1	Deal 5 damage for each Skill in your Hand.
+Silent	Footwork	1	Gain 2 Dexterity.
+Silent	Hand Trick	1	Gain 7 Block. Add Sly to a Skill in your Hand this turn.
+Silent	Haze	3	Apply 4 Poison to ALL enemies.
+Silent	Hidden Daggers	0	Discard 2 cards. Add 2 Shivs into your Hand.
+Silent	Infinite Blades	1	At the start of your turn, add 1 Shiv into your Hand.
+Silent	Leg Sweep	2	Apply 2 Weak. Gain 11 Block.
+Silent	Memento Mori	1	Deal 9 damage. Deals 4 additional damage for each card discarded this turn.
+Silent	Mirage	1	Gain Block equal to Poison on ALL enemies.
+Silent	Noxious Fumes	1	At the start of your turn, apply 2 Poison to ALL enemies.
+Silent	Outbreak	1	Every 3 times you apply Poison, deal 11 damage to ALL enemies.
+Silent	Phantom Blades	1	Shivs gain Retain. The first Shiv you play each turn deals 9 additional damage.
+Silent	Pinpoint	3	Deal 15 damage. Costs 1 less E for each Skill played this turn.
+Silent	Pounce	2	Deal 14 damage. The next Skill you play costs 0 E.
+Silent	Precise Cut	0	Deal 13 damage. Deals 2 less damage for each other card in your Hand.
+Silent	Reflex	3	Draw 2 cards.
+Silent	Scare	0	Apply 1 Weak to ALL enemies.
+Silent	Skewer	X	Deal 8 damage X times.
+Silent	Speedster	2	Whenever you draw a card during your turn, deal 2 damage to ALL enemies.
+Silent	Strangle	1	Deal 8 damage. Whenever you play a card this turn, the enemy loses 2 HP.
+Silent	Tactician	3	Gain 1 Energy.
+Silent	Up My Sleeve	2	Add 3 Shivs into your Hand. Reduce this card's cost by 1.
+Silent	Well-Laid Plans	1	At the end of your turn, Retain up to 1 card.
+Silent	Abrasive	3	Gain 1 Dexterity. Gain 4 Thorns.
+Silent	Accelerant	1	Poison is triggered 1 additional time.
+Silent	Adrenaline	0	Gain 1 Energy. Draw 2 cards.
+Silent	Afterimage	1	Whenever you play a card, gain 1 Block.
+Silent	Assassinate	0	Deal 10 damage. Apply 1 Vulnerable.
+Silent	Blade of Ink	1	Add 2 Inky Shivs into your Hand.
+Silent	Bullet Time	3	You cannot draw additional cards this turn. ALL cards in your Hand are free to play this turn.
+Silent	Burst	1	This turn, your next Skill is played an extra time.
+Silent	Corrosive Wave	1	Whenever you draw a card this turn, apply 2 Poison to ALL enemies.
+Silent	Echoing Slash	1	Deal 10 damage to ALL enemies. Repeat this effect for each enemy killed.
+Silent	Envenom	2	Whenever an Attack deals unblocked damage, apply 1 Poison.
+Silent	Fan of Knives	2	Shivs now hit ALL enemies. Add 4 Shivs into your Hand.
+Silent	Grand Finale	0	Can only be played if there are no cards in your Draw Pile. Deal 60 damage to ALL enemies.
+Silent	Knife Trap	2	Play every Shiv in your Exhaust Pile on the enemy.
+Silent	Malaise	X	Enemy loses X Strength. Apply X Weak.
+Silent	Master Planner	2	When you play a Skill, it gains Sly.
+Silent	Murder	3	Deal 1 damage. Deals 1 additional damage for each card drawn this combat.
+Silent	Nightmare	3	Choose a card. Next turn, add 3 copies of that card into your Hand.
+Silent	Serpent Form	3	Whenever you play a card, deal 4 damage to a random enemy.
+Silent	Shadow Step	1	Discard your Hand. Next turn, Attacks deal double damage.
+Silent	Shadowmeld	1	Double your Block gain this turn.
+Silent	Sneaky	2	Whenever another player attacks an enemy, gain 1 Block.
+Silent	Storm of Steel	1	Discard your Hand. Add 1 Shiv into your Hand for each card discarded.
+Silent	The Hunt	1	Deal 10 damage. If Fatal, gain an additional card reward.
+Silent	Tools of the Trade	1	At the start of your turn, draw 1 card and discard 1 card.
+Silent	Tracking	2	Weak enemies take double damage from Attacks.
+Silent	Suppress	0	Deal 11 damage. Apply 3 Weak.
+Silent	Wraith Form	3	Gain 2 Intangible. At the start of your turn, lose 1 Dexterity.

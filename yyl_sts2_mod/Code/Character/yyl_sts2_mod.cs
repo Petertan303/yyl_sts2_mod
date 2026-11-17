@@ -83,6 +83,18 @@ public class yyl_sts2_mod : PlaceholderCharacterModel
 
     public override string CustomCharacterSelectBg => "res://yyl_sts2_mod/scenes/yylUI.tscn";
 
+    /*  多人模式下的「手臂」贴图 (四种手势: 指向 / 石头 / 布 / 剪刀, 各 422×1200)。
+        不覆写这四个属性时, BaseLib 的 PlaceholderCharacterModel 会用
+        ImageHelper.GetImagePath("ui/hands/multiplayer_hand_" + PlaceholderID + "_<gesture>.png"),
+        而 PlaceholderID 默认 = "ironclad" ⇒ 多人里伊林伸出来的是【铁甲战士的手臂】。
+        写法参照 LexNinja2 的同名资产 (同样放在 images/charui/ + CharacterUiPath()),
+        但它走的是 RitsuLib 的 CharacterMultiplayerAssetSet 构造参数;
+        我们继承的是 BaseLib 的 PlaceholderCharacterModel, 所以用覆写属性这条同源路径。 */
+    public override string CustomArmPointingTexturePath => "Point.png".CharacterUiPath();
+    public override string CustomArmRockTexturePath => "Rock.png".CharacterUiPath();
+    public override string CustomArmPaperTexturePath => "Paper.png".CharacterUiPath();
+    public override string CustomArmScissorsTexturePath => "Scissors.png".CharacterUiPath();
+
     /*  The combat visual is built through the BaseLib node factory instead of relying on
         CustomVisualPath + a C# script on the scene root. Godot's binary scene export strips
         the script ext_resource from the packed scene, which left the root a bare Node2D and

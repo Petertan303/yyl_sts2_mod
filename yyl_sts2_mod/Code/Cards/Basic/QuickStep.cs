@@ -30,7 +30,7 @@ public sealed class QuickStep(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
+    bool shouldShowInCardLibrary = false)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     public QuickStep() : this(0, CardType.Skill, CardRarity.Basic, TargetType.Self)

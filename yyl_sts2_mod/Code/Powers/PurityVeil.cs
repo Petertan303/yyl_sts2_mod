@@ -25,6 +25,15 @@ public sealed class PurityVeil : yylPowerModel
     /// <summary>
     ///     负面状态 (Debuff) 的获得量改写为 0; 返回 true 表示"已改写, 用 modified 值"。
     ///     Buff 与无关 Power 原样放行。
+    ///     <para>
+    ///         ★★[2026-10-15 修正] 必须判 <c>receiver == Owner</c>。
+    ///         反汇编确认: 引擎在 <c>Hooks.Hook.ModifyPowerAmountReceived</c> 里是
+    ///         用 <c>IterateCombatHookListeners</c> 遍历<b>整场战斗所有监听者</b>来调用
+    ///         本方法的 —— 它不会因为"这次 debuff 是挂在别人身上"就跳过我们。
+    ///         漏掉 receiver 判定的后果: 只要队伍里<b>任何一人</b>带着清心,
+    ///         全队 (甚至敌人施加给任何人的 debuff) 都会被一并无效化,
+    ///         与卡面"本回合你受到的负面状态无效"完全不符。
+    ///     </para>
     /// </summary>
     public override bool TryModifyPowerAmountReceived(
         PowerModel power,
@@ -36,6 +45,8 @@ public sealed class PurityVeil : yylPowerModel
         modified = amount;
         if (Amount <= 0) return false;
         if (power.Type != PowerType.Debuff) return false;
+        // 只保护持有者本人 (上面的遍历语义说明: 不判就会变成"对 debuff 本身生效")。
+        if (receiver != Owner) return false;
         modified = 0m;
         return true;
     }

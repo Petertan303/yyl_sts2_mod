@@ -85,11 +85,14 @@ public partial class MainFile : Node
         }
     }
 
-    /*  ★游戏版本守卫 (2026-09-29): 本 mod 基于 v0.111.0 开发。实测有玩家用 v0.107 运行时,
-        逆生一重能量结算错乱、二重打出后手握三重直接全场冻死 —— 111 前后引擎改过回合/能量
-        结算管线, 老版本里我们的调用行为对不上。启动时读游戏根目录 release_info.json,
-        版本不符就打醒目错误, 让"莫名卡死"第一时间能看到原因。 */
-    private const string SupportedGameVersion = "v0.111.0";
+    /*  ★游戏版本守卫 (2026-11-15 迁移到 v0.113.1): v0.113.0 把血条/交互 API 整组重命名
+        (ToggleIsInteractable → SetIsInteractable、IsHealthBarVisible → IsInteractable),
+        AfterDeath 增加 CardModel 参数, 引擎 SingletonModel 被删除、BaseLib 基类随之改为 AbstractModel;
+        v0.113.1 又把 AttackCommand.Execute 的伤害结算改走
+        CreatureCmd.Damage(IEnumerable<DamageTargetData>, ...) 新重载 (太极重定向补丁已同步覆盖)。
+        版本不符时旧 API 解析失败会让战斗房间创建中断 (角色站位错乱、敌人不显示、进战斗卡死)。
+        启动时读游戏根目录 release_info.json, 版本不符就打醒目错误。 */
+    private const string SupportedGameVersion = "v0.113.1";
 
     private static void CheckGameVersion()
     {
@@ -114,8 +117,8 @@ public partial class MainFile : Node
             Logger.Error(
                 $"\n========================================\n" +
                 $"[版本守卫] ★游戏版本不匹配! 当前游戏 = {ver}, 本 mod 基于 {SupportedGameVersion} 开发。\n" +
-                $"[版本守卫] 旧版本上会出现: 逆生一重能量结算错误、打出逆生二重后全场冻死等恶性问题。\n" +
-                $"[版本守卫] 请把游戏更新到 {SupportedGameVersion}。\n" +
+                $"[版本守卫] 版本不符时可能出现: 战斗房间创建中断 (角色站位错乱、敌人不显示) 等恶性问题。\n" +
+                $"[版本守卫] 请把游戏切换到 {SupportedGameVersion}。\n" +
                 $"========================================");
         }
         catch (Exception ex)

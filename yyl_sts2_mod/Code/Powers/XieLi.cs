@@ -8,7 +8,6 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Patches;
@@ -24,25 +23,17 @@ namespace yyl_sts2_mod.Code.Powers;
 ///         预览不会触发该钩子。
 ///     </para>
 ///     <para>
-///         ★2026-10-02 修正叠层丢失: 原实现用**一个全层共享的 <c>_used</c> 布尔**,
-///         被打中一次就 <c>PowerCmd.Remove(this)</c> 移除整个 power ——
-///         叠 3 层时一次攻击全消失(用户实测反馈)。
-///         改为<b>按层消耗</b>: 用 <c>_consumed</c> 记录已消耗的层数,
-///         <c>Amount</c> 恒等于总层数(卡面显示的层数 = 还能挡几次),
-///         剩余层数耗尽才移除整个 power。
+///         ★2026-11-17 用户定调: 层数必须<b>真实递减并显示在 UI 上</b> —— 此前用隐藏
+///         <c>Consumed</c> 计数、<c>Amount</c> 恒定不变, 玩家看到层数不动还以为没生效,
+///         具有误导性。现改为直接 <c>PowerCmd.Decrement(this)</c>: 每挡下一次攻击减 1 层,
+///         <b>层数即剩余可挡次数</b>, 减到 0 由引擎命令管线自动散去 (照原版 ToricToughnessPower)。
+///         只要还剩层, 后续攻击依旧减半, 直到耗尽。
 ///     </para>
 /// </summary>
 public sealed class XieLi : yylPowerModel, IModifyDamageMultiplicative
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
-
-    /// <summary>已被消耗掉的层数 (= 挡掉的攻击次数)。</summary>
-    [SavedProperty]
-    private int Consumed { get; set; }
-
-    /// <summary>还剩几层可用(未消耗的层数)。</summary>
-    private int Remaining => Amount - Consumed;
 
     public decimal ModifyDamageMultiplicativeCompability(
         Creature? target,
@@ -52,8 +43,8 @@ public sealed class XieLi : yylPowerModel, IModifyDamageMultiplicative
         CardModel? cardSource,
         CardPlay? cardPlay)
     {
-        // ★按"是否还有未消耗的层"判定, 不再用全局布尔 —— 叠层时每层各挡一次。
-        if (Remaining <= 0) return 1m;
+        // ★层数即剩余可挡次数 (真实递减, UI 可见)。无层时不再减伤。
+        if (Amount <= 0) return 1m;
         if (target != Owner) return 1m;
         if (props.HasFlag(ValueProp.Unpowered)) return 1m;
         return 0.5m;
@@ -61,8 +52,8 @@ public sealed class XieLi : yylPowerModel, IModifyDamageMultiplicative
 
     public override async Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
     {
-        // 已被打空(理论上不会走到, 因为空时会Remove) → 直接返回。
-        if (Remaining <= 0) return;
+        // 无层(理论上不会走到, 因为减到 0 时命令管线会自动散去) → 直接返回。
+        if (Amount <= 0) return;
 
         // ★必须确认"这一击确实打在自己身上" —— 否则玩家打出空挥/ 打给别人也会消耗层数。
         var hitMe = command.Results
@@ -70,14 +61,10 @@ public sealed class XieLi : yylPowerModel, IModifyDamageMultiplicative
             .Any(result => result.Receiver == Owner);
         if (!hitMe) return;
 
-        // 消耗一层。
-        Consumed++;
-
-        // 层数耗尽 → 移除整个 power(引擎 SetAmount/Amount 归零不会自动移除, 必须显式 Remove)。
-        if (Remaining <= 0)
-        {
-            await PowerCmd.Remove(this);
-        }
+        // 真实减 1 层 (照原版 ToricToughnessPower: 走命令管线, 联机同步, 归零自动散去)。
+        //   每次 AfterAttack 对应"单个敌人的一次攻击命令", 多段攻击算一次 → 只减 1 层。
+        //   减到 0 后引擎自动移除; 若仍有层, 下次攻击继续减半。
+        await PowerCmd.Decrement(this);
     }
 
     /*  ★2026-09-22 用户定调: 卸力改为**不随回合减少**的 buff。

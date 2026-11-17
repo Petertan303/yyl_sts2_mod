@@ -23,7 +23,7 @@ public sealed class BorrowForce(
     CardType type,
     CardRarity rarity,
     TargetType targetType,
-    bool shouldShowInCardLibrary = true)
+    bool shouldShowInCardLibrary = false)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
     // [balance 2026-09-22] 雪藏: 稀有度 Uncommon → Basic, 暂离卡池 (虚弱进攻回报件, 删后虚弱转纯防御向, 后续再评估)。

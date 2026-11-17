@@ -14,6 +14,7 @@ using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Character;
 using yyl_sts2_mod.Code.Commands;
 using yyl_sts2_mod.Code.Events;
+using yyl_sts2_mod.Code.Powers;
 using yyl_sts2_mod.Code.Utils;
 
 namespace yyl_sts2_mod.Code.Relics;
@@ -42,7 +43,10 @@ public sealed class NlCan2 : yylRelicModel
         PlayerChoiceContext choiceContext,
         ICombatState combatState)
     {
-        if (player != Owner || Owner.PlayerCombatState is not { TurnNumber: 1 }) return;
+        if (player != Owner) return;
+        // ★ [2026-10-19 联机修复] 同 PeachCan: 去掉 TurnNumber == 1 守卫 (联机各玩家
+        //   起始回合数会错开 ⇒ 整个初始化被跳过 ⇒ 开局 0 炁、耗炁卡全废), 改用幂等标记。
+        if (Owner.Creature.GetPower<StarterSetup>() != null) return;
 
         await yylCmd.GainQi(choiceContext, player, InitialQi, this, null);
 
@@ -62,5 +66,8 @@ public sealed class NlCan2 : yylRelicModel
 
         // 心魔 buff 被赋予实体时: 发出奶龙的声音
         yylAudio.PlaySfx(yylAudio.Sfx("nailong/nailong_voice.ogg"), 0.9f);
+
+        // 打上幂等标记 (最后挂: 中途异常也不会漏发)
+        await PowerCmd.Apply<StarterSetup>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
     }
 }

@@ -35,6 +35,8 @@ public static class GlowRegistry
         [typeof(FiveThunderLaw)] = HasAegis,
         [typeof(RisingPalm)] = HasAegis,
         [typeof(CloseGate)] = HasAegis,
+        // 返照: 后半段「消耗全部金光 → 2 倍回流」只在有金光护体时触发, 与上面同款条件金光。
+        [typeof(BaoShan)] = HasAegis,
         // ---- 本回合获得过炁 (伪 0 费) ----
         [typeof(BurstFist)] = c => QiGainTracker.GainedThisRound(
             c.Owner, c.Owner.Creature.CombatState),

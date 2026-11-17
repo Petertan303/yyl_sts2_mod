@@ -11,7 +11,7 @@ using yyl_sts2_mod.Code.Powers;
 namespace yyl_sts2_mod.Code.Cards.Common;
 
 /// <summary>
-///     炁化金光: 1 费, 失去 1 点炁, 获得 1 → 2 层金光护体, 并获得 6 → 9 点格挡。
+///     炁化金光: 1 费, 失去 1 点炁, 获得 4 层金光护体 (升级不加层), 并获得 6 → 9 点格挡。
 ///     炁(攻击端)与金光护体(防御端)之间的转换器。
 ///     [rule 2026-09-18] 耗炁卡统一判定: 炁不足时无额外效果 (不失去炁, 也不获得护体/格挡)。
 /// </summary>
@@ -26,8 +26,8 @@ public sealed class QiTransmute(
 {
     public QiTransmute() : this(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
-        WithBlock(6, 3);
-        WithPower<GoldenAegis>(1, 1);
+        WithBlock(5, 3);
+        WithPower<GoldenAegis>(4, 0);
         // 仅用于卡面显示: 这张卡要花掉的炁
         WithPower<Qi>("QiLoss", 1, 0);
     }

@@ -57,9 +57,11 @@ public class yylModel() : CustomSingletonModel(HookType.Combat)
 
         // 「逆生一重」的首格挡翻倍由隐藏 Power 承载 (原版坚定不移 UnmovablePower 同款管线):
         // 块值分发(ModifyBlockMultiplicative)不吃 ModHelper 订阅的模型, 姿态上的重写从不触发。
-        // 进一重挂上, 切到其它姿态/退出时移除。
+        // ★2026-11-16 用户定调: 二重「保留逆生一重效果」→ 进一重/二重都挂上;
+        // 三重失去二重效果 → 进场时移除, 之后由 RebirthStanceThree 的回合逻辑按
+        // 「无无实体的回合挂 / 无实体回合移」的节奏管理; 其余姿态照旧移除。
         var ward = player.Creature.GetPower<RebirthStanceOnePower>();
-        if (newCanonical is RebirthStanceOne)
+        if (newCanonical is RebirthStanceOne or RebirthStanceTwo)
         {
             if (ward == null)
                 await PowerCmd.Apply<RebirthStanceOnePower>(ctx, new[] { player.Creature }, 1m, player.Creature, source);

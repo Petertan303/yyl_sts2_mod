@@ -1,8 +1,39 @@
-[gd_scene load_steps=2 format=3 uid="uid://b85i7gh02ny56"]
+[gd_scene load_steps=7 format=3 uid="uid://b85i7gh02ny56"]
 
-[ext_resource type="Texture2D" uid="uid://b3rqfnynofjd7" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_dphec"]
+[ext_resource type="Texture2D" path="res://yyl_sts2_mod/images/ui/contact_shadow_mul.png" id="4_cshdw"]
+[ext_resource type="Texture2D" path="res://yyl_sts2_mod/images/ui/character_silhouette.png" id="5_silh"]
+[ext_resource type="Texture2D" uid="uid://xxpiv5nlluto" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_dphec"]
+[ext_resource type="Texture2D" uid="uid://0ec3eynyimq4" path="res://yyl_sts2_mod/images/ui/shadow_oval.png" id="2_shdw"]
+[ext_resource type="Texture2D" uid="uid://cqy3tsku472er" path="res://yyl_sts2_mod/images/pets/snake_flower_miss.png" id="3_pet"]
 
-[node name="YylMerchant" type="Node2D"]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_cshdw"]
+blend_mode = 3
+
+[node name="YylMerchant" type="Node2D" groups=["yyl_merchant_visual"]]
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(-19, -4)
+scale = Vector2(1.7, 1.7)
+texture = ExtResource("2_shdw")
+
+[node name="PetSprite" type="Sprite2D" parent="."]
+visible = false
+clip_children = 2
+position = Vector2(116, -25.6)
+offset = Vector2(0, -124)
+scale = Vector2(1.0276968, 1.0277985)
+texture = ExtResource("3_pet")
+
+[node name="CharShadow" type="Sprite2D" parent="PetSprite"]
+modulate = Color(0, 0, 0, 0.5)
+position = Vector2(-8.5, -177.9)
+scale = Vector2(1.935, 1.935)
+texture = ExtResource("5_silh")
+
+[node name="ContactShadow" type="Sprite2D" parent="PetSprite"]
+material = SubResource("CanvasItemMaterial_cshdw")
+position = Vector2(-105, 6)
+texture = ExtResource("4_cshdw")
 
 [node name="Yyl" type="Sprite2D" parent="."]
 position = Vector2(-19, -189.00002)

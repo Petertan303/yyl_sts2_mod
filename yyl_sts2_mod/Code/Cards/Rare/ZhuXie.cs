@@ -20,8 +20,8 @@ using yyl_sts2_mod.Code.Utils;
 namespace yyl_sts2_mod.Code.Cards.Rare;
 
 /// <summary>
-///     诛邪: 1 费, 造成 12 → 18 伤害。若目标**因此死亡**, **立即处决**其他所有生命值
-///     不高于 {Threshold} 点的敌人 (无视格挡)。
+///     诛邪: 1 费, 造成 8 → 12 伤害。若目标**因此死亡**, **立即处决**其他所有生命值
+///     不高于 {Threshold} (基础 35) 点的敌人 (无视格挡)。
 ///     <para>
 ///         [balance 2026-09-19] 斩杀线由"最大生命值 50%"改为**定值**, 斩杀仍走伤害管线。
 ///     </para>
@@ -31,6 +31,14 @@ namespace yyl_sts2_mod.Code.Cards.Rare;
 ///         导致卡面显示的斩杀线随炁量膨胀而与实际判定脱节。
 ///     </para>
 ///     <para>
+///         [2026-10-07] **降强度**（用户定调）: 本体 <b>12→18 改为 8→12</b>,
+///         斩杀线 <b>40→50 改为 35→45</b>。
+///         原因: 处决走 <c>CreatureCmd.Kill</c> 即死（无视格挡与减伤）, 而第一幕杂兵血量
+///         11~36 <b>全部</b>落在旧阈值 40 以下 ⇒ 旧版在第一幕几乎必然触发,
+///         <b>1 费清空整个低血编队</b>, 且护甲/金光护体/减伤类power 全部挡不住。
+///         降本体伤害 = 提高「必须恰好斩杀」的苛刻度; 降阈值 = 让中型敌人(45~60)
+///         退出连锁范围, 精英(70+)仍完全免疫。
+///     <para/>
 ///         [2026-10-03] 双重改版:
 ///         <list type="bullet">
 ///             <item>处决方式: "造成等同其最大生命的伤害" → **<c>CreatureCmd.Kill</c> 即死</c>。
@@ -41,9 +49,9 @@ namespace yyl_sts2_mod.Code.Cards.Rare;
 ///                 原版数据: 第一幕杂兵血量 Inklet 11-18 / CorpseSlug 25-29 / LeafSlime 32-36
 ///                 多在 40 以下, 而 Myte 61-69 / Chomper 60-67 / 精英 Boss 更高 ——
 ///                 单斩一个在这些编队里浪费了其余目标。</item>
-///             <item>阈值改为**可升级: 40 → 50**(<c>WithVar("Threshold", 40, 10)</c>,
+///             <item>阈值**可升级**（即 35 → 45）(<c>WithVar("Threshold", 35, 10)</c>,
 ///                 卡面用 <c>{Threshold:diff()}</c> 才有升级差分高亮);
-///                 本体伤害 9→13 提到 <b>12→18</b>, 降低"必须恰好斩杀"的苛刻度。</item>
+///                 本体伤害 12→18。</item>
 ///             <item>特效修复: 处决演出以前"改完代码就不播"了 —— 因为
 ///                 <c>CreatureCmd.Kill</c> 会 <c>RemoveCreatureNode</c>,
 ///                 而 <c>GrandFinaleImpact(creature)</c> 依赖 <c>GetCreatureNode</c>拿坐标,
@@ -63,7 +71,12 @@ public sealed class ZhuXie(
 {
     public ZhuXie() : this(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
     {
-        WithDamage(12, 6);
+        // ★2026-10-07 降强度(用户定调): 本体 12→18 改为 **8→12**, 斩杀线 40→50 改为 **35→45**。
+        //   原因: 处决走 CreatureCmd.Kill(无视格挡/减伤), 而第一幕杂兵血量 11~36 **全部**落在旧阈值 40 以下
+        //   ⇒ 旧版在第一幕几乎必然触发, 1 费清空整个低血编队, 且没有任何防御手段能挡。
+        //   降本体伤害 = 提高"必须恰好斩杀"的苛刻度(小怪更难被单张打死);
+        //   降阈值 = 让中型敌人(45~60)退出连锁范围, 精英(70+)仍完全免疫。
+        WithDamage(8, 4);
         // ★2026-10-02 修「斩杀线随炁增长」: 原来用 WithCalculatedDamage("Threshold", ...),
         //   它建立的是 **CustomCalculatedDamageVar**(带 ValueProp.Move),
         //   于是被「炁」的 IModifyDamageMultiplicative 乘区乘了进去 ——
@@ -77,9 +90,9 @@ public sealed class ZhuXie(
     }
 
     /// <summary>处决线(基础): 生命值 ≤ 此值的敌人会被即死(定值, 不随炁变化)。</summary>
-    public const int ThresholdBase = 40;
+    public const int ThresholdBase = 35;
 
-    /// <summary>升级带来的处决线增量: 40 → 50。</summary>
+    /// <summary>升级带来的处决线增量: 35 → 45。</summary>
     public const int ThresholdUpgrade = 10;
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
