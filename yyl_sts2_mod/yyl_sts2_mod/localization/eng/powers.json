@@ -132,5 +132,8 @@
   "YYL_STS2_MOD-DAZZLED_TARGET.smartDescription": "Damage dealt to this enemy is increased by {Amount}x, until you play your next Attack on it.",
   "YYL_STS2_MOD-NEXT_SKILL_DOUBLE_BLOCK.title": "Focused Guard",
   "YYL_STS2_MOD-NEXT_SKILL_DOUBLE_BLOCK.description": "Your next Skill grants double Block.",
-  "YYL_STS2_MOD-NEXT_SKILL_DOUBLE_BLOCK.smartDescription": "Your next Skill grants double Block."
+  "YYL_STS2_MOD-NEXT_SKILL_DOUBLE_BLOCK.smartDescription": "Your next Skill grants double Block.",
+  "YYL_STS2_MOD-CARD_SFX_DRIVER.title": "Battle Tune",
+  "YYL_STS2_MOD-CARD_SFX_DRIVER.description": "Yilin's battle tune plays as you play cards. (hidden mechanic)",
+  "YYL_STS2_MOD-CARD_SFX_DRIVER.smartDescription": "Yilin's battle tune plays as you play cards."
 }

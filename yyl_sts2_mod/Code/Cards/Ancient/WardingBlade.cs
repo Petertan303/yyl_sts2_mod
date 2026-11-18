@@ -13,12 +13,18 @@ namespace yyl_sts2_mod.Code.Cards.Ancient;
 
 /// <summary>
 ///     辟邪剑法: 先古卡, 由先古 NPC 赠予 (坦克斯最合适 —— 台词里他就在找武器)。
-///     造成 8 → 11 点伤害; 若目标身上带有任何负面状态 (易伤 / 虚弱 / 中毒 / 奶龙),
-///     本次伤害翻倍。
+///     造成 6 → 8 点伤害 ×3 段; 若目标身上带有易伤 / 虚弱 / 中毒, 本次伤害翻倍。
 ///     <para>
 ///         「辟邪」= 专克邪祟: 目标越脏, 这一剑越重。
 ///         和现有的铺 debuff 体系 (掌心雷 / 风后奇门 / 破防 / 投喂) 天然闭环,
 ///         是先古卡里"越到中后期越强"的那一张。
+///     </para>
+///     <para>
+///         ★2026-11-18 降强度(用户定调): ①伤害 8→11 下调为 6→8 (三段翻倍态 48→66 降为 36→48);
+///         ②去掉「奶龙标记」作为翻倍条件 —— 初始遗物黄桃罐头开局就把所有敌人标记成奶龙,
+///         等于白送翻倍, 让"需要铺 debuff"的设计前提形同虚设。现在只认易伤/虚弱/中毒,
+///         必须真的铺出负面状态才能吃到翻倍。
+///         ⚠ 三段各吃一次力量 (引擎 Execute 按 hitCount 循环调用伤害管线), 故段伤不宜再高。
 ///     </para>
 /// </summary>
 [Pool(typeof(yyl_sts2_modCardPool))]
@@ -33,7 +39,7 @@ public sealed class WardingBlade(
 {
     public WardingBlade() : this(1, CardType.Attack, CardRarity.Ancient, TargetType.AnyEnemy)
     {
-        WithDamage(8, 3);
+        WithDamage(6, 2); // 基础 6, 升级 +2 → 8 (三段翻倍态 36 → 48)
         WithVars(new RepeatVar(3));
         // WithCostUpgradeBy(-1);
     }
@@ -61,9 +67,9 @@ public sealed class WardingBlade(
     private static bool HasAnyDebuff(Creature? target)
     {
         if (target is not { IsAlive: true }) return false;
+        // ★2026-11-18: 去掉奶龙标记 —— 初始遗物黄桃罐头开局全员标记奶龙, 会白送翻倍。
         return target.HasPower<VulnerablePower>()
                || target.HasPower<WeakPower>()
-               || target.HasPower<PoisonPower>()
-               || yylNailong.IsNailong(target);
+               || target.HasPower<PoisonPower>();
     }
 }

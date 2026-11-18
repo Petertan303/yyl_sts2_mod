@@ -109,7 +109,7 @@ public class GoldenAegis : yylPowerModel
             return amount;
 
         // 只减"敌方来源"的掉血: dealer 为空 (中毒/状态牌/自伤类 LoseHp) 或来自己方
-        // (联机误伤) 时不减 —— 否则燃炁/拉伤这类固定代价也会被金光吃掉。
+        // (联机误伤) 时不减 —— 否则燃炁/内伤这类固定代价也会被金光吃掉。
         if (dealer == null || dealer.Side == Owner.Side)
             return amount;
 
@@ -207,6 +207,37 @@ public class GoldenAegis : yylPowerModel
     private const string IdleSdfPath = FrameSdfDir + "yyl.png";
     private static readonly Dictionary<string, Texture2D?> FrameSdfCache = new();
 
+    // ── 奶龙形态的金光轮廓 (2026-11-18) ────────────────────────────────────
+    // 大瓶罐头变身奶龙后, 立绘换成静态的 nailong_idle/guard.png (scale 0.6066 / pos -140);
+    // 三层金光的 SDF 必须同步换成奶龙贴图生成的版本, 否则描边仍是伊林轮廓。
+    // pose: 0=原伊林(用逐帧SDF), 1=奶龙立正, 2=奶龙马步。
+    private const string NailongIdleSdf = FrameSdfDir + "nailong_idle.png";
+    private const string NailongGuardSdf = FrameSdfDir + "nailong_guard.png";
+    private static int _nailongPose; // 静态即可: 单主角 mod, 变身只针对玩家
+    private static Texture2D? _nailongIdleTex;
+    private static Texture2D? _nailongGuardTex;
+
+    /// <summary>
+    ///     由奶龙视觉控制器调用, 切换金光轮廓适配的立绘形状。
+    ///     pose: 0=恢复原伊林逐帧SDF, 1=奶龙立正, 2=奶龙马步。切换后强制刷一次金光。
+    /// </summary>
+    public static void SetNailongPose(Creature creature, int pose)
+    {
+        if (_nailongPose == pose) return;
+        _nailongPose = pose;
+        RefreshVfx(creature);
+        MainFile.Logger.Info($"[yyl] 金光轮廓: 切换到 {(pose == 0 ? "原伊林" : pose == 1 ? "奶龙立正" : "奶龙马步")}");
+    }
+
+    /// <summary>
+    ///     每场战斗开始把静态形态归零 (不刷 VFX —— 此时金光节点可能还没建好)。
+    ///     ★为什么需要: NailongVisuals.Remove 无处可挂、从未调用, 一旦某场变过奶龙,
+    ///     _nailongPose 就跨战斗残留, 导致下一场即使没大瓶, SyncFrameSdf 也一直 early-return,
+    ///     金光轮廓停在奶龙贴图上 (伊林立绘 + 奶龙剪影的错位)。有大瓶时随后的
+    ///     NlCan2.BeforeHandDraw → NailongVisuals.Apply 会再设回 1/2, 顺序上不冲突。
+    /// </summary>
+    public static void ResetNailongPose() => _nailongPose = 0;
+
     private static Texture2D? GetFrameSdf(string? frameTexPath)
     {
         var name = string.IsNullOrEmpty(frameTexPath)
@@ -229,6 +260,9 @@ public class GoldenAegis : yylPowerModel
     {
         try
         {
+            // ★奶龙形态 (2026-11-18): 逐帧 hook 会把 SDF 覆盖回原伊林帧 —— 变身期间必须跳过。
+            //   奶龙是静态 Sprite2D, 本来也不该走逐帧 SDF。恢复原形态(pose=0)由 ApplyNailongSdf 显式处理。
+            if (_nailongPose != 0) return;
             if (anim.SpriteFrames == null) return;
             var frameTex = anim.SpriteFrames.GetFrameTexture(anim.Animation, anim.Frame);
             var sdf = GetFrameSdf(frameTex?.ResourcePath);
@@ -241,6 +275,72 @@ public class GoldenAegis : yylPowerModel
             MainFile.Logger.Warn($"[yyl_sts2_mod] 金光逐帧SDF同步失败: {ex.Message}");
         }
     }
+
+    /// <summary>
+    ///     按当前奶龙形态把三层金光的 SDF 贴图与 transform 对齐到奶龙立绘。
+    ///     pose=0 时恢复原伊林 transform + 当前动画帧的逐帧 SDF（切回原形态时调用）。
+    /// </summary>
+    private static void ApplyNailongSdf(Sprite2D body, Sprite2D inner, Sprite2D outer)
+    {
+        try
+        {
+            var layers = new[] { body, inner, outer };
+            if (_nailongPose == 0)
+            {
+                // 恢复原伊林 transform + 当前帧的逐帧 SDF (切回原形态时必须显式恢复,
+                // 否则动画不换帧时 texture 会停在奶龙版)
+                foreach (var layer in layers)
+                {
+                    if (layer.Position != OriginalAegisPos) layer.Position = OriginalAegisPos;
+                    if (layer.Scale != OriginalAegisScale) layer.Scale = OriginalAegisScale;
+                }
+                var parent = body.GetParent();
+                if (parent?.GetNodeOrNull("Visuals") is AnimatedSprite2D anim && anim.SpriteFrames != null)
+                {
+                    var frameTex = anim.SpriteFrames.GetFrameTexture(anim.Animation, anim.Frame);
+                    var frameSdf = GetFrameSdf(frameTex?.ResourcePath);
+                    if (frameSdf != null)
+                        foreach (var layer in layers)
+                            if (layer.Texture != frameSdf) layer.Texture = frameSdf;
+                }
+                return;
+            }
+
+            Texture2D? sdf;
+            if (_nailongPose == 1)
+            {
+                _nailongIdleTex ??= ResourceLoader.Load<Texture2D>(NailongIdleSdf);
+                sdf = _nailongIdleTex;
+            }
+            else
+            {
+                _nailongGuardTex ??= ResourceLoader.Load<Texture2D>(NailongGuardSdf);
+                sdf = _nailongGuardTex;
+            }
+            if (sdf == null)
+            {
+                MainFile.Logger.Warn($"[yyl] 奶龙金光SDF加载失败: pose={_nailongPose}");
+                return;
+            }
+
+            foreach (var layer in layers)
+            {
+                if (layer.Texture != sdf) layer.Texture = sdf;
+                if (layer.Position != NailongAegisPos) layer.Position = NailongAegisPos;
+                if (layer.Scale != NailongAegisScale) layer.Scale = NailongAegisScale;
+            }
+            MainFile.Logger.Info($"[yyl] 奶龙金光SDF: pose={_nailongPose} tex={sdf.GetSize()} layerPos={body.Position} layerScale={body.Scale}");
+        }
+        catch (Exception ex)
+        {
+            MainFile.Logger.Warn($"[yyl] 奶龙金光SDF切换失败: {ex.Message}");
+        }
+    }
+
+    private static readonly Vector2 OriginalAegisPos = new(0f, -139.00002f);
+    private static readonly Vector2 OriginalAegisScale = new(1.2870026f, 1.3421055f);
+    private static readonly Vector2 NailongAegisPos = new(0f, -140f);
+    private static readonly Vector2 NailongAegisScale = new(0.6066f, 0.6066f);
 
     private static void EnsureFrameSdfHook(AnimatedSprite2D anim, Sprite2D[] layers)
     {
@@ -352,6 +452,10 @@ public class GoldenAegis : yylPowerModel
             innerMat.SetShaderParameter("intensity", Math.Min(0.60f, 0.40f + stacks * 0.01f));
             bodyMat.SetShaderParameter("intensity", Math.Min(0.25f, 0.10f + stacks * 0.003f));
             outerMat.SetShaderParameter("intensity", Math.Min(0.95f, 0.20f + stacks * 0.015f));
+
+            // ★奶龙形态 (2026-11-18): 三层金光换成奶龙 SDF, 并跟随奶龙立绘的 transform。
+            //   每次刷新都重设 —— 兼顾"从原形态切换过来"和"帧 hook 可能覆盖 texture"两种情况。
+            ApplyNailongSdf(body, inner, outer);
 
             // 佛光强度不在此处直接设置 —— 由上方点亮淡入 / 层数变化逻辑统一驱动
             // (FadeAuraTo / AuraTargetIntensity), 避免 tween 被直设值覆盖导致淡入失效。

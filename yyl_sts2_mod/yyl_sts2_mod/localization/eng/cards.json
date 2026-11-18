@@ -87,7 +87,7 @@
   "YYL_STS2_MOD-GUARD_STANCE.title": "Defensive Stance",
   "YYL_STS2_MOD-GUARD_STANCE.description": "Each stack of [gold]Golden Aegis[/gold] reduces damage taken by an additional {ShouShi:diff()} point, but [gold]Qi[/gold] no longer provides a damage bonus.",
   "YYL_STS2_MOD-SHI_QI.title": "Devour Qi",
-  "YYL_STS2_MOD-SHI_QI.description": "Deal {BaseDamage:diff()} damage. If this [gold]kills[/gold], gain {QiRefund:diff()} [gold]Qi[/gold]. Costs {QiCost} [gold]Qi[/gold].",
+  "YYL_STS2_MOD-SHI_QI.description": "Deal {Damage:diff()} damage. If this [gold]kills[/gold], gain {QiRefund:diff()} [gold]Qi[/gold]. Costs {QiCost} [gold]Qi[/gold].",
   "YYL_STS2_MOD-DIVINATION.title": "Divination",
   "YYL_STS2_MOD-DIVINATION.description": "Scry {Cards:diff()} card(s). Lose {QiLoss:diff()} [gold]Qi[/gold], then draw {Draw:diff()} card(s); if you have no Qi, you only Scry.",
   "YYL_STS2_MOD-BAO_SHAN.title": "Golden Echo",
@@ -148,7 +148,7 @@
   "YYL_STS2_MOD-ZU_QI_FORM.title": "Ancestral Qi Form",
   "YYL_STS2_MOD-ZU_QI_FORM.description": "Your [gold]Qi[/gold] damage bonus no longer decays: each point of [gold]Qi[/gold] increases damage you deal by {ZuQiForm:diff()}%.",
   "YYL_STS2_MOD-BLOOD_THUNDER.title": "Blood Thunder",
-  "YYL_STS2_MOD-BLOOD_THUNDER.description": "Deal {Damage:diff()} damage. Add two [gold]Strain[/gold] to your discard pile.",
+  "YYL_STS2_MOD-BLOOD_THUNDER.description": "Deal {Damage:diff()} damage. Add one [gold]Internal Injury[/gold] to your hand.",
   "YYL_STS2_MOD-BURN_QI.title": "Burn Qi",
   "YYL_STS2_MOD-BURN_QI.description": "Lose {HpLoss:diff()} HP. Gain {Qi:diff()} [gold]Qi[/gold]. Draw {Cards:diff()} cards.",
   "YYL_STS2_MOD-DARK_HUMOR.title": "Dark Humor",
@@ -192,7 +192,7 @@
 
 
   "YYL_STS2_MOD-WARDING_BLADE.title": "Evil-Warding Swordplay",
-  "YYL_STS2_MOD-WARDING_BLADE.description": "Deal {Damage:diff()} damage {Repeat:diff()} times. If the target has [gold]Vulnerable[/gold], [gold]Weak[/gold], [gold]Poison[/gold] or the [gold]Nailong[/gold] mark, this damage is doubled.",
+  "YYL_STS2_MOD-WARDING_BLADE.description": "Deal {Damage:diff()} damage {Repeat:diff()} times. If the target has [gold]Vulnerable[/gold], [gold]Weak[/gold] or [gold]Poison[/gold], this damage is doubled.",
   "YYL_STS2_MOD-WHITE_WORM.title": "White Worm",
   "YYL_STS2_MOD-WHITE_WORM.description": "Deal {Damage:diff()} damage to all enemies {Repeat:diff()} times, and apply {VulnerablePower:diff()} [gold]Vulnerable[/gold] and {WeakPower:diff()} [gold]Weak[/gold]. If you have [gold]Golden Aegis[/gold], consume 1 stack and each hit deals {Bonus:diff()} more damage.",
 
@@ -203,8 +203,8 @@
   "YYL_STS2_MOD-REBIRTH_THREE.description": "Enter [gold]Reverse Life III[/gold]. Gain 1 [gold]Intangible[/gold] immediately, then 1 more every other turn; lose the [gold]Reverse Life II[/gold] effect. On turns without [gold]Intangible[/gold], keep [gold]Reverse Life I[/gold]'s first-Block doubling.",
   "YYL_STS2_MOD-SNAKE_FLOWER_BITE.title": "Snake Flower Bite",
   "YYL_STS2_MOD-SNAKE_FLOWER_BITE.description": "Deal {PetDamage:diff()} damage 3 times. Apply 2 [gold]Weak[/gold].",
-  "YYL_STS2_MOD-LA_SHANG.title": "Strain",
-  "YYL_STS2_MOD-LA_SHANG.description": "Unplayable. If this card is in your hand at the end of the turn, lose {HpLoss:diff()} HP.",
+  "YYL_STS2_MOD-LA_SHANG.title": "Internal Injury",
+  "YYL_STS2_MOD-LA_SHANG.description": "If this card is in your hand at the end of the turn, lose {HpLoss:diff()} HP.",
 
 
   "YYL_STS2_MOD-SNAKE_FLOWER.title": "Snake Flower",

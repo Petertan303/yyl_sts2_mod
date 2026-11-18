@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://b85i7gh02ny56"]
+[gd_scene load_steps=8 format=3 uid="uid://b85i7gh02ny56"]
 
+[ext_resource type="Texture2D" uid="uid://cswagvklqyhv0" path="res://yyl_sts2_mod/images/charui/nailong_idle.png" id="6_nailong"]
 [ext_resource type="Texture2D" path="res://yyl_sts2_mod/images/ui/contact_shadow_mul.png" id="4_cshdw"]
 [ext_resource type="Texture2D" path="res://yyl_sts2_mod/images/ui/character_silhouette.png" id="5_silh"]
 [ext_resource type="Texture2D" uid="uid://xxpiv5nlluto" path="res://yyl_sts2_mod/images/charui/yyl.png" id="1_dphec"]
@@ -39,3 +40,9 @@ texture = ExtResource("4_cshdw")
 position = Vector2(-19, -189.00002)
 scale = Vector2(1.988619, 1.9888158)
 texture = ExtResource("1_dphec")
+
+[node name="NailongIdle" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-19, -185)
+scale = Vector2(0.69, 0.69)
+texture = ExtResource("6_nailong")

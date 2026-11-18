@@ -31,7 +31,7 @@ uniform float sat = 0.75;              // 彩虹饱和度
 uniform vec3 core_color = vec3(1.0, 0.96, 0.78); // 中心发光白金
 uniform float core_mix = 0.9;                    // 白金核心混合强度
 uniform vec3 gold_color = vec3(1.0, 0.82, 0.35); // 光轮主体金色 (温暖纯正金黄)
-uniform float rim_start = 0.5;                  // 边缘彩虹起始位置 (0.0~1.0): 0.6→0.5 (11-17 用户定调, 彩虹往中心挪一点)
+uniform float rim_start = 0.55;                  // 边缘彩虹起始位置 (0.0~1.0): 0.6→0.55 (11-17 用户定调, 彩虹往中心挪一点)
 uniform float rim_power = 1.2;                   // 边缘彩虹过渡曲线 (越大过渡越陡、彩虹越聚拢在边缘)
 // ★2026-11-17: 全彩虹模式 —— 金光≥20层且处于祖炁形态时, 由 GoldenAegis 置 1,
 //   让整个光轮从"金身+边缘彩虹"变为通体彩虹 (呼应初版彩虹外观, 与祖炁联动)。

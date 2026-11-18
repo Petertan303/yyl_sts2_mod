@@ -54,6 +54,12 @@ public sealed class PeachCan : yylRelicModel
         // 3) 挂上手牌金光驱动 (隐藏 Power): 条件牌 (崩拳/金光联动/耗炁卡) 满足条件时发光。
         await PowerCmd.Apply<CardGlowDriver>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
 
+        // ★2026-11-18: 主题出牌音效 CardSfxDriver (Kenney CC0 短音, 只给清单里有意象的卡响)
+        //   两阶段都挂 —— 普通黄桃罐头阶段也要有。大瓶阶段在 NlCan2.BeforeHandDraw 里挂,
+        //   两者是替换关系 (一场战斗只有一个在场), 不会重复。
+        //   注: combat_start.mp3 仍只在大瓶阶段播放, 与出牌音分工不同。
+        await PowerCmd.Apply<CardSfxDriver>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
+
         // 4) 打上幂等标记 (最后挂: 中途异常也不会漏发)。
         await PowerCmd.Apply<StarterSetup>(choiceContext, new[] { Owner.Creature }, 1m, Owner.Creature, null);
     }

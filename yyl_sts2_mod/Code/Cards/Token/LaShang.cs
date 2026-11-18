@@ -12,8 +12,9 @@ using yyl_sts2_mod.Code.Commands;
 namespace yyl_sts2_mod.Code.Cards.Token;
 
 /// <summary>
-///     拉伤: 状态牌。不可打出; 每个回合结束时 (留在手里) 失去 2 点生命。
-///     由「血雷」塞进弃牌堆 —— 是高数值攻击留下的后续账单。
+///     内伤: 状态牌。3 费可打出 (打出即清掉); 每个回合结束时若留在手里, 失去 2 点生命。
+///     由「血雷」塞进手牌 —— 是攻击留下的后续账单, 玩家可花 3 能量主动清理。
+///     2026-11-18 用户定调: 从不可打出 (-1 费) 改为 3 费, 给玩家一个"付费消灾"的选择。
 /// </summary>
 [Pool(typeof(TokenCardPool))]
 public sealed class LaShang(
@@ -24,10 +25,10 @@ public sealed class LaShang(
     bool shouldShowInCardLibrary = true)
     : yylCardModel(canonicalEnergyCost, type, rarity, targetType, shouldShowInCardLibrary)
 {
-    // cost = -1: 与原版"感染/灼伤"等状态牌一致 —— 能量球不渲染, 手中只显示划线图标。
-    public LaShang() : this(-1, CardType.Status, CardRarity.Status, TargetType.None)
+    // ★2026-11-18: 原 -1 费 + Unplayable (原版感染/灼伤同款), 改为 3 费可打出 ——
+    //   玩家可主动花 3 能量把这张账单牌打出, 避免回合末在手里失去 2 血。
+    public LaShang() : this(3, CardType.Status, CardRarity.Status, TargetType.None)
     {
-        WithKeywords(CardKeyword.Unplayable);
         // 每回合结束的自伤 (卡面用)
         WithCalculatedDamage("HpLoss", 2, (_, _) => 0m, 0, 0, 0);
     }

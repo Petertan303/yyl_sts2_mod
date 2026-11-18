@@ -148,7 +148,7 @@ FUNCS = {
     # ---- 任务 Quest（1） ----
     "蛇花": ["局外成长"],
     # ---- 状态 Status（1） ----
-    "拉伤": [],  # 负面状态牌，不计功能标签
+    "内伤": [],  # 负面状态牌，不计功能标签
 }
 
 TAG_ZHS = {
@@ -170,7 +170,7 @@ TAG_ORDER = list(TAG_ZHS.keys())
 
 # ---- 可获得口径（游戏实际能拿到/看到的卡）----
 # 排除四类（用户 2026-11-02 确认）：
-#   衍生 Token×3（蛇花咬/逆生二重/逆生三重）、任务×1（蛇花）、状态×1（拉伤）、
+#   衍生 Token×3（蛇花咬/逆生二重/逆生三重）、任务×1（蛇花）、状态×1（内伤）、
 #   雪藏×9（Basic 池不进奖励且不在 StartingDeck：东尼之霸/侧踹/借力/抢步/撩掌/点穴/纳炁/站桩/回收）
 # 注：游戏图鉴默认显示 88 张 = 常规四稀有度 89 − 东尼之霸(shouldShowInCardLibrary=false)；
 #     先古 2 张与特殊稀有度 5 张靠图鉴筛选开关（_ancientsFilter/_miscPoolFilter）显示。
@@ -178,13 +178,13 @@ TAG_ORDER = list(TAG_ZHS.keys())
 EXCLUDED = {
     "蛇花咬", "逆生二重", "逆生三重",   # Token
     "蛇花",                              # Quest
-    "拉伤",                              # Status
+    "内伤",                              # Status
     "东尼之霸", "侧踹", "借力", "抢步", "撩掌", "点穴", "纳炁", "站桩", "回收",  # 雪藏（站桩/回收 2026-11-02 雪藏）
 }
 
 TOKEN = {"蛇花咬", "逆生二重", "逆生三重"}
 QUEST = {"蛇花"}
-STATUS = {"拉伤"}
+STATUS = {"内伤"}
 SNOW_HIDDEN = EXCLUDED - TOKEN - QUEST - STATUS
 
 # 真初始牌组（StartingDeck 里的 4 种）：Basic 池不进卡牌奖励，不算奖励池分母。

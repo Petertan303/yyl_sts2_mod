@@ -85,6 +85,9 @@ public class yylModel() : CustomSingletonModel(HookType.Combat)
         var state = CombatManager.Instance.DebugOnlyGetState();
         if (state == null) return Task.CompletedTask;
         StanceTagUI.Reset();
+        // ★每场战斗先把静态奶龙形态归零, 避免上一场变过奶龙后金光 SDF 轮廓残留成奶龙
+        //   (伊林立绘 + 奶龙剪影错位)。有大瓶时 NlCan2.BeforeHandDraw 随后会重设为对应姿势。
+        GoldenAegis.ResetNailongPose();
         foreach (var player in state.Players)
         {
             ActiveStance[player] = yylModelDb.yylStance<NoStance>();

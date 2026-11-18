@@ -133,5 +133,8 @@
   "YYL_STS2_MOD-STARTER_SETUP.smartDescription": "开局装备已布置。",
   "YYL_STS2_MOD-STANCE_TIP.title": "姿态",
   "YYL_STS2_MOD-STANCE_TIP.description": "同一时间只能处于一种[gold]姿态[/gold]。进入新[gold]姿态[/gold]会离开当前姿态。",
-  "YYL_STS2_MOD-STANCE_TIP.smartDescription": "同一时间只能处于一种[gold]姿态[/gold]。进入新[gold]姿态[/gold]会离开当前姿态。"
+  "YYL_STS2_MOD-STANCE_TIP.smartDescription": "同一时间只能处于一种[gold]姿态[/gold]。进入新[gold]姿态[/gold]会离开当前姿态。",
+  "YYL_STS2_MOD-CARD_SFX_DRIVER.title": "出牌音",
+  "YYL_STS2_MOD-CARD_SFX_DRIVER.description": "伊林的战斗配乐随出牌响起。",
+  "YYL_STS2_MOD-CARD_SFX_DRIVER.smartDescription": "伊林的战斗配乐随出牌响起。"
 }
