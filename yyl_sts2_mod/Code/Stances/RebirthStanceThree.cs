@@ -38,6 +38,17 @@ public sealed class RebirthStanceThree : RebirthStanceTwo
         BodyTint: new Color(1.1f, 0.95f, 0.65f),
         EnterSfxPath: yylAudio.Sfx("stance/reverse_life3.ogg"));
 
+    /// <summary>
+    ///     ★2026-11-18: 三重"失去逆生二重每回合收益"——二重把这个钩子改成了每回合 8 格挡,
+    ///     而三重继承它却仍白拿这 8 格挡, 与注释/卡面冲突 (11-16 收益从回血改格挡时漏同步子类)。
+    ///     这里 override 且**不调用 base**, 干净去掉二重的 8 格挡; base 链上层
+    ///     (RebirthStanceOne / StanceModel) 并未 override 此钩子, 跳过无副作用。
+    /// </summary>
+    public override Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    {
+        return Task.CompletedTask;
+    }
+
     public override async Task OnEnterStance(PlayerChoiceContext ctx, Player owner, CardModel? source)
     {
         await base.OnEnterStance(ctx, owner, source);

@@ -11,7 +11,7 @@ namespace yyl_sts2_mod.Code.Utils;
 ///     金光护体（<see cref="GoldenAegis" />）的<b>统一消耗入口</b>。
 ///     <para>
 ///         掌心雷 / 白长虫 / 五雷正法 / 返照的主动消耗，以及
-///         <see cref="GoldenAegis.AfterSideTurnEnd" /> 的敌方回合末按「单次命中的最大用层数」衰减，全部走这里。
+///         <see cref="GoldenAegis.AfterPlayerTurnStart" /> 的玩家回合开始按「单次命中的最大用层数」衰减，全部走这里。
 ///         ★ 2026-11-08 用户定调：衰减也走本入口，让它能被「金光化炁」「铜镜」等
 ///         卡牌/遗物捕获利用 —— 这是玩家决策的一种选项，不是需要绕开的漏洞。
 ///     </para>
@@ -23,7 +23,7 @@ public static class yylAegis
         => ConsumeCore(ctx, card.Owner, card, layers);
 
     /// <summary>
-    ///     无卡牌来源的消耗（回合末衰减）。<paramref name="cardSource" /> 可空，
+    ///     无卡牌来源的消耗（玩家回合开始时的自然衰减）。<paramref name="cardSource" /> 可空，
     ///     <c>PowerCmd.Apply</c> 允许传 null（<c>GoldenWard.cs</c> 同款写法）。
     /// </summary>
     public static Task Consume(
@@ -55,7 +55,7 @@ public static class yylAegis
         }
         catch (Exception ex)
         {
-            // 衰减挂在回合末钩子里，抛异常会冻结整场战斗。
+            // 衰减挂在回合钩子里，抛异常会冻结整场战斗。
             MainFile.Logger.Warn($"[yyl_sts2_mod] 金光消耗失败: {ex.GetType().Name}: {ex.Message}");
         }
     }

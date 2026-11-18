@@ -39,9 +39,15 @@ public class RebirthStanceTwo : RebirthStanceOne
     //         await CreatureCmd.GainBlock(Owner.Creature, PerTurnBlock, ValueProp.Unpowered, null);
     // }
 
-    public override Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    /// <summary>
+    ///     每回合开始给 Owner 8 格挡。★2026-11-18 补玩家守卫: AfterPlayerTurnStart 按玩家派发,
+    ///     联机时每个玩家的回合开始都会触发, 不判 player == Owner 会让 Owner 一轮拿多次。
+    ///     (HeartGuard/LongNu/QiHai 同款铁律) 时机在清格挡之后, 格挡能留住。
+    /// </summary>
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
-        CreatureCmd.GainBlock(Owner.Creature, PerTurnBlock, ValueProp.Unpowered, null);
-        return base.AfterPlayerTurnStart(choiceContext, player);
+        if (Owner == null || player == null || player != Owner) return;
+        await CreatureCmd.GainBlock(Owner.Creature, PerTurnBlock, ValueProp.Unpowered, null);
+        await base.AfterPlayerTurnStart(choiceContext, player);
     }
 }

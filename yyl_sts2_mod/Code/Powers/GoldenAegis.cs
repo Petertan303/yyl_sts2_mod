@@ -3,6 +3,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -18,20 +19,24 @@ public class GoldenAegis : yylPowerModel
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    // ── 敌方回合末按「单次命中的最大用层数」衰退 ──────────────────────────────
+    // ── 玩家回合开始时按「单次命中的最大用层数」衰退 ──────────────────────────
     // 2026-11-08 定调 1:1 衰减；2026-11-09 改为按「本次命中实际动用的金光层数」
     //   = ceil(本次实际抵消的掉血 / perStack)，守势(perStack 2 / 3)下挡 3 点只动用 1 层，
     //   于是守势不再「多挡也多付账」，同样层数更耐用。
-    // ★ 2026-11-09 二修（用户定调）：
-    //   ① 结算从玩家回合末改到**敌方回合末**（side != Owner.Side）。敌方攻击发生在
-    //      玩家回合结束之后，旧挂点结的是上一轮账、要等下一回合末才掉层；新挂点打完即结算。
-    //   ② 多段攻击取**最大值**而非累加：敌人 A 打 3×3、敌人 B 打 4 且都被金光挡下时，
-    //      只掉 4 层 = max(3,3,3,4)，不是 13 层也不是 7 层。账本因此只需存一个标量。
+    // ★ 2026-11-09 二修：多段攻击取**最大值**而非累加 —— 敌人 A 打 3×3、敌人 B 打 4
+    //   且都被金光挡下时只掉 4 层 = max(3,3,3,4)。账本因此只需存一个标量。
+    // ★ 2026-11-18 三修（用户定调）：结算挂点从**敌方回合末**改到**玩家回合开始**
+    //   (AfterPlayerTurnStart)。原因: 衰减走 yylAegis.Consume 会触发金光化炁得炁 →
+    //   温养换算格挡; 原挂点在敌方回合末, 格挡在"玩家回合开始清格挡"之前就生成,
+    //   紧接着被 ClearBlock 抹掉 (观感: 挨打→冒格挡→回合开始格挡消失)。
+    //   引擎 StartTurn 顺序: BeforeSideTurnStart → AfterTurnStart(清格挡) →
+    //   AfterSideTurnStart → AfterPlayerTurnStart; 挂 AfterPlayerTurnStart 在清格挡之后,
+    //   产出的格挡能正常留到本回合。与 QiHai 同款修正。
+    //   ⚠ 守卫用 player == Owner.Player 而非 side: 联机时全员同属一个 CombatSide。
+    //   账本 _maxStacksUsedThisPeriod 在敌方回合写入后一直保留到玩家回合开始才读取清零。
     // ⚠ 掉血修正钩子会被伤害预览调用（引擎 HpLossHookPhase.All 文档点名 damage
-    //   previews），所以不能在这里直接入账。用 BeforeDamageReceived 开一笔草稿、
-    //   AfterDamageReceived 确认入账；预览不派发这两个事件，草稿会被下一次真实
-    //   伤害的 Before 清掉，不会污染账本。草稿与账期都取 max，多段命中无论引擎
-    //   怎么分组都不会累加。
+    //   previews），所以不能在那里直接入账。用 BeforeDamageReceived 开草稿、
+    //   AfterDamageReceived 确认入账；预览不派发这两个事件。草稿与账期都取 max。
     private decimal _maxStacksUsedThisPeriod;
     private decimal _draftStacksUsed;
 
@@ -57,18 +62,17 @@ public class GoldenAegis : yylPowerModel
     }
 
     /// <summary>
-    ///     敌方回合结束时，按本账期「单次命中的最大用层数」扣层，走 yylAegis.Consume 统一入口。
-    ///     2026-11-09 用户定调：旧的玩家回合末挂点结的是上一轮账（敌方攻击在其后发生），
-    ///     会晚一整个回合才掉层；改挂敌方回合末（side != Owner.Side）后打完即结算。
+    ///     玩家回合开始时，按本账期「单次命中的最大用层数」扣层，走 yylAegis.Consume 统一入口。
+    ///     2026-11-18 用户定调：从敌方回合末挪到这里 —— 衰减触发的金光化炁得炁 → 温养格挡
+    ///     必须在"玩家回合开始清格挡"之后产出，否则格挡会被同回合的 ClearBlock 抹掉。
     ///     衰减因此会被金光化炁 / 铜镜等 IAegisConsumed 监听者捕获 —— 用户定调这是
     ///     玩家可主动构筑的决策选项，不是漏洞。
     /// </summary>
-    public override async Task AfterSideTurnEnd(
-        PlayerChoiceContext ctx, CombatSide side, IEnumerable<Creature> participants)
+    public override async Task AfterPlayerTurnStart(
+        PlayerChoiceContext ctx, Player player)
     {
-        // 只处理敌方回合结束；这里判的是「谁的回合结束」，联机时全员同属一个 CombatSide，
-        // 与 AfterPlayerTurnStart 里必须判 player == Owner 的情形不同。
-        if (Owner == null || side == Owner.Side) return;
+        // ★联机守卫：全员同属一个 CombatSide，必须判玩家本人（QiHai/HeartGuard 同款）。
+        if (Owner == null || player == null || player != Owner.Player) return;
         try
         {
             var used = _maxStacksUsedThisPeriod;
@@ -78,15 +82,12 @@ public class GoldenAegis : yylPowerModel
             var decay = (int)Math.Min(Math.Floor(used), Amount);
             if (decay <= 0) return;
 
-            var player = Owner.CombatState?.Players.FirstOrDefault(p => p.Creature == Owner);
-            if (player == null) return;
-
-            MainFile.Logger.Info($"[yyl] 金光衰退(敌方回合末): 单次最大用层={used} 扣层={decay} 结算前={Amount}");
+            MainFile.Logger.Info($"[yyl] 金光衰退(玩家回合开始): 单次最大用层={used} 扣层={decay} 结算前={Amount}");
             await yylAegis.Consume(ctx, player, decay, null);
         }
         catch (Exception ex)
         {
-            // 回合末钩子抛异常会冻结整场战斗。
+            // 回合钩子抛异常会冻结整场战斗。
             MainFile.Logger.Warn($"[yyl_sts2_mod] 金光衰退结算失败: {ex.GetType().Name}: {ex.Message}");
         }
     }
@@ -116,7 +117,7 @@ public class GoldenAegis : yylPowerModel
         var perStack = 1m + (Owner.GetPower<ShouShi>()?.Amount ?? 0m);
         // 减到 0 为止 (掉血阶段没有下限钳制, 这是与伤害阶段实现的本质区别)。
         var reduced = Math.Max(0m, amount - Amount * perStack);
-        // 本次命中实际动用的层数 = ceil(实际抵消的掉血 / 每层减伤)，供敌方回合末结算。
+        // 本次命中实际动用的层数 = ceil(实际抵消的掉血 / 每层减伤)，供玩家回合开始结算。
         // 守势下 perStack 为 2 / 3：挡 3 点只动用 1 层，结算时也只掉 1 层。
         // perStack 恒 >= 1（基础 1 + 守势层数），不会除零；prevented 为 0 时 ceil 也是 0。
         // 草稿取 max：若引擎把多段伤害并进同一笔 Before/After，仍只记最大的那一段。

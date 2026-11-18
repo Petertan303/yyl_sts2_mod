@@ -1,13 +1,9 @@
-using System.Linq;
-using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using yyl_sts2_mod.Code.Abstract;
 using yyl_sts2_mod.Code.Commands;
-using MegaCrit.Sts2.Core.Commands;
 
 namespace yyl_sts2_mod.Code.Powers;
 
@@ -17,25 +13,25 @@ namespace yyl_sts2_mod.Code.Powers;
 ///     <para>
 ///         Stack: Counter, Amount = 即将获得的炁数量(默认 2, 升级后 3)。
 ///     </para>
+///     <para>
+///         ★2026-11-18 时机修正: 原挂 <c>BeforeSideTurnStart</c>(清格挡前), 得炁经温养换算出的
+///         格挡紧接着被引擎 <c>ClearBlock</c> 抹掉 (观感: 炁到账、格挡冒一下就没了)。
+///         挪到 <c>AfterPlayerTurnStart</c>(清格挡之后), 与 QiHai / 金光衰减同款;
+///         守卫用 <c>player == Owner.Player</c> 而非 side (联机时 side 判不出是谁的回合)。
+///     </para>
 /// </summary>
 public sealed class StoredMight : yylPowerModel
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public override async Task BeforeSideTurnStart(
-        PlayerChoiceContext ctx,
-        CombatSide side,
-        IReadOnlyList<Creature> participants,
-        ICombatState combatState)
+    public override async Task AfterPlayerTurnStart(
+        PlayerChoiceContext ctx, Player player)
     {
-        if (side != Owner.Side) return;
+        if (Owner == null || player == null || player != Owner.Player) return;
         if (Amount <= 0) return;
-        var qi = Amount;
-        var player = combatState.Players.FirstOrDefault(p => p.Creature == Owner);
-        if (player == null) return;
 
-        await yylCmd.GainQi(ctx, player, qi, this, null);
+        await yylCmd.GainQi(ctx, player, Amount, this, null);
         await PowerCmd.Remove(this);
     }
 }

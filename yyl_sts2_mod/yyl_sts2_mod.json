@@ -3,8 +3,8 @@
   "name": "伊林",
   "author": "L1veeR",
   "description": "来自东方的神秘男子，背负着‘最龙之人’的神秘称号。",
-  "version": "v0.0.8",
-  "min_game_version": "0.113.1",
+  "version": "v0.1.1",
+  "min_game_version": "0.111.0",
   "has_pck": true,
   "has_dll": true,
   "dependencies": [

@@ -207,7 +207,7 @@ public class yylHook
 
     /// <summary>
     ///     金光护体被消耗后广播（唯一调用点 <c>yylAegis.Consume</c>）。
-    ///     敌方回合末按「单次命中的最大用层数」结算的衰减也算「消耗」，监听者据此决定要不要为此付费。
+    ///     玩家回合开始时按「单次命中的最大用层数」结算的衰减也算「消耗」，监听者据此决定要不要为此付费。
     /// </summary>
     public static Task AfterAegisConsumed(PlayerChoiceContext ctx, Player player, int layers, CardModel? cardSource)
     {
