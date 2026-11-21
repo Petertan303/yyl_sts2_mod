@@ -180,7 +180,7 @@
   "YYL_STS2_MOD-QI_WELLSPRING.title": "Qi Wellspring",
   "YYL_STS2_MOD-QI_WELLSPRING.description": "Double your current Qi.",
   "YYL_STS2_MOD-REBIRTH_ONE.title": "Reverse Life I",
-  "YYL_STS2_MOD-REBIRTH_ONE.description": "Enter [gold]Reverse Life I[/gold]. The first Block gained from a card each turn is doubled. Add a [gold]Reverse Life II[/gold] card to your hand.",
+  "YYL_STS2_MOD-REBIRTH_ONE.description": "Enter [gold]Reverse Life I[/gold]. Add a [gold]Reverse Life II[/gold] card to your hand.",
   "YYL_STS2_MOD-YIN_SHA.title": "Silkworm Frost",
   "YYL_STS2_MOD-YIN_SHA.description": "Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies.",
   "YYL_STS2_MOD-SKY_FIRE.title": "Sky Fire",
@@ -198,9 +198,9 @@
 
 
   "YYL_STS2_MOD-REBIRTH_TWO.title": "Reverse Life II",
-  "YYL_STS2_MOD-REBIRTH_TWO.description": "Enter [gold]Reverse Life II[/gold]. Gain {Block:diff()} Block now and {Block:diff()} Block at the start of each turn, keeping [gold]Reverse Life I[/gold]'s first-Block doubling. Add a [gold]Reverse Life III[/gold] card to your hand.",
+  "YYL_STS2_MOD-REBIRTH_TWO.description": "Enter [gold]Reverse Life II[/gold]. Add a [gold]Reverse Life III[/gold] card to your hand.",
   "YYL_STS2_MOD-REBIRTH_THREE.title": "Reverse Life III",
-  "YYL_STS2_MOD-REBIRTH_THREE.description": "Enter [gold]Reverse Life III[/gold]. Gain 1 [gold]Intangible[/gold] immediately, then 1 more every other turn; lose the [gold]Reverse Life II[/gold] effect. On turns without [gold]Intangible[/gold], keep [gold]Reverse Life I[/gold]'s first-Block doubling.",
+  "YYL_STS2_MOD-REBIRTH_THREE.description": "Enter [gold]Reverse Life III[/gold].",
   "YYL_STS2_MOD-SNAKE_FLOWER_BITE.title": "Snake Flower Bite",
   "YYL_STS2_MOD-SNAKE_FLOWER_BITE.description": "Deal {PetDamage:diff()} damage 3 times. Apply 2 [gold]Weak[/gold].",
   "YYL_STS2_MOD-LA_SHANG.title": "Internal Injury",

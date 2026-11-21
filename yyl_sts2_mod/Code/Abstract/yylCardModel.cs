@@ -56,6 +56,14 @@ public abstract class yylCardModel(
     /// </summary>
     protected override bool ShouldGlowGoldInternal => GlowRegistry.ShouldGlow(this);
 
+    /// <summary>
+    ///     ★红色警示高亮 (2026-11-21): 走引擎原生 <c>CardModel.ShouldGlowRedInternal</c>,
+    ///     由 <c>NHandCardHolder</c> 把 <c>CardHighlight.Modulate</c> 设成红色。
+    ///     只对"无炁则完全无效"的卡亮 (见 <see cref="GlowRegistry.ShouldGlowRed" />),
+    ///     红优先级高于金, 与金色正面提示互斥。
+    /// </summary>
+    protected override bool ShouldGlowRedInternal => GlowRegistry.ShouldGlowRed(this);
+
     // 注: 之前的 SeedCalculatedBaseValue 已删除 —— CalculatedVar 在战斗外被 BaseLib 强制返回 0,
     // 播种 BaseValue/PreviewValue 既无效又会触发未解析(花括号)。"战斗外显示准确数字"改用普通
     // DynamicVar (WithDamage / WithVar) 解决: 其 IConvertible 直接返回 BaseValue, 战斗外也正确。
